@@ -1,14 +1,14 @@
 import { StatusCodes } from 'http-status-codes';
-import { Demo } from './demo.model';
-import { IDemo } from './demo.interface';
-import { GenericService } from '../_generic-module/generic.services';
+import { Capsule } from './capsule.model';
+import { ICapsule } from './capsule.interface';
+import { GenericService } from '../../_generic-module/generic.services';
 
 
-export class DemoService extends GenericService<
-  typeof Demo,
-  IDemo
+export class CapsuleService extends GenericService<
+  typeof Capsule,
+  ICapsule
 > {
   constructor() {
-    super(Demo);
+    super(Capsule);
   }
 }

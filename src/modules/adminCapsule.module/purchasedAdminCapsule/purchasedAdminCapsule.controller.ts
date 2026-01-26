@@ -1,19 +1,19 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import { GenericController } from '../_generic-module/generic.controller';
-import { Demo } from './demo.model';
-import { IDemo } from './demo.interface';
-import { DemoService } from './demo.service';
+import { GenericController } from '../../_generic-module/generic.controller';
+import { PurchasedAdminCapsule } from './purchasedAdminCapsule.model';
+import { IPurchasedAdminCapsule } from './PurchasedAdminCapsule.interface';
+import { PurchasedAdminCapsuleService } from './purchasedAdminCapsule.service';
 
-export class DemoController extends GenericController<
-  typeof Demo,
-  IDemo
+export class PurchasedAdminCapsuleController extends GenericController<
+  typeof PurchasedAdminCapsule,
+  IPurchasedAdminCapsule
 > {
-  demoService = new DemoService();
+  PurchasedAdminCapsuleService = new PurchasedAdminCapsuleService();
 
   constructor() {
-    super(new DemoService(), 'Demo');
+    super(new PurchasedAdminCapsuleService(), 'PurchasedAdminCapsule');
   }
 
   // add more methods here if needed or override the existing ones 

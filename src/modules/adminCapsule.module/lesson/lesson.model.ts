@@ -1,10 +1,10 @@
 //@ts-ignore
 import { model, Schema } from 'mongoose';
-import { IDemo, IDemoModel } from './demo.interface';
-import paginate from '../../common/plugins/paginate';
+import { ILesson, ILessonModel } from './lesson.interface';
+import paginate from '../../../common/plugins/paginate';
 
 
-const demoSchema = new Schema<IDemo>(
+const LessonSchema = new Schema<ILesson>(
   {
     userId: { //🔗
       type: Schema.Types.ObjectId,
@@ -23,18 +23,18 @@ const demoSchema = new Schema<IDemo>(
   { timestamps: true }
 );
 
-demoSchema.plugin(paginate);
+LessonSchema.plugin(paginate);
 
 // Use transform to rename _id to _projectId
-demoSchema.set('toJSON', {
+LessonSchema.set('toJSON', {
   transform: function (doc, ret, options) {
-    ret._demoId = ret._id; // Rename _id to _subscriptionId
+    ret._LessonId = ret._id; // Rename _id to _subscriptionId
     delete ret._id; // Remove the original _id field
     return ret;
   },
 });
 
-export const Demo = model<
-  IDemo,
-  IDemoModel
->('Demo', demoSchema);
+export const Lesson = model<
+  ILesson,
+  ILessonModel
+>('Lesson', LessonSchema);

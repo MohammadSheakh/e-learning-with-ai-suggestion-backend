@@ -1,19 +1,21 @@
+//@ts-ignore
 import { Request, Response } from 'express';
+//@ts-ignore
 import { StatusCodes } from 'http-status-codes';
 
-import { GenericController } from '../_generic-module/generic.controller';
-import { Demo } from './demo.model';
-import { IDemo } from './demo.interface';
-import { DemoService } from './demo.service';
+import { GenericController } from '../../_generic-module/generic.controller';
+import { AdminCapsule } from './adminCapsule.model';
+import { IAdminCapsule } from './AdminCapsule.interface';
+import { AdminCapsuleService } from './adminCapsule.service';
 
-export class DemoController extends GenericController<
-  typeof Demo,
-  IDemo
+export class AdminCapsuleController extends GenericController<
+  typeof AdminCapsule,
+  IAdminCapsule
 > {
-  demoService = new DemoService();
+  AdminCapsuleService = new AdminCapsuleService();
 
   constructor() {
-    super(new DemoService(), 'Demo');
+    super(new AdminCapsuleService(), 'AdminCapsule');
   }
 
   // add more methods here if needed or override the existing ones 

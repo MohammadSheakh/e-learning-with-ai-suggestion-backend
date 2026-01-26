@@ -1,19 +1,19 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import { GenericController } from '../_generic-module/generic.controller';
-import { Demo } from './demo.model';
-import { IDemo } from './demo.interface';
-import { DemoService } from './demo.service';
+import { GenericController } from '../../_generic-module/generic.controller';
+import { Roadmap } from './roadmap.model';
+import { IRoadmap } from './Roadmap.interface';
+import { RoadmapService } from './roadmap.service';
 
-export class DemoController extends GenericController<
-  typeof Demo,
-  IDemo
+export class RoadmapController extends GenericController<
+  typeof Roadmap,
+  IRoadmap
 > {
-  demoService = new DemoService();
+  RoadmapService = new RoadmapService();
 
   constructor() {
-    super(new DemoService(), 'Demo');
+    super(new RoadmapService(), 'Roadmap');
   }
 
   // add more methods here if needed or override the existing ones 

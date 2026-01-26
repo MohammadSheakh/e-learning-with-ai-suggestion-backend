@@ -1,19 +1,19 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import { GenericController } from '../_generic-module/generic.controller';
-import { Demo } from './demo.model';
-import { IDemo } from './demo.interface';
-import { DemoService } from './demo.service';
+import { GenericController } from '../../_generic-module/generic.controller';
+import { StudentAnswer } from './studentAnswer.model';
+import { IStudentAnswer } from './StudentAnswer.interface';
+import { StudentAnswerService } from './studentAnswer.service';
 
-export class DemoController extends GenericController<
-  typeof Demo,
-  IDemo
+export class StudentAnswerController extends GenericController<
+  typeof StudentAnswer,
+  IStudentAnswer
 > {
-  demoService = new DemoService();
+  StudentAnswerService = new StudentAnswerService();
 
   constructor() {
-    super(new DemoService(), 'Demo');
+    super(new StudentAnswerService(), 'StudentAnswer');
   }
 
   // add more methods here if needed or override the existing ones 

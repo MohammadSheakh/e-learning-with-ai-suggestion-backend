@@ -1,14 +1,15 @@
+//@ts-ignore
 import { StatusCodes } from 'http-status-codes';
-import { Demo } from './demo.model';
-import { IDemo } from './demo.interface';
-import { GenericService } from '../_generic-module/generic.services';
+import { AdminCapsule } from './adminCapsule.model';
+import { IAdminCapsule } from './adminCapsule.interface';
+import { GenericService } from '../../_generic-module/generic.services';
 
 
-export class DemoService extends GenericService<
-  typeof Demo,
-  IDemo
+export class AdminCapsuleService extends GenericService<
+  typeof AdminCapsule,
+  IAdminCapsule
 > {
   constructor() {
-    super(Demo);
+    super(AdminCapsule);
   }
 }

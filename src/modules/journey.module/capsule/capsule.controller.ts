@@ -1,19 +1,19 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import { GenericController } from '../_generic-module/generic.controller';
-import { Demo } from './demo.model';
-import { IDemo } from './demo.interface';
-import { DemoService } from './demo.service';
+import { GenericController } from '../../_generic-module/generic.controller';
+import { Capsule } from './capsule.model';
+import { ICapsule } from './Capsule.interface';
+import { CapsuleService } from './capsule.service';
 
-export class DemoController extends GenericController<
-  typeof Demo,
-  IDemo
+export class CapsuleController extends GenericController<
+  typeof Capsule,
+  ICapsule
 > {
-  demoService = new DemoService();
+  CapsuleService = new CapsuleService();
 
   constructor() {
-    super(new DemoService(), 'Demo');
+    super(new CapsuleService(), 'Capsule');
   }
 
   // add more methods here if needed or override the existing ones 

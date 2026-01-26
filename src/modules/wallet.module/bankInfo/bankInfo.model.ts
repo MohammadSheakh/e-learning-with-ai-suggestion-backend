@@ -2,7 +2,7 @@
 import { model, Schema } from 'mongoose';
 import { IBankInfo, IBankInfoModel } from './bankInfo.interface';
 import paginate from '../../../common/plugins/paginate';
-import { TBankAccount } from './bankInfo.constant';
+import { TBankAccount } from './bankInfo.constant';//
 
 const bankInfoSchema = new Schema<IBankInfo>(
   {

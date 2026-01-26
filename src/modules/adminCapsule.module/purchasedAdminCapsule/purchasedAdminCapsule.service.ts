@@ -1,14 +1,14 @@
 import { StatusCodes } from 'http-status-codes';
-import { Demo } from './demo.model';
-import { IDemo } from './demo.interface';
-import { GenericService } from '../_generic-module/generic.services';
+import { PurchasedAdminCapsule } from './purchasedAdminCapsule.model';
+import { IPurchasedAdminCapsule } from './purchasedAdminCapsule.interface';
+import { GenericService } from '../../_generic-module/generic.services';
 
 
-export class DemoService extends GenericService<
-  typeof Demo,
-  IDemo
+export class PurchasedAdminCapsuleService extends GenericService<
+  typeof PurchasedAdminCapsule,
+  IPurchasedAdminCapsule
 > {
   constructor() {
-    super(Demo);
+    super(PurchasedAdminCapsule);
   }
 }

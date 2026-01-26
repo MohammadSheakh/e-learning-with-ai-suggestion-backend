@@ -1,11 +1,11 @@
 //@ts-ignore
 import express from 'express';
-import * as validation from './demo.validation';
-import { DemoController} from './demo.controller';
-import { IDemo } from './demo.interface';
-import { validateFiltersForQuery } from '../../middlewares/queryValidation/paginationQueryValidationMiddleware';
-import validateRequest from '../../shared/validateRequest';
-import auth from '../../middlewares/auth';
+import * as validation from './question.validation';
+import { QuestionController} from './question.controller';
+import { IQuestion } from './question.interface';
+import { validateFiltersForQuery } from '../../../middlewares/queryValidation/paginationQueryValidationMiddleware';
+import validateRequest from '../../../shared/validateRequest';
+import auth from '../../../middlewares/auth';
 //@ts-ignore
 import multer from "multer";
 const storage = multer.memoryStorage();
@@ -13,7 +13,7 @@ const upload = multer({ storage: storage });
 
 const router = express.Router();
 
-export const optionValidationChecking = <T extends keyof IDemo | 'sortBy' | 'page' | 'limit' | 'populate'>(
+export const optionValidationChecking = <T extends keyof IQuestion | 'sortBy' | 'page' | 'limit' | 'populate'>(
   filters: T[]
 ) => {
   return filters;
@@ -27,7 +27,7 @@ const paginationOptions: Array<'sortBy' | 'page' | 'limit' | 'populate'> = [
 ];
 
 // const taskService = new TaskService();
-const controller = new DemoController();
+const controller = new QuestionController();
 
 //
 router.route('/paginate').get(
@@ -79,4 +79,4 @@ router.route('/softDelete/:id').put(
 //[🚧][🧑‍💻✅][🧪] // 🆗
 
 
-export const DemoRoute = router;
+export const QuestionRoute = router;

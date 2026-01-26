@@ -1,4 +1,4 @@
-export enum DemoType {
+export enum ModuleType {
   document = 'document',
   image = 'image',
   unknown = 'unknown',
