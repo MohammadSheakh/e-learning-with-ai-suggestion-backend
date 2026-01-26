@@ -1,12 +1,20 @@
+//@ts-ignore
 import { Model, Types } from 'mongoose';
 import { PaginateOptions, PaginateResult } from '../../../types/paginate';
-
+import { TAdminModuleProgress } from './adminModuleProgress.constant';
 
 export interface IAdminModuleProgress {
   // _taskId: undefined | Types.ObjectId;
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
-  userId: Types.ObjectId;
-  message : string;
+  
+  studentId: Types.ObjectId;//🔗
+  moduleId: Types.ObjectId; //🔗
+  capsuleId: Types.ObjectId; //🔗
+  status: TAdminModuleProgress; //🧩
+  completedLessonsCount: number;
+  totalLessons: number;
+  completedAt?: Date;
+  viewedAt?: Date;
 
   isDeleted? : boolean;  
   createdAt?: Date;

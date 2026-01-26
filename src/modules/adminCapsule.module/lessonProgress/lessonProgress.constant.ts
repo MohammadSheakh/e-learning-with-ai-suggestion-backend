@@ -1,5 +1,6 @@
-export enum LessonProgressType {
-  document = 'document',
-  image = 'image',
-  unknown = 'unknown',
+export enum TLessonProgress {
+  locked = 'locked',
+  unlocked = 'unlocked',
+  viewed = 'viewed',
+  completed = 'completed',
 }

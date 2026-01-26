@@ -6,8 +6,9 @@ import { PaginateOptions, PaginateResult } from '../../../types/paginate';
 export interface IAdminCapsuleCategory {
   // _taskId: undefined | Types.ObjectId;
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
-  userId: Types.ObjectId;
-  message : string;
+  
+  name: string;
+  attachments?: Types.ObjectId[]; //🔗🖼️
 
   isDeleted? : boolean;  
   createdAt?: Date;

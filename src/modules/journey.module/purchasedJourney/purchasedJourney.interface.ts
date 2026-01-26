@@ -5,8 +5,11 @@ import { PaginateOptions, PaginateResult } from '../../../types/paginate';
 export interface IPurchasedJourney {
   // _taskId: undefined | Types.ObjectId;
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
-  userId: Types.ObjectId;
-  message : string;
+  
+  journeyId: Types.ObjectId; //🔗
+  studentId: Types.ObjectId; //🔗
+  studentsAnswer: string;
+  aiSummary: string;
 
   isDeleted? : boolean;  
   createdAt?: Date;

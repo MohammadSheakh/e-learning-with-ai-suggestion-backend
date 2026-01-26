@@ -6,14 +6,19 @@ import paginate from '../../../common/plugins/paginate';
 
 const AdminCapsuleCategorySchema = new Schema<IAdminCapsuleCategory>(
   {
-    userId: { //🔗
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-    },
-    message: {
+    
+    name: {
       type: String,
-      required: [true, 'dateOfBirth is required'],
+      required: [true, 'name is required'],
     },
+    attachments: [//🔗🖼️
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Attachment',
+        required: [false, 'attachments is not required'],
+      }
+    ],
+
     isDeleted: {
       type: Boolean,
       required: [false, 'isDeleted is not required'],
@@ -27,7 +32,7 @@ AdminCapsuleCategorySchema.plugin(paginate);
 
 // Use transform to rename _id to _projectId
 AdminCapsuleCategorySchema.set('toJSON', {
-  transform: function (doc, ret, options) {
+  transform: function (doc:any, ret:any, options:any) {
     ret._AdminCapsuleCategoryId = ret._id; // Rename _id to _subscriptionId
     delete ret._id; // Remove the original _id field
     return ret;

@@ -6,13 +6,30 @@ import paginate from '../../../common/plugins/paginate';
 
 const ModuleSchema = new Schema<IModule>(
   {
-    userId: { //🔗
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-    },
-    message: {
+    title: {
       type: String,
-      required: [true, 'dateOfBirth is required'],
+      required: [true, 'title is required'],
+    },
+    description: {
+      type: String,
+      required: [true, 'description is required'],
+    },
+    attachments: [//🔗🖼️
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Attachment',
+        required: [false, 'attachments is not required'],
+      }
+    ],
+    capsuleId: { //🔗
+      type: Schema.Types.ObjectId,
+      ref: 'Capsule',
+      required: [true, 'capsuleId is required'],
+    },
+    estimatedTime: {
+      type: Number,
+      required: [true, 'estimatedTime is required'],
+      min: [0, 'estimatedTime cannot be negative'],
     },
     isDeleted: {
       type: Boolean,
@@ -27,7 +44,7 @@ ModuleSchema.plugin(paginate);
 
 // Use transform to rename _id to _projectId
 ModuleSchema.set('toJSON', {
-  transform: function (doc, ret, options) {
+  transform: function (doc:any, ret:any, options:any) {
     ret._ModuleId = ret._id; // Rename _id to _subscriptionId
     delete ret._id; // Remove the original _id field
     return ret;

@@ -1,5 +1,4 @@
-export enum StudentModuleTrackerType {
-  document = 'document',
-  image = 'image',
-  unknown = 'unknown',
+export enum TStudentModuleTrackerStatus {
+  inProgress = 'inProgress',
+  completed = 'completed',
 }

@@ -1,5 +1,5 @@
-export enum AdminModuleProgressType {
-  document = 'document',
-  image = 'image',
-  unknown = 'unknown',
+export enum TAdminModuleProgress {
+  notStarted = 'not-started',
+  inProgress = 'in-progress',
+  completed = 'completed',
 }

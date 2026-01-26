@@ -6,13 +6,23 @@ import paginate from '../../../common/plugins/paginate';
 
 const PurchasedJourneySchema = new Schema<IPurchasedJourney>(
   {
-    userId: { //🔗
+    journeyId: { //🔗
+      type: Schema.Types.ObjectId,
+      ref: 'Journey',
+      required: [true, 'journeyId is required'],
+    },
+    studentId: { //🔗
       type: Schema.Types.ObjectId,
       ref: 'User',
+      required: [true, 'studentId is required'],
     },
-    message: {
+    studentsAnswer: {
       type: String,
-      required: [true, 'dateOfBirth is required'],
+      required: [true, 'studentsAnswer is required'],
+    },
+    aiSummary: {
+      type: String,
+      required: [true, 'aiSummary is required'],
     },
     isDeleted: {
       type: Boolean,
@@ -27,7 +37,7 @@ PurchasedJourneySchema.plugin(paginate);
 
 // Use transform to rename _id to _projectId
 PurchasedJourneySchema.set('toJSON', {
-  transform: function (doc, ret, options) {
+  transform: function (doc:any, ret:any, options:any) {
     ret._PurchasedJourneyId = ret._id; // Rename _id to _subscriptionId
     delete ret._id; // Remove the original _id field
     return ret;

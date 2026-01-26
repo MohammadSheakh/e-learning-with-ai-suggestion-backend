@@ -5,8 +5,12 @@ import { PaginateOptions, PaginateResult } from '../../../types/paginate';
 export interface IModule {
   // _taskId: undefined | Types.ObjectId;
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
-  userId: Types.ObjectId;
-  message : string;
+  
+  title: string;
+  description: string;
+  attachments:  Types.ObjectId[] | undefined; //🖼️🧩 
+  capsuleId: Types.ObjectId; //🔗
+  estimatedTime: number;
 
   isDeleted? : boolean;  
   createdAt?: Date;

@@ -1,5 +1,4 @@
-export enum StudentAnswerType {
-  document = 'document',
-  image = 'image',
-  unknown = 'unknown',
+export enum TStudentAnswerStatus {
+  inProgress = 'inProgress',
+  completed = 'completed',
 }

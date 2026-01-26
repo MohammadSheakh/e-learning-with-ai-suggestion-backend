@@ -1,5 +1,5 @@
-export enum AdminCapsuleType {
-  document = 'document',
-  image = 'image',
-  unknown = 'unknown',
+export enum TAdminCapsuleLevel {
+  intermediate = 'intermediate',
+  beginner = 'beginner',
+  advanced = 'advanced',
 }

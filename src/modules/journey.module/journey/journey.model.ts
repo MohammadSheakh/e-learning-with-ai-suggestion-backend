@@ -6,14 +6,25 @@ import paginate from '../../../common/plugins/paginate';
 
 const JourneySchema = new Schema<IJourney>(
   {
-    userId: { //🔗
+    
+    adminId: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'User', // assuming Admins are also Users — adjust if you have a separate Admin model
+      required: [true, 'adminId is required'],
     },
-    message: {
+    numberOfCapsule: {
+      type: Number,
+      required: [true, 'numberOfCapsule is required'],
+    },
+    price: {
+      type: Number,
+      required: [true, 'price is required'],
+    },
+    description: {
       type: String,
-      required: [true, 'dateOfBirth is required'],
+      required: [true, 'description is required'],
     },
+
     isDeleted: {
       type: Boolean,
       required: [false, 'isDeleted is not required'],
@@ -27,7 +38,7 @@ JourneySchema.plugin(paginate);
 
 // Use transform to rename _id to _projectId
 JourneySchema.set('toJSON', {
-  transform: function (doc, ret, options) {
+  transform: function (doc:any, ret:any, options:any) {
     ret._JourneyId = ret._id; // Rename _id to _subscriptionId
     delete ret._id; // Remove the original _id field
     return ret;

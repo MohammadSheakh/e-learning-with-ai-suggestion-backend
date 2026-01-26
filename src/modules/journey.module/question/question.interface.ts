@@ -1,12 +1,17 @@
 import { Model, Types } from 'mongoose';
 import { PaginateOptions, PaginateResult } from '../../../types/paginate';
+import { TQuestion } from './question.constant';
 
 
 export interface IQuestion {
   // _taskId: undefined | Types.ObjectId;
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
-  userId: Types.ObjectId;
-  message : string;
+  
+  questionText: string;
+  type: TQuestion;
+  options?: string[];
+  correctAnswer?: string;
+  capsuleId: Types.ObjectId;
 
   isDeleted? : boolean;  
   createdAt?: Date;

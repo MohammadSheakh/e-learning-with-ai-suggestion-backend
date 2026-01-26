@@ -1,12 +1,18 @@
 import { Model, Types } from 'mongoose';
 import { PaginateOptions, PaginateResult } from '../../../types/paginate';
+import { TStudentAnswerStatus } from './studentAnswer.constant';
 
 
 export interface IStudentAnswer {
   // _taskId: undefined | Types.ObjectId;
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
-  userId: Types.ObjectId;
-  message : string;
+  
+  questionId: Types.ObjectId; //🔗
+  studentId: Types.ObjectId; //🔗
+  status: TStudentAnswerStatus; //🧩
+  answer: string;
+  isCorrect?: boolean;
+  isAnswered?: boolean;
 
   isDeleted? : boolean;  
   createdAt?: Date;

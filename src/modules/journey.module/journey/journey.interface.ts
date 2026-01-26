@@ -6,8 +6,11 @@ import { PaginateOptions, PaginateResult } from '../../../types/paginate';
 export interface IJourney {
   // _taskId: undefined | Types.ObjectId;
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
-  userId: Types.ObjectId;
-  message : string;
+  
+  adminId: Types.ObjectId; // FK to Admin/User who created it
+  numberOfCapsule: number; // display-only value
+  price: number;
+  description: string;
 
   isDeleted? : boolean;  
   createdAt?: Date;

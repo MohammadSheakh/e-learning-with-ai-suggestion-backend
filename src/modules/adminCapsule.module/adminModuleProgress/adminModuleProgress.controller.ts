@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { GenericController } from '../../_generic-module/generic.controller';
 import { AdminModuleProgress } from './adminModuleProgress.model';
-import { IAdminModuleProgress } from './AdminModuleProgress.interface';
+import { IAdminModuleProgress } from './adminModuleProgress.interface';
 import { AdminModuleProgressService } from './adminModuleProgress.service';
 
 export class AdminModuleProgressController extends GenericController<

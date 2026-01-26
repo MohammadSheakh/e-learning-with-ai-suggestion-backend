@@ -1,12 +1,21 @@
 import { Model, Types } from 'mongoose';
 import { PaginateOptions, PaginateResult } from '../../../types/paginate';
+import { TPurchasedAdminCapsuleStatus } from './purchasedAdminCapsule.constant';
 
 
 export interface IPurchasedAdminCapsule {
   // _taskId: undefined | Types.ObjectId;
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
-  userId: Types.ObjectId;
-  message : string;
+  
+  capsuleId: Types.ObjectId; //🔗
+  studentId: Types.ObjectId; //🔗
+  status: TPurchasedAdminCapsuleStatus;  //🧩
+  isGifted: boolean;
+  uploadedCertificate?: Types.ObjectId[]; //🔗🖼️
+  isCertificateUploaded: boolean;
+  completedModules: number;
+  totalModules: number;
+  progressPercent: number;
 
   isDeleted? : boolean;  
   createdAt?: Date;

@@ -5,8 +5,11 @@ import { PaginateOptions, PaginateResult } from '../../../types/paginate';
 export interface ILesson {
   // _taskId: undefined | Types.ObjectId;
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
-  userId: Types.ObjectId;
-  message : string;
+  
+  title: string;
+  attachments?: Types.ObjectId[]; //🔗🖼️
+  moduleRefId: Types.ObjectId; //🔗 FK to parent (e.g., Capsule or Roadmap)
+  duration: string; // e.g., "5m", "1h30m", "2d"
 
   isDeleted? : boolean;  
   createdAt?: Date;

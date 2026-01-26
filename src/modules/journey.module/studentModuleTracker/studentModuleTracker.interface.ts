@@ -1,12 +1,16 @@
 import { Model, Types } from 'mongoose';
 import { PaginateOptions, PaginateResult } from '../../../types/paginate';
+import { TStudentModuleTrackerStatus } from './studentModuleTracker.constant';
 
 
 export interface IStudentModuleTracker {
   // _taskId: undefined | Types.ObjectId;
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
-  userId: Types.ObjectId;
-  message : string;
+  
+  moduleId: Types.ObjectId;  //🔗
+  studentId: Types.ObjectId;  //🔗
+  status: TStudentModuleTrackerStatus; //🧩 
+  progressPercentage: number;
 
   isDeleted? : boolean;  
   createdAt?: Date;

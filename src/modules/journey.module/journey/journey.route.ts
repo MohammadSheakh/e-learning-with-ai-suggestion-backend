@@ -41,7 +41,7 @@ router.route('/:id').get(
   controller.getById
 );
 
-router.route('/update/:id').put(
+router.route('/:id').put(
   //auth('common'),
   // validateRequest(validation.createHelpMessageValidationSchema),
   controller.updateById
@@ -54,7 +54,7 @@ router.route('/').get(
 );
 
 //[🚧][🧑‍💻✅][🧪] // 🆗
-router.route('/create').post(
+router.route('/').post(
   // [
   //   upload.fields([
   //     { name: 'attachments', maxCount: 15 }, // Allow up to 5 cover photos
@@ -64,19 +64,6 @@ router.route('/create').post(
   validateRequest(validation.createHelpMessageValidationSchema),
   controller.create
 );
-
-router.route('/delete/:id').delete(
-  //auth('common'),
-  controller.deleteById
-); // FIXME : change to admin
-
-router.route('/softDelete/:id').put(
-  //auth('common'),
-  controller.softDeleteById
-);
-
-////////////
-//[🚧][🧑‍💻✅][🧪] // 🆗
 
 
 export const JourneyRoute = router;

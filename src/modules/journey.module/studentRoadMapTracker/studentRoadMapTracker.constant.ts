@@ -1,5 +1,4 @@
-export enum StudentRoadMapTrackerType {
-  document = 'document',
-  image = 'image',
-  unknown = 'unknown',
+export enum TStudentRoadMapTrackerStatus {
+  inProgress = 'inProgress',
+  completed = 'completed',
 }

@@ -1,5 +1,5 @@
-export enum PurchasedAdminCapsuleType {
-  document = 'document',
-  image = 'image',
-  unknown = 'unknown',
+export enum TPurchasedAdminCapsuleStatus {
+  start = 'start',
+  inProgress = 'inProgress',
+  complete = 'complete',
 }
