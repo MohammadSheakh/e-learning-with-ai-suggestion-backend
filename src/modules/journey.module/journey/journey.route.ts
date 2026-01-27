@@ -65,5 +65,15 @@ router.route('/').post(
   controller.create
 );
 
+router.route('/:id/permenent').delete(
+  auth(TRole.specialist),
+  controller.deleteById
+);
+
+router.route('/:id').delete(
+  auth(TRole.specialist),
+  controller.softDeleteById
+);
+
 
 export const JourneyRoute = router;

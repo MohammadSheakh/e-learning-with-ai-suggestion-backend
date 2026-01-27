@@ -2,7 +2,7 @@
 import express from 'express';
 import * as validation from './phase.validation';
 import { PhaseController} from './phase.controller';
-import { IPhase } from './Phase.interface';
+import { IPhase } from './phase.interface';
 import { validateFiltersForQuery } from '../../../middlewares/queryValidation/paginationQueryValidationMiddleware';
 import validateRequest from '../../../shared/validateRequest';
 import auth from '../../../middlewares/auth';

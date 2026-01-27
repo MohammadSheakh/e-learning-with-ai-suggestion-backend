@@ -6,14 +6,20 @@ import paginate from '../../../common/plugins/paginate';
 
 const PhaseSchema = new Schema<IPhase>(
   {
-    userId: { //🔗
-      type: Schema.Types.ObjectId,
-      ref: 'User',
+    phaseNumber: {
+      type: Number,
+      required: [true, 'phaseNumber is required'],
+      min: [1, 'phaseNumber must be at least 1'],
     },
-    message: {
+    title: {
       type: String,
-      required: [true, 'dateOfBirth is required'],
+      required: [true, 'title is required'],
     },
+    subTitle: {
+      type: String,
+      required: [true, 'subTitle is required'],
+    },
+
     isDeleted: {
       type: Boolean,
       required: [false, 'isDeleted is not required'],

@@ -5,8 +5,10 @@ import { PaginateOptions, PaginateResult } from '../../../types/paginate';
 export interface IPhase {
   // _taskId: undefined | Types.ObjectId;
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
-  userId: Types.ObjectId;
-  message : string;
+  
+  phaseNumber: number;
+  title: string;
+  subTitle: string;
 
   isDeleted? : boolean;  
   createdAt?: Date;
