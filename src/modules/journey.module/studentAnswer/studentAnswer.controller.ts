@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { GenericController } from '../../_generic-module/generic.controller';
 import { StudentAnswer } from './studentAnswer.model';
-import { IStudentAnswer } from './StudentAnswer.interface';
+import { IStudentAnswer } from './studentAnswer.interface';
 import { StudentAnswerService } from './studentAnswer.service';
 
 export class StudentAnswerController extends GenericController<

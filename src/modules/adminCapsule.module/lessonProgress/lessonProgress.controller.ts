@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { GenericController } from '../../_generic-module/generic.controller';
 import { LessonProgress } from './lessonProgress.model';
-import { ILessonProgress } from './LessonProgress.interface';
+import { ILessonProgress } from './lessonProgress.interface';
 import { LessonProgressService } from './lessonProgress.service';
 
 export class LessonProgressController extends GenericController<

@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { GenericController } from '../../_generic-module/generic.controller';
 import { StudentModuleTracker } from './studentModuleTracker.model';
-import { IStudentModuleTracker } from './StudentModuleTracker.interface';
+import { IStudentModuleTracker } from './studentModuleTracker.interface';
 import { StudentModuleTrackerService } from './studentModuleTracker.service';
 
 export class StudentModuleTrackerController extends GenericController<

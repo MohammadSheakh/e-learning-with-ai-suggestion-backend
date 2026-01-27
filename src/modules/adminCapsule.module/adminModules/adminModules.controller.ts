@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { GenericController } from '../../_generic-module/generic.controller';
 import { AdminModules } from './adminModules.model';
-import { IAdminModules } from './AdminModules.interface';
+import { IAdminModules } from './adminModules.interface';
 import { AdminModulesService } from './adminModules.service';
 
 export class AdminModulesController extends GenericController<

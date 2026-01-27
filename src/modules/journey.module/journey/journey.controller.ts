@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { GenericController } from '../../_generic-module/generic.controller';
 import { Journey } from './journey.model';
-import { IJourney } from './Journey.interface';
+import { IJourney } from './journey.interface';
 import { JourneyService } from './journey.service';
 
 export class JourneyController extends GenericController<

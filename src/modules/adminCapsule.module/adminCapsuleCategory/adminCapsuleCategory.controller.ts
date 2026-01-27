@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { GenericController } from '../../_generic-module/generic.controller';
 import { AdminCapsuleCategory } from './adminCapsuleCategory.model';
-import { IAdminCapsuleCategory } from './AdminCapsuleCategory.interface';
+import { IAdminCapsuleCategory } from './adminCapsuleCategory.interface';
 import { AdminCapsuleCategoryService } from './adminCapsuleCategory.service';
 
 export class AdminCapsuleCategoryController extends GenericController<

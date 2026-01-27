@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { GenericController } from '../../_generic-module/generic.controller';
 import { Module } from './module.model';
-import { IModule } from './Module.interface';
+import { IModule } from './module.interface';
 import { ModuleService } from './module.service';
 
 export class ModuleController extends GenericController<

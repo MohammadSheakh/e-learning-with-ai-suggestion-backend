@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { GenericController } from '../../_generic-module/generic.controller';
 import { StudentRoadMapTracker } from './studentRoadMapTracker.model';
-import { IStudentRoadMapTracker } from './StudentRoadMapTracker.interface';
+import { IStudentRoadMapTracker } from './studentRoadMapTracker.interface';
 import { StudentRoadMapTrackerService } from './studentRoadMapTracker.service';
 
 export class StudentRoadMapTrackerController extends GenericController<

@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { GenericController } from '../../_generic-module/generic.controller';
 import { PurchasedJourney } from './purchasedJourney.model';
-import { IPurchasedJourney } from './PurchasedJourney.interface';
+import { IPurchasedJourney } from './purchasedJourney.interface';
 import { PurchasedJourneyService } from './purchasedJourney.service';
 
 export class PurchasedJourneyController extends GenericController<

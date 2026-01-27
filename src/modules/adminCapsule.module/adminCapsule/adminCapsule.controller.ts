@@ -5,7 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { GenericController } from '../../_generic-module/generic.controller';
 import { AdminCapsule } from './adminCapsule.model';
-import { IAdminCapsule } from './AdminCapsule.interface';
+import { IAdminCapsule } from './adminCapsule.interface';
 import { AdminCapsuleService } from './adminCapsule.service';
 
 export class AdminCapsuleController extends GenericController<

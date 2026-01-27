@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { GenericController } from '../../_generic-module/generic.controller';
 import { PurchasedAdminCapsule } from './purchasedAdminCapsule.model';
-import { IPurchasedAdminCapsule } from './PurchasedAdminCapsule.interface';
+import { IPurchasedAdminCapsule } from './purchasedAdminCapsule.interface';
 import { PurchasedAdminCapsuleService } from './purchasedAdminCapsule.service';
 
 export class PurchasedAdminCapsuleController extends GenericController<
