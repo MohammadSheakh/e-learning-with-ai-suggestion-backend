@@ -40,49 +40,15 @@ const register = catchAsync(async (req :Request, res:Response) => {
       success: true,
     });
   }
-  //---------------------------------------
-  // detect lang of location and translate and store both version
-  //---------------------------------------
-  /*
-  let detectedLang = await detectLanguage(data.location);
-  const originalLang = detectedLang || 'en';
-  const locationObj = {
-      en: '',
-      bn: ''
-  };
   
-  // 3. Set original
-  locationObj[originalLang] = data.location;
-
-  const otherLang = originalLang === 'en' ? 'bn' : 'en';
-
-  locationObj[otherLang] = await translateTextToTargetLang(
-    data.location,
-    otherLang
-  );
-
-  */
-
   const userProfile:IUserProfile = await UserProfile.create({
     acceptTOC: data.acceptTOC,
-    gender : data.gender,
-    location: {
-      en: "FIXME",
-      bn: "FIXME"
-    }, // make sure we store both bn and en version
-    lat: data.lat,
-    lng : data.lng,
-    locationV2: {
-      type: "Point",
-      coordinates: [ data.lng, data.lat ] // must be [longitude, latitude]
-    },
-    dob : data.dob 
   });
 
   // req.body.profileId = userProfile._id;
 
   //---------------------------------
-  // lets create wallet for provider but we do this in AuthService.createUser function 
+  // lets create wallet for mentor but we do this in AuthService.createUser function 
   //---------------------------------
 
   const userDTO :ICreateUser = {
@@ -95,21 +61,52 @@ const register = catchAsync(async (req :Request, res:Response) => {
 
   const result = await AuthService.createUser(userDTO, userProfile._id);
 
-  if(req.body.role == TRole.provider) {
-    //---------------------------------
-    // we already created wallet for provider in AuthService.createUser function
-    //---------------------------------
+  sendResponse(res, {
+    code: StatusCodes.CREATED,
+    message: `Account create successfully, Please verify your email to login`,
+    data: result,
+    success: true,
+  });
 
-    // For Provider
+  
+});
+
+/*-─────────────────────────────────
+|  We refactor register service in this project
+└──────────────────────────────────*/
+const registerV2 = catchAsync(async (req :Request, res:Response) => {
+
+  const data : IRegisterData = req.body;
+
+  if(!data.acceptTOC){
     sendResponse(res, {
       code: StatusCodes.CREATED,
-      message: `Account create successfully. After checking your documents, you will be notified by email.`,
-      data: result,
+      message: `Please Read Terms and Conditions and Accept it.`,
+      data: null,
       success: true,
     });
-  } 
+  }
+  
+  const userProfile:IUserProfile = await UserProfile.create({
+    acceptTOC: data.acceptTOC,
+  });
 
-  // For User
+  // req.body.profileId = userProfile._id;
+
+  //---------------------------------
+  // lets create wallet for mentor but we do this in AuthService.createUser function 
+  //---------------------------------
+
+  const userDTO :ICreateUser = {
+    name:  data.name,
+    email : req.body.email,
+    password : req.body.password,
+    role : data.role,
+    profileId : userProfile._id
+  }
+
+  const result = await AuthService.createUser(userDTO, userProfile._id);
+
   sendResponse(res, {
     code: StatusCodes.CREATED,
     message: `Account create successfully, Please verify your email to login`,
@@ -121,8 +118,30 @@ const register = catchAsync(async (req :Request, res:Response) => {
 });
 
 const login = catchAsync(async (req :Request, res:Response) => {
+  const { email, password } = req.body;
+  const result = await AuthService.login(email, password);
+
+  //set refresh token in cookie
+  res.cookie('refreshToken', result.tokens.refreshToken, {
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000, // set maxAge to a number
+    sameSite: 'lax',
+  });
+
+  sendResponse(res, {
+    code: StatusCodes.OK,
+    message: 'User logged in successfully',
+    data: result,
+    success: true,
+  });
+});
+
+/*-─────────────────────────────────
+|  We refactor login service in this project
+└──────────────────────────────────*/
+const loginV2 = catchAsync(async (req :Request, res:Response) => {
   const { email, password, fcmToken } = req.body;
-  const result = await AuthService.login(email, password, fcmToken);
+  const result = await AuthService.loginV2(email, password, fcmToken);
 
   //set refresh token in cookie
   res.cookie('refreshToken', result.tokens.refreshToken, {
@@ -506,7 +525,9 @@ const refreshToken = catchAsync(async (req :Request, res:Response) => {
 
 export const AuthController = {
   register,
+  registerV2 , // 🆕
   login,
+  loginV2, // 🆕
   googleLogin,
   verifyEmail,
   resendOtp,

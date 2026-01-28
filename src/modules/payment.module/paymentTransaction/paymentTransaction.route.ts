@@ -9,7 +9,6 @@ import * as validation from './paymentTransaction.validation';
 
 import multer from "multer";
 import { TRole } from '../../../middlewares/roles';
-import { validateAfterSuccessfulTransaction, validateAfterSuccessfulTransactionV2 } from '../payment/gateways/sslcommerz/sslcommerz.handler';
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -107,14 +106,6 @@ router.route('/cancel').get(controller.cancelPage);
 // router.post('/ssl/fail', handleSSLFail); // not sure
 // router.post('/ssl/cancel', handleSSLCancel); // not sure
 // router.post('/ssl/ipn', handleSSLIPN); // not sure
-
-/**
- * This is validation API that SSLCommerz will POST to
- * based on this .. we have to update our database
- * * */
-// router.route('/pay/apn/validate').post(validateAfterSuccessfulTransaction); // may be method will be get
-router.route('/pay/apn/validate').post(validateAfterSuccessfulTransactionV2); // may be method will be get
-
 
 //---------------- https://github.com/sslcommerz/SSLCommerz-NodeJS 
 router.route('/initiate-refund').get(controller.initiateARefundThroughAPI);

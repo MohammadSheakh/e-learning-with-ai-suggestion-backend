@@ -3,8 +3,8 @@ import { Request, Response, NextFunction } from 'express';
 import sendResponse from '../../shared/sendResponse';
 //@ts-ignore
 import { StatusCodes } from 'http-status-codes';
-import { ServiceProvider } from '../../modules/service.module/serviceProvider/serviceProvider.model';
-import { IServiceProvider } from '../../modules/service.module/serviceProvider/serviceProvider.interface';
+// import { ServiceProvider } from '../../modules/service.module/serviceProvider/serviceProvider.model';
+// import { IServiceProvider } from '../../modules/service.module/serviceProvider/serviceProvider.interface';
 import { TProviderApprovalStatus } from '../../modules/user.module/userRoleData/userRoleData.constant';
 
 /** ----------------------------------------------
@@ -33,6 +33,8 @@ export const IsProviderRejected = <T> () => {
     
     // check providerApprovalStatus from Service Provider Details Table
 
+    /*----------------------
+
     const serviceProviderDetails : IServiceProvider = await ServiceProvider.findOne({
         providerId: req.user.userId
     })
@@ -56,6 +58,8 @@ export const IsProviderRejected = <T> () => {
         });
         return;
     }
+
+    ---------------------------*/
 
     // Proceed to the next middleware or controller if validation passes
     next();

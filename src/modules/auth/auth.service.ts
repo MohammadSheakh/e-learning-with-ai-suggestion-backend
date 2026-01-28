@@ -24,14 +24,9 @@ import { UserProfile } from '../user.module/userProfile/userProfile.model';
 import { User } from '../user.module/user/user.model';
 import { UserDevices } from '../user.module/userDevices/userDevices.model';
 import { IUserDevices } from '../user.module/userDevices/userDevices.interface';
-import { ICreateUser } from './auth.constants';
 import { UserRoleDataService } from '../user.module/userRoleData/userRoleData.service';
-import { TProviderApprovalStatus } from '../user.module/userRoleData/userRoleData.constant';
 import { IUser } from '../user.module/user/user.interface';
-import { IServiceProvider } from '../service.module/serviceProvider/serviceProvider.interface';
-import { ServiceProvider } from '../service.module/serviceProvider/serviceProvider.model';
-import { IUserRoleData } from '../user.module/userRoleData/userRoleData.interface';
-import { UserRoleData } from '../user.module/userRoleData/userRoleData.model';
+import { ICreateUser } from './auth.interface';
 const eventEmitterForUpdateUserProfile = new EventEmitter(); // functional way
 const eventEmitterForCreateWallet = new EventEmitter();
 
@@ -50,15 +45,13 @@ eventEmitterForUpdateUserProfile.on('eventEmitterForUpdateUserProfile', async (v
 export default eventEmitterForUpdateUserProfile;
 
 
-
-
 eventEmitterForCreateWallet.on('eventEmitterForCreateWallet', async (valueFromRequest: any) => {
   try {
       const { userId } = valueFromRequest;
       
       const wallet =  await walletService.create({
         userId: userId,
-        amount: 0, // default 0
+        amount: 0, //  default 0
         currency: TCurrency.bdt,
       });
 
@@ -73,8 +66,6 @@ eventEmitterForCreateWallet.on('eventEmitterForCreateWallet', async (valueFromRe
     }
 });
 
-
-
 const validateUserStatus = (user: IUser) => {
   if (user.isDeleted) {
     throw new ApiError(
@@ -83,6 +74,7 @@ const validateUserStatus = (user: IUser) => {
     );
   }
 };
+
 const createUser = async (userData: ICreateUser, userProfileId:string) => {
   
   const existingUser = await User.findOne({ email: userData.email });
@@ -206,6 +198,127 @@ const login = async (email: string,
 
   const isPasswordValid = await bcryptjs.compare(reqpassword, user.password);
 
+  if (!isPasswordValid) {
+    throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid credentials');
+  }
+
+  /*---------------------------------------
+  if (!isPasswordValid) {
+    user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
+    if (user.failedLoginAttempts >= config.auth.maxLoginAttempts) {
+      user.lockUntil = moment().add(config.auth.lockTime, 'minutes').toDate();
+      await user.save();
+      throw new ApiError(
+        423,
+        `Account locked for ${config.auth.lockTime} minutes due to too many failed attempts`,
+      );
+    }
+
+    await user.save();
+    throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid credentials');
+  }
+
+  if (user.failedLoginAttempts > 0) {
+    user.failedLoginAttempts = 0;
+    user.lockUntil = undefined;
+    await user.save();
+  }
+
+  -------------------------------------------*/
+
+  const tokens = await TokenService.accessAndRefreshToken(user);
+
+  // ✅ Save FCM token in UserDevices
+  if (fcmToken) {
+    const deviceType = deviceInfo?.deviceType || 'web';
+    const deviceName = deviceInfo?.deviceName || 'Unknown Device';
+
+    // Find or create device record
+    let device:IUserDevices = await UserDevices.findOne({
+      userId: user._id,
+      fcmToken,
+    });
+
+    if (!device) {
+      device = await UserDevices.create({
+        userId: user._id,
+        fcmToken,
+        deviceType,
+        deviceName,
+        lastActive: new Date(),
+      });
+    } else {
+      // Update last active
+      device.lastActive = new Date();
+      await device.save();
+    }
+  }
+
+  const { password, ...userWithoutPassword } = user.toObject();
+
+  return {
+    userWithoutPassword,
+    tokens
+  };
+};
+
+/*------------------ 🆕
+1. find user by email
+2. validateUserStatus // check for isDeleted
+3. handle account logged case [rate limit]
+4. check password maching
+    -----------------------------
+    * get hashed password and salt for user from database
+    * hashedPassword = bcrypt( intput password + salt)
+    * if matched then login successful
+    -------------------------
+5. |-> for failed attempt lock account for some time
+6. if password matched ...
+7. return proper response based on role
+8. if everything is ok .. then return accessTokens
+
+    -------------------
+    * token generator will generate
+    - access token and refresh token
+
+-------------------*/
+const loginV2 = async (email: string, 
+  reqpassword: string,
+  fcmToken? : string,
+  deviceInfo?: { deviceType?: string, deviceName?: string }
+) => {
+  const user:IUser = await User.findOne({ email }).select('+password');
+  if (!user) {
+    throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid credentials');
+  }
+
+  if (user.isDeleted == true) {
+    throw new ApiError(StatusCodes.UNAUTHORIZED, 'Your account is deleted. Please create a new account.');
+  }
+
+  validateUserStatus(user);
+
+  // if (!user.isEmailVerified) {
+  //   //create verification email token
+  //   const verificationToken = await TokenService.createVerifyEmailToken(user);
+  //   //create verification email otp
+  //   await OtpService.createVerificationEmailOtp(user.email);
+  //   return { verificationToken };
+
+  //   throw new ApiError(
+  //     StatusCodes.BAD_REQUEST,
+  //     'User not verified, Please verify your email, Check your email.'
+  //   );
+  // }
+
+  // if (user.lockUntil && user.lockUntil > new Date()) {
+  //   throw new ApiError(
+  //     StatusCodes.TOO_MANY_REQUESTS,
+  //     `Account is locked. Try again after ${config.auth.lockTime} minutes`,
+  //   );
+  // }
+
+  const isPasswordValid = await bcryptjs.compare(reqpassword, user.password);
 
   if (!isPasswordValid) {
     throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid credentials');
@@ -265,60 +378,9 @@ const login = async (email: string,
 
   const { password, ...userWithoutPassword } = user.toObject();
 
-  /*-----------------
-    now we need to check if logged in user is provider .. 
-    if provider .. then we return isFilledUp and approvalStatus
-    is Filled Up should be boolean .. 
-    true or false .. 
-
-    and if providerApprovalStatus 
-    is "requested" wating for approval..
-    "reject"   show rejection page that admin rejected this profile
-    "pending"  can log in .. just for 
-    
-  -------------------*/
-
-  let isServiceProviderDetailsFound : boolean = false;
-  if(user.role == TRole.provider){
-    console.log("user.role == provider");
-    const serviceProviderDetails : IServiceProvider | null = await ServiceProvider.findOne({
-      providerId : user._id,
-    })
-    
-    if(serviceProviderDetails){
-      isServiceProviderDetailsFound = true;
-    }
-  }
-
-  let providerApprovalStatusFromUsersRoleData = null
-
-  let usersRoleData : IUserRoleData | null = await UserRoleData.findOne({
-    userId :  user._id,
-  }).select("providerApprovalStatus");
-
-  if(usersRoleData){
-    providerApprovalStatusFromUsersRoleData = usersRoleData.providerApprovalStatus;
-  }
-
-  if(providerApprovalStatusFromUsersRoleData == TProviderApprovalStatus.reject){
-    throw new ApiError(StatusCodes.FORBIDDEN, 'Admin rejected this profile.');
-  }
-
-  if(providerApprovalStatusFromUsersRoleData == TProviderApprovalStatus.requested){
-    throw new ApiError(StatusCodes.FORBIDDEN, 'Please Wait For Admins Approval.');
-  }
-
-  // approval status pending or approved hoile login korte parbe ..
-  // register korar pore pending thakbe .. karon .. jate providerDetailsForm Fill up 
-  // korte pare .. 
-  // providerDetailsForm Fill up korle .. approvalStatus "requested" hoye jabe ..
-  // er pore provider ar login korte parbe na .. etai hocche flow .. 
-
   return {
     userWithoutPassword,
-    tokens,
-    isServiceProviderDetailsFound,
-    providerApprovalStatusFromUsersRoleData
+    tokens
   };
 };
 
@@ -429,6 +491,7 @@ const refreshAuth = async (refreshToken: string) => {};
 export const AuthService = {
   createUser,
   login,
+  loginV2,
   verifyEmail,
   resetPassword,
   forgotPassword,

@@ -22,12 +22,22 @@ router.post(
   AuthController.register,
 );
 
-// TODO  : Login er shomoy  FCM token store korte hobe .. 
-//[🚧][🧑‍💻✅][🧪] // 🆗 
 router.post(
+  '/register/v2',
+  // validateRequest(AuthValidation.createHelpMessageValidationSchema),
+  AuthController.registerV2,
+);
+
+router.post( // send fcm token for push notification .. 
   '/login',
   validateRequest(AuthValidation.loginValidationSchema),
   AuthController.login,
+);
+
+router.post(
+  '/login/v2',
+  validateRequest(AuthValidation.loginValidationSchema),
+  AuthController.loginV2,
 );
 
 // Route for Google login

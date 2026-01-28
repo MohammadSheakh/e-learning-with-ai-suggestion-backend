@@ -11,16 +11,9 @@ import { UserRoutes } from '../modules/user.module/user/user.route';
 import { WalletTransactionHistoryRoute } from '../modules/wallet.module/walletTransactionHistory/walletTransactionHistory.route';
 import { BankInfoRoute } from '../modules/wallet.module/bankInfo/bankInfo.route';
 import { WithdrawalRequstRoute } from '../modules/wallet.module/withdrawalRequst/withdrawalRequst.route';
-import { ServiceProviderRoute } from '../modules/service.module/serviceProvider/serviceProvider.route';
-import { ServiceCategoryRoute } from '../modules/service.module/serviceCategory/serviceCategory.route';
-import { ServiceBookingRoute } from '../modules/service.module/serviceBooking/serviceBooking.route';
-import { ReviewRoute } from '../modules/service.module/review/review.route';
 import { ContactUsRoute } from '../modules/settings.module/contactUs/contactUs.route';
 import { SettingsRoutes } from '../modules/settings.module/settings/settings.routes';
-import { AdditionalCostRoute } from '../modules/service.module/additionalCost/additionalCost.route';
-import { BannerRoute } from '../modules/banner/banner.route';
-import { AdminPercentageRoute } from '../modules/adminPercentage/adminPercentage.route';
-import { SupportMessageRoute } from '../modules/supportMessage/supportMessage.route';
+
 import { AgoraCallingRoute } from '../modules/chatting.module/agoraCalling/agoraCalling.route';
 
 // import { ChatRoutes } from '../modules/chat/chat.routes';
@@ -44,16 +37,16 @@ const apiRoutes = [
   ////////////////////// Created By Mohammad Sheakh
 
   ///////////////////////////////////////// Support Message
-  { // 🟢
-    path: '/support-messages',
-    route: SupportMessageRoute,
-  },
+  // { // 🟢
+  //   path: '/support-messages',
+  //   route: SupportMessageRoute,
+  // },
 
   ///////////////////////////////////////// 
-  { // 🟢
-    path: '/banners',
-    route: BannerRoute,
-  },
+  // { // 🟢
+  //   path: '/banners',
+  //   route: BannerRoute,
+  // },
   
   ///////////////////////////////////////// Payment Transaction
   { // 🟢
@@ -82,27 +75,27 @@ const apiRoutes = [
   // },
 
   ///////////////////////////////////////////// Admin Percentage
-  {
-    path: '/admin-percentage',
-    route: AdminPercentageRoute,
-  },
+  // {
+  //   path: '/admin-percentage',
+  //   route: AdminPercentageRoute,
+  // },
   
   ///////////////////////////////////////////// Service Booking
-  {
-    path: '/service-bookings',
-    route: ServiceBookingRoute,
-  },
+  // {
+  //   path: '/service-bookings',
+  //   route: ServiceBookingRoute,
+  // },
 
   ///////////////////////////////////////////// Service Provider
-  {
-    path: '/service-providers',
-    route: ServiceProviderRoute,
-  },
+  // {
+  //   path: '/service-providers',
+  //   route: ServiceProviderRoute,
+  // },
   ///////////////////////////////////////////// Service Categories
-  {
-    path: '/service-categories',
-    route: ServiceCategoryRoute,
-  },
+  // {
+  //   path: '/service-categories',
+  //   route: ServiceCategoryRoute,
+  // },
   ///////////////////////////////////////////// Settings And Contact Us
   {
     path: '/settings',
@@ -113,10 +106,10 @@ const apiRoutes = [
     route: ContactUsRoute,
   },
   ///////////////////////////////////////////// Reviews
-  {
-    path: '/reviews',
-    route: ReviewRoute,
-  },
+  // {
+  //   path: '/reviews',
+  //   route: ReviewRoute,
+  // },
   {
     path: '/attachments',
     route: AttachmentRoutes,
@@ -161,10 +154,10 @@ const apiRoutes = [
     path: '/bank-info',
     route: BankInfoRoute,
   },
-  { // 🟢
-    path: '/additional-cost',
-    route: AdditionalCostRoute,
-  }
+  // { // 🟢
+  //   path: '/additional-cost',
+  //   route: AdditionalCostRoute,
+  // }
   
 ];
 
