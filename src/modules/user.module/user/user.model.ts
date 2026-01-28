@@ -21,7 +21,7 @@ const profileImageSchema = new Schema<TProfileImage>({
 // User Schema Definition
 const userSchema = new Schema<IUser, UserModal>(
   {
-    profileId: { //🔗 dob, gender, acceptTOC, 3 different image 
+    profileId: { //🔗 acceptTOC
       type: Types.ObjectId,
       ref: 'UserProfile',
       required: true,
@@ -64,24 +64,10 @@ const userSchema = new Schema<IUser, UserModal>(
     // fcmToken: { type: String, default: null }, 
     //-- now we Store Firebase Token into different table 
 
-    //---------------------------------
-    // INFO : we dont need subscriptionType in this kaj-bdi project this is from suplify 
-    //---------------------------------
-    
-    
+  
     //------- we move this status to different table
     //-------- as we have different status for different user
-    // status : {  
-    //   type: String,
-    //   enum:  [TStatusType.active, TStatusType.inactive],
-    //   required: [
-    //     false,
-    //     `Status is required it can be ${Object.values(
-    //       TStatusType
-    //     ).join(', ')}`,
-    //   ],
-    //   default: TStatusType.active,
-    // },
+    
 
     isEmailVerified: {
       type: Boolean,
@@ -113,15 +99,7 @@ const userSchema = new Schema<IUser, UserModal>(
       default: null,
     },
 
-    //---------------------------------
-    // Preferred Language
-    //---------------------------------
-    preferredLanguage: {
-      type: String,
-      enum: [TpreferredLanguage.en, TpreferredLanguage.bn],
-      required: [false, 'preferredLanguage is not required'],
-    },
-
+    
     isDeleted: {
       type: Boolean,
       default: false,

@@ -143,6 +143,7 @@ export class RedisStateManager {
     return isMember;
   }
 
+
   async getAllOnlineUsers(): Promise<string[]> {
     return await this.redis.sMembers(this.KEYS.ONLINE_USERS);
   }

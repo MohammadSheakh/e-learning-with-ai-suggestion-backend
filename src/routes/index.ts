@@ -14,8 +14,6 @@ import { WithdrawalRequstRoute } from '../modules/wallet.module/withdrawalRequst
 import { ContactUsRoute } from '../modules/settings.module/contactUs/contactUs.route';
 import { SettingsRoutes } from '../modules/settings.module/settings/settings.routes';
 
-import { AgoraCallingRoute } from '../modules/chatting.module/agoraCalling/agoraCalling.route';
-
 // import { ChatRoutes } from '../modules/chat/chat.routes';
 // import { MessageRoutes } from '../modules/message/message.routes';
 const router = express.Router();
@@ -121,10 +119,6 @@ const apiRoutes = [
   {
     path: '/messages',
     route: MessageRoute,
-  },
-  {
-    path: '/call',
-    route: AgoraCallingRoute,
   },
 
   // {

@@ -13,11 +13,11 @@ import cluster from 'cluster';
 import { createAdapter } from '@socket.io/redis-adapter';
 //@ts-ignore
 import http from "http";
-import { startNotificationWorker, startScheduleWorker } from './helpers/bullmq/bullmq'; // ⬅️ ADD THIS
+import { startNotificationWorker } from './helpers/bullmq/bullmq'; // ⬅️ ADD THIS
 import connectToDb from './config/mongoDbConfig';
 import { initializeRedis, redisClient, redisPubClient, redisSubClient } from './helpers/redis/redis';
 import { socketHelperForKafka } from './helpers/socket/socketForChatV1WithKafka';
-import { socketService } from './helpers/socket/socketForChatV3WithFirebase';
+import { socketService } from './helpers/socket/socketForChatV3';
 
 // in production, use all cores, but in development, limit to 2-4 cores
 const numCPUs = config.environment === 'production' ? os.cpus().length : Math.max(0, Math.min(1, os.cpus().length));
@@ -106,20 +106,7 @@ async function main() {
       redisPubClient
     );
 
-
-
-    // 🔥 CRITICAL: Use Redis adapter for cross-worker communication //we move this to socketService.initialize
-    // io.adapter(createAdapter(redisPubClient, redisSubClient));
-
-    // Setup socket helper
-    // socketHelper.socketForChat_V2_Claude(io);
-    // socketHelperForKafka.socketForChat_With_Kafka(io);
-
-    // @ts-ignore
-    // global.io = io;
-
     // 🔥 Start BullMQ Worker (listens for schedule jobs)
-    startScheduleWorker(); 
     startNotificationWorker();
 
   } catch (error) {

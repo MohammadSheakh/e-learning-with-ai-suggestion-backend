@@ -13,7 +13,6 @@ import { User } from '../../modules/user.module/user/user.model';
 import { TRole } from '../../middlewares/roles';
 import { IUser } from '../../modules/user.module/user/user.interface';
 import { INotification } from '../../modules/notification/notification.interface';
-import { sendPushNotification } from '../../modules/notification/firebaseUtils';
 import { ConversationParticipentsService } from '../../modules/chatting.module/conversationParticipents/conversationParticipents.service';
 import { MessagerService } from '../../modules/chatting.module/message/message.service';
 import { Conversation } from '../../modules/chatting.module/conversation/conversation.model';
@@ -22,6 +21,7 @@ import { Message } from '../../modules/chatting.module/message/message.model';
 import { IUserDevices } from '../../modules/user.module/userDevices/userDevices.interface';
 import { UserDevices } from '../../modules/user.module/userDevices/userDevices.model';
 import { sendPushNotificationV2 } from '../../utils/firebaseUtils';
+import { config } from '../../config';
 
 export type IUserProfile = Pick<IUser, '_id' | 'name' | 'profileImage' | 'role' | 'subscriptionType' | 'fcmToken'>;
 
@@ -86,6 +86,7 @@ export class SocketService {
 
   // 🥇
   public async initialize(
+    socketPort: number,
     server: http.Server, 
     redisPubClient: any, 
     redisSubClient: any,
@@ -110,16 +111,14 @@ export class SocketService {
 
       // Create Socket.IO server
       this.io = new SocketIOServer(server, {
-        // pingTimeout: 60000,
-        // pingInterval: 25000,
-        // upgradeTimeout: 30000,
-        // maxHttpBufferSize: 1e6,
         cors: {
           origin: '*',
-          // methods: ['GET', 'POST']
+          credentials: true, // 👈 critical!
         },
-        // allowEIO3: true, // Support older clients
-        // transports: ['polling', 'websocket']
+      });
+
+      server.listen(socketPort, config.backend.ip as string, () => {
+        logger.info(colors.green(`🔌 Socket.IO listening on http://${config.backend.ip}:${socketPort}`));
       });
 
       // Initialize Redis state manager
@@ -675,6 +674,11 @@ export class SocketService {
     }
       ---------------------*/
     return false;
+  }
+
+
+  public async isUserInRoom(participantId : string, conversationId: string){
+    return await this.redisStateManager.isUserInRoom(participantId, conversationId);
   }
 
   /********
