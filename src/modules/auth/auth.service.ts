@@ -75,6 +75,7 @@ const validateUserStatus = (user: IUser) => {
   }
 };
 
+// 💎✨🔍 -> V2 Found
 const createUser = async (userData: ICreateUser, userProfileId:string) => {
   
   const existingUser = await User.findOne({ email: userData.email });
@@ -110,26 +111,22 @@ const createUser = async (userData: ICreateUser, userProfileId:string) => {
       OtpService.createVerificationEmailOtp(user.email)
   ]);
 
-  if(userData.role === TRole.provider){
-
-  /*---------------------------
-   * For first time registation .. for provider .. we dont want to 
-   * send otp to them .. 
-   * we automatically verify their email from admin panel ..
-   * TODO : we will do this .. in admin panel
-   * ------------------------- */
-
+  if(userData.role === TRole.mentor){
+    /*-─────────────────────────────────
+    | Mentor must have wallet
+    | TODO : use redis bullmq to create wallet in stead of event emitter .. 
+    └──────────────────────────────────*/
+  
     // 📈⚙️ OPTIMIZATION: with event emmiter 
     eventEmitterForCreateWallet.emit('eventEmitterForCreateWallet', { 
       userId : user._id
     });
 
   
-    /********
-     * TODO : MUST
-     * Lets send notification to admin that new Provider registered
-     * 
-     * ***** */
+    /*-─────────────────────────────────
+    |  TODO : MUST
+    | Lets send notification to admin that new Provider registered
+    └──────────────────────────────────*/
     await enqueueWebNotification(
       `A ${userData.role} registered successfully . verify document to activate account`,
       null, // senderId
@@ -146,20 +143,119 @@ const createUser = async (userData: ICreateUser, userProfileId:string) => {
     //--------- Lets create UserRole Data 
     await userRoleDataService.create({
       userId: user._id,
-      // providerApprovalStatus : TProviderApprovalStatus.pending, // we make this pending  later in serviceProvider Data Create part
     })
     
     return { user, verificationToken };
   }
 
+  // eventEmitterForOTPCreateAndSendMail.emit('eventEmitterForOTPCreateAndSendMail', { email: user.email });
+
+  return { user, verificationToken , otp  }; // FIXME  : otp remove korte hobe ekhan theke .. 
+};
+
+ /*-─────────────────────────────────
+  |  
+  └──────────────────────────────────*/
+  /*-------------------------------
+
+  1. check for user object by email
+      |-> if user exist.. check for isEmailVerified
+      |-> if not verified .. send otp and verification token
+  2. hash the given password
+  3. create the User
+  4. use eventEmitter to add userProfileId to User Table [🎯Optimized]
+
+  5. if not patient 
+      |-> use eventEmitter to create wallet
+      |-> send notification to admin
+      |-> return user
+
+  6.  if patient [🐛]
+      |->  create verificationEmailToken(createdUser)
+      |-> create otp and send mail by eventEmitter 
+          [🎯Optimized]
+      |-> return user
+
+  ---------------------------------*/
+const createUserV2 = async (userData: ICreateUser, userProfileId:string) => {
+  
+  const existingUser = await User.findOne({ email: userData.email });
+  
+  if (existingUser) {
+    if (existingUser.isEmailVerified) {
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Email already taken');
+    } else {
+      await User.findOneAndUpdate({ email: userData.email }, userData);
+
+      //create verification email token
+      const verificationToken =
+        await TokenService.createVerifyEmailToken(existingUser);
+      //create verification email otp
+      await OtpService.createVerificationEmailOtp(existingUser.email);
+      return { verificationToken };
+    }
+  }
+
+  userData.password = await bcryptjs.hash(userData.password, 12);
+
+  const user = await User.create(userData);
+
+  /*-─────────────────────────────────
+  | TODO : use redis bullmq 
+  └──────────────────────────────────*/
+  // 📈⚙️ OPTIMIZATION: with event emmiter 
+  eventEmitterForUpdateUserProfile.emit('eventEmitterForUpdateUserProfile', { 
+    userProfileId,
+    userId : user._id
+  });
+
+  const [verificationToken, otp] = await Promise.all([
+      TokenService.createVerifyEmailToken(user),
+      OtpService.createVerificationEmailOtp(user.email)
+  ]);
+
+  if(userData.role === TRole.mentor){
+    /*-─────────────────────────────────
+    | Mentor must have wallet
+    | TODO : use redis bullmq to create wallet in stead of event emitter .. 
+    └──────────────────────────────────*/
+  
+    // 📈⚙️ OPTIMIZATION: with event emmiter 
+    eventEmitterForCreateWallet.emit('eventEmitterForCreateWallet', { 
+      userId : user._id
+    });
+
+    /*-─────────────────────────────────
+    |  TODO : MUST
+    | Lets send notification to admin that new Provider registered
+    └──────────────────────────────────*/
+    await enqueueWebNotification(
+      `A ${userData.role} registered successfully . verify document to activate account`,
+      null, // senderId
+      null, // receiverId 
+      TRole.admin, // receiverRole
+      TNotificationType.newUser, // type
+      /**********
+       * In UI there is no details page for specialist's schedule
+       * **** */
+      // '', // linkFor
+      // existingWorkoutClass._id // linkId
+    );
+
+    //--------- Lets create UserRole Data 
+    await userRoleDataService.create({
+      userId: user._id,
+    })
+    
+    return { user, verificationToken };
+  }
 
   // eventEmitterForOTPCreateAndSendMail.emit('eventEmitterForOTPCreateAndSendMail', { email: user.email });
 
-  // , otp
-  return { user, verificationToken  }; // FIXME  : otp remove korte hobe ekhan theke .. 
+  return { user, verificationToken , otp  }; // FIXME  : otp remove korte hobe ekhan theke .. 
 };
 
-// local login
+// local login // 💎✨🔍 -> V2 Found
 const login = async (email: string, 
   reqpassword: string,
   fcmToken? : string,
@@ -490,6 +586,7 @@ const refreshAuth = async (refreshToken: string) => {};
 
 export const AuthService = {
   createUser,
+  createUserV2,
   login,
   loginV2,
   verifyEmail,

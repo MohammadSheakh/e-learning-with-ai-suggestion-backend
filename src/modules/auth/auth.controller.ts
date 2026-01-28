@@ -105,7 +105,7 @@ const registerV2 = catchAsync(async (req :Request, res:Response) => {
     profileId : userProfile._id
   }
 
-  const result = await AuthService.createUser(userDTO, userProfile._id);
+  const result = await AuthService.createUserV2(userDTO, userProfile._id);
 
   sendResponse(res, {
     code: StatusCodes.CREATED,
