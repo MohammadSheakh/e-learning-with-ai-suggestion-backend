@@ -73,7 +73,6 @@ export class GenericService<ModelType, InterfaceType> {
 
   async getById(id: string , populateOptions?: (string | any)[], select?: string) : Promise<InterfaceType | null>  {
     
-
     let query = this.model.findById(id).select(select);
     
     if (populateOptions && populateOptions.length > 0) {

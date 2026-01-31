@@ -2,6 +2,7 @@ import express from 'express';
 import auth from '../../middlewares/auth';
 import validateRequest from '../../shared/validateRequest';
 import { AttachmentController } from './attachment.controller';
+import { TRole } from '../../middlewares/roles';
 
 const multer = require('multer');
 // import fileUploadHandler from '../../shared/fileUploadHandler';
@@ -13,24 +14,24 @@ const router = express.Router();
 
 //
 router.route('/paginate').get(
-  auth('common'),
+  auth(TRole.common),
   AttachmentController.getAllAttachmentWithPagination
 );
 
 router.route('/:attachmentId').get(
-  auth('common'),
+  auth(TRole.common),
   AttachmentController.getAAttachment
 );
 
 router.route('/update/:attachmentId').put(
-  auth('common'),
+  auth(TRole.common),
   // validateRequest(validation.createHelpMessageValidationSchema),
   AttachmentController.updateById
 );
 
 
 router.route('/').get(
-  auth('common'),
+  auth(TRole.common),
   AttachmentController.getAllAttachment
 );
 
@@ -42,7 +43,7 @@ router.route('/').get(
 
 //[🚧][🧑‍💻✅][🧪🆗] 
 router.route('/:attachmentId').delete(
-  auth('common'),
+  auth(TRole.common),
   AttachmentController.deleteById
 );
 

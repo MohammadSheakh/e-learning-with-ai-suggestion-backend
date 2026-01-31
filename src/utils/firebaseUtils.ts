@@ -6,7 +6,7 @@ import { Schema } from 'mongoose';
 //@ts-ignore
 import dotenv from 'dotenv';
 import { config } from '../config';
-import { IMessageToEmmit } from '../helpers/socket/socketForChatV3WithFirebase';
+import { IMessageToEmmit } from '../helpers/socket/socketForChatV3';
 // Load environment variables
 dotenv.config();
 

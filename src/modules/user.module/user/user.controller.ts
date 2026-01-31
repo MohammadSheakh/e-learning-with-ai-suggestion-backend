@@ -17,6 +17,8 @@ import ApiError from '../../../errors/ApiError';
 import { TRole } from '../../../middlewares/roles';
 import { enqueueWebNotification } from '../../../services/notification.service';
 import { TNotificationType } from '../../notification/notification.constants';
+//@ts-ignore
+import { Types } from 'mongoose';
 
 const userService = new UserService();
 

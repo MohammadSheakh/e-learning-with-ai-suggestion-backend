@@ -199,7 +199,7 @@ const googleLogin = async (idToken: string,
         const deviceType = deviceInfo?.deviceType || 'web';
         const deviceName = deviceInfo?.deviceName || 'Unknown Device';
 
-        let device : IUserDevices = await UserDevices.findOne({
+        let device : IUserDevices | any = await UserDevices.findOne({
           userId: user._id,
           fcmToken,
         });

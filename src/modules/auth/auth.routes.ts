@@ -66,7 +66,7 @@ router.post(
 
 router.post(
   '/change-password',
-  auth('common'),
+  auth(TRole.common),
   validateRequest(AuthValidation.changePasswordValidationSchema),
   AuthController.changePassword,
 );

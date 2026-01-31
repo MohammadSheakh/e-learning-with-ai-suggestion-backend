@@ -48,7 +48,7 @@ import {
 } from 'date-fns';
 import { TAdminStatus } from '../userRoleData/userRoleData.constant';
 import { PaymentTransaction } from '../../payment.module/paymentTransaction/paymentTransaction.model';
-import { TGender } from '../userProfile/userProfile.constant';
+
 import { Attachment } from '../../attachments/attachment.model';
 import { IAttachment } from '../../attachments/attachment.interface';
 
@@ -130,7 +130,7 @@ export class UserService extends GenericService<typeof User, IUser> {
 
   removeSubAdmin = async (subAdminId: string): Promise<IUser> => {
 
-    const existingUser:IUser = await User.findByIdAndUpdate(
+    const existingUser:IUser | null = await User.findByIdAndUpdate(
       { _id: subAdminId },
       {
         isEmailVerified: false,
@@ -230,7 +230,7 @@ export class UserService extends GenericService<typeof User, IUser> {
     const incomeByDate: Record<string, number> = {};
     incomeData.forEach((item) => (incomeByDate[item._id] = item.totalIncome));
 
-    const chartData = dateLabels.map((label, i) => ({
+    const chartData : any = dateLabels.map((label, i) => ({
       label,
       income: incomeByDate[i + 1] || 0, // works for day/month (1-indexed)
     }));
@@ -257,35 +257,20 @@ export class UserService extends GenericService<typeof User, IUser> {
     //-- name, email, phoneNumber from User table ..
     //-- location, dob and gender from UserProfile table
 
-    const updateUser:IUser  = await User.findByIdAndUpdate(id, {
+    const updateUser:IUser | null  = await User.findByIdAndUpdate(id, {
       name: data.name,
       // email: data.email, // email can not be updated
       phoneNumber: data.phoneNumber
     },{ new: true }).lean()
 
-    const updateUserProfile:IUserProfile = await UserProfile.findOne(
+    const updateUserProfile:IUserProfile | any = await UserProfile.findOne(
       {
         userId: id
       }
     );
 
-    
-    
-    if(data.location){
-      // Translate multiple properties dynamically
-      const [locationObj] : [IUserProfile['location']]  = await Promise.all([
-        buildTranslatedField(data.location as string)
-      ]);
-
-      updateUserProfile.location = locationObj;
-    }
-
-
     if(data.dob){
       updateUserProfile.dob = data.dob;
-    }
-    if(data.gender){
-      updateUserProfile.gender = data.gender as TGender;
     }
   
     const res =  await updateUserProfile.save();
@@ -305,10 +290,10 @@ export class UserService extends GenericService<typeof User, IUser> {
     //   throw new ApiError(StatusCodes.NOT_FOUND, 'You have to upload an image to update');
     // }
 
-    const attachmentUrl:IAttachment = await Attachment.findById(data?.profileImage[0]);
+    const attachmentUrl:IAttachment | null = await Attachment.findById(data?.profileImage[0]);
 
 
-    const updateUser:IUser  = await User.findByIdAndUpdate(id, {
+    const updateUser:IUser | null  = await User.findByIdAndUpdate(id, {
       name: data.name,
       profileImage : {
         imageUrl: attachmentUrl?.attachment ? attachmentUrl?.attachment : user?.profileImage?.imageUrl,
@@ -333,7 +318,7 @@ export class UserService extends GenericService<typeof User, IUser> {
       throw new ApiError(StatusCodes.NOT_FOUND, 'You have to upload an image to update');
     }
 
-    const attachmentUrl:IAttachment = await Attachment.findById(data?.profileImage[0]);
+    const attachmentUrl:IAttachment | null = await Attachment.findById(data?.profileImage[0]);
     // console.log("user -> ", user);
   
     const updatedUser = await User.findByIdAndUpdate(

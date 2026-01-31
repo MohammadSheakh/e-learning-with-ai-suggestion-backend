@@ -9,6 +9,8 @@ import { BankInfoService } from './bankInfo.service';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import { IUser } from '../../token/token.interface';
+//@ts-ignore
+import { Types } from 'mongoose';
 
 export class BankInfoController extends GenericController<
   typeof BankInfo,
@@ -30,7 +32,7 @@ export class BankInfoController extends GenericController<
 
     console.log('data :: ',data )
 
-    data.userId = ((req.user) as IUser).userId as string;
+    data.userId = new Types.ObjectId(((req.user) as IUser).userId)// as string;
 
     console.log("logged in user ::", ((req.user) as IUser).userId)
 

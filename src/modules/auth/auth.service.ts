@@ -330,7 +330,7 @@ const login = async (email: string,
     const deviceName = deviceInfo?.deviceName || 'Unknown Device';
 
     // Find or create device record
-    let device:IUserDevices = await UserDevices.findOne({
+    let device:IUserDevices | any = await UserDevices.findOne({
       userId: user._id,
       fcmToken,
     });
@@ -452,7 +452,7 @@ const loginV2 = async (email: string,
     const deviceName = deviceInfo?.deviceName || 'Unknown Device';
 
     // Find or create device record
-    let device:IUserDevices = await UserDevices.findOne({
+    let device:IUserDevices | any = await UserDevices.findOne({
       userId: user._id,
       fcmToken,
     });

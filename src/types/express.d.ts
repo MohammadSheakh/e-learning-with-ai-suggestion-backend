@@ -7,6 +7,10 @@ declare global {
   namespace Express {
     interface Request {
       t: TFunction; // Add the 't' method to the Request object
+      queryOptions?: {
+        populate?: string;
+        select?: string;
+      };
     }
   }
 }

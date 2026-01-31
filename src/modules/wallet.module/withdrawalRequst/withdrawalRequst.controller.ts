@@ -30,6 +30,8 @@ import pick from '../../../shared/pick';
 import { TTransactionFor } from '../../../constants/TTransactionFor';
 import ApiError from '../../../errors/ApiError';
 import { TWithdrawalRequstType } from '../bankInfo/bankInfo.constant';
+//@ts-ignore
+import { Types } from 'mongoose';
 
 export class WithdrawalRequstController extends GenericController<
   typeof WithdrawalRequst,
@@ -48,7 +50,7 @@ export class WithdrawalRequstController extends GenericController<
     
     const data:IWithdrawalRequst = req.body;
 
-    data.userId = (req.user as IUser).userId;
+    data.userId = new Types.ObjectId((req.user as IUser).userId);
 
     const user:IUserMain = await User.findById((req.user as IUser).userId).select('walletId').lean(); 
 
@@ -190,7 +192,7 @@ export class WithdrawalRequstController extends GenericController<
 
     const withdrawalRequstId = req.params.id;
 
-    const withdrawalRequst : IWithdrawalRequst = await WithdrawalRequst.findById(withdrawalRequstId);
+    const withdrawalRequst : IWithdrawalRequst | any = await WithdrawalRequst.findById(withdrawalRequstId);
 
     if (!withdrawalRequst) {
       return sendResponse(res, {
@@ -259,8 +261,8 @@ export class WithdrawalRequstController extends GenericController<
 
     const updated =  await withdrawalRequst.save();
 
-    let balanceBeforeTransaction : number ;
-    let balanceAfterTransaction : number ; 
+    let balanceBeforeTransaction : number = 0 ;
+    let balanceAfterTransaction : number  = 0; 
     let wallet;
     
     //------------------------------------

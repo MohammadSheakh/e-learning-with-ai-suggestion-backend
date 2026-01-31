@@ -12,6 +12,7 @@ export interface IUserDevices {
   deviceType:  UserDevicesType; //🧩
   deviceName?: string;
   lastActive?: Date;
+  ipAddress? : string;
 
   isDeleted? : boolean;  
   createdAt?: Date;

@@ -9,6 +9,10 @@ export interface IUserProfile {
   acceptTOC : boolean;
   userId: Types.ObjectId; // for back reference ..
   
+  location?: string;
+  dob?: Date;
+  gender?: any;
+
   isDeleted? : boolean;  
   createdAt?: Date;
   updatedAt?: Date;

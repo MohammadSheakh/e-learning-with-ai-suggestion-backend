@@ -62,7 +62,7 @@ UserDevicesSchema.pre('save', function (next) {
 // Use transform to rename _id to _projectId
 UserDevicesSchema.set('toJSON', {
   transform: function (doc, ret, options) {
-    ret._UserDevicesId = ret._id; // Rename _id to _subscriptionId
+    ret._userDevicesId = ret._id; // Rename _id to _subscriptionId
     delete ret._id; // Remove the original _id field
     return ret;
   },

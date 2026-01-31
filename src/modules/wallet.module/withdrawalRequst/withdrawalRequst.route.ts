@@ -20,7 +20,7 @@ const upload = multer({ storage: storage });
 
 const router = express.Router();
 
-export const optionValidationChecking = <T extends keyof IWithdrawalRequst | 'sortBy' | 'page' | 'limit' | 'populate'>(
+export const optionValidationChecking = <T extends keyof IWithdrawalRequst | 'sortBy' | 'page' | 'limit' | 'populate' | 'from' | 'to'>(
   filters: T[]
 ) => {
   return filters;
@@ -37,7 +37,7 @@ const paginationOptions: Array<'sortBy' | 'page' | 'limit' | 'populate'> = [
 const controller = new WithdrawalRequstController();
 
 router.route('/paginate').get(
-  auth(TRole.provider),
+  auth(TRole.common),
   IsProviderRejected(),
   validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
   getLoggedInUserAndSetReferenceToUser('userId'),
@@ -57,7 +57,7 @@ router.route('/paginate').get(
 // Admin | 07-01 Show All Withdraw Request .. which status is requested .. filter by from and to date
 //---------------------------------
 router.route('/paginate/for-admin').get(
-  auth(TRole.admin, TRole.subAdmin),
+  auth(TRole.admin),
   validateFiltersForQuery(optionValidationChecking(['_id', 'status', 'from', 'to', ...paginationOptions])),
   filterByDateRange(),
   setQueryOptions({
@@ -79,7 +79,7 @@ router.route('/:id').get(
 //  Admin | 07-02 Upload receipt And Update status :id actually withdrawalRequestId [approved]
 //---------------------------------
 router.route('/:id').put(
-  auth(TRole.admin, TRole.subAdmin),
+  auth(TRole.admin),
   [
     upload.fields([
       { name: 'proofOfPayment', maxCount: 1 }, // Allow up to 1 photos
@@ -91,7 +91,7 @@ router.route('/:id').put(
 
 //[🚧][🧑‍💻✅][🧪] // 🆗
 router.route('/').get(
-  auth('commonAdmin'),
+  auth(TRole.common),
   controller.getAll
 );
 
@@ -100,7 +100,7 @@ router.route('/').get(
 // Provider  | Wallet | Create withdrawal request
 //---------------------------------
 router.route('/').post(
-  auth(TRole.provider),
+  auth(TRole.common),
   IsProviderRejected(),
   // validateRequest(validation.createWithdrawalRequstValidationSchema),
   controller.create

@@ -51,7 +51,7 @@ UserRoleDataSchema.pre('save', function (next) {
 // Use transform to rename _id to _projectId
 UserRoleDataSchema.set('toJSON', {
   transform: function (doc, ret, options) {
-    ret._UserRoleDataId = ret._id; // Rename _id to _subscriptionId
+    ret._userRoleDataId = ret._id; // Rename _id to _subscriptionId
     delete ret._id; // Remove the original _id field
     return ret;
   },

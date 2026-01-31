@@ -8,6 +8,7 @@ import validateRequest from '../../../shared/validateRequest';
 import auth from '../../../middlewares/auth';
 //@ts-ignore
 import multer from "multer";
+import { TRole } from '../../../middlewares/roles';
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -49,13 +50,13 @@ router.route('/update/:id').put(
 
 //[🚧][🧑‍💻✅][🧪] // 🆗
 router.route('/').get(
-  auth('commonAdmin'),
+  auth(TRole.common),
   controller.getAll
 );
 
 //[🚧][🧑‍💻✅][🧪] // 🆗
 router.route('/create').post(
-  auth('common'),
+  auth(TRole.common),
   validateRequest(validation.createHelpMessageValidationSchema),
   controller.create
 );

@@ -176,18 +176,17 @@ const createResetPasswordToken = async (user: IUserMain) => {
 
 const accessAndRefreshToken = async (user: IUserMain) => {
   let userFullname;
-  if(user.fname && user.lname){
-    userFullname = user.fname + ' ' + user.lname;
-  }else{
+  if(user.name){
     userFullname = user.name;
   }
 
   const payload:IUserMain = { 
+    //@ts-ignore
     userId: user?._id,
     userName: userFullname ,
     email: user.email,
     role: user.role,
-    stripe_customer_id: user.stripe_customer_id ? user.stripe_customer_id : null
+    // stripe_customer_id: user.stripe_customer_id ? user.stripe_customer_id : null
   };
 
   // await Token.deleteMany({ user: user._id });  // ---------------------

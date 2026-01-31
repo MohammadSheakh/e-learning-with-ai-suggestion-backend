@@ -139,7 +139,7 @@ WithdrawalRequstSchema.pre('save', function (next) {
 // Use transform to rename _id to _projectId
 WithdrawalRequstSchema.set('toJSON', {
   transform: function (doc, ret, options) {
-    ret._WithdrawalRequstId = ret._id; // Rename _id to _subscriptionId
+    ret._withdrawalRequstId = ret._id; // Rename _id to _subscriptionId
     delete ret._id; // Remove the original _id field
     return ret;
   },

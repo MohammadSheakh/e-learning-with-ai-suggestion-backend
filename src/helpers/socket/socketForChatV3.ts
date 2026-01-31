@@ -22,6 +22,8 @@ import { IUserDevices } from '../../modules/user.module/userDevices/userDevices.
 import { UserDevices } from '../../modules/user.module/userDevices/userDevices.model';
 import { sendPushNotificationV2 } from '../../utils/firebaseUtils';
 import { config } from '../../config';
+//@ts-ignore
+import { Types } from 'mongoose';
 
 export type IUserProfile = Pick<IUser, '_id' | 'name' | 'profileImage' | 'role' | 'subscriptionType' | 'fcmToken'>;
 
@@ -30,6 +32,14 @@ interface MessageData {
   senderId: string;
   text: string;
   // Add other message properties as needed
+}
+
+export interface IMessageToEmmit extends MessageData {
+  _id : Types.ObjectId,
+  senderId : Types.ObjectId,
+  name : string,
+  image : string,
+  createdAt : Date
 }
 
 async function getConversationById(conversationId: string) {

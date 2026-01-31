@@ -33,7 +33,7 @@ const paginationOptions: Array<'sortBy' | 'page' | 'limit' | 'populate'> = [
 const controller = new BankInfoController();
 
 router.route('/paginate').get(
-  auth(TRole.provider),
+  auth(TRole.common),
   IsProviderRejected(),
   validateFiltersForQuery(optionValidationChecking(['_id',...paginationOptions])),
   getLoggedInUserAndSetReferenceToUser("userId"),
@@ -57,7 +57,7 @@ router.route('/:id').get(
  * 
  * ********** */
 router.route('/create-or-update').put(
-  auth(TRole.provider),
+  auth(TRole.common),
   IsProviderRejected(),
   validateRequest(validation.createOrUpdateBankInfoValidationSchema),
   controller.createOrUpdate
@@ -65,7 +65,7 @@ router.route('/create-or-update').put(
 
 //[🚧][🧑‍💻✅][🧪] // 🆗
 router.route('/').get(
-  auth('commonAdmin'),
+  auth(TRole.common),
   controller.getAll
 );
 

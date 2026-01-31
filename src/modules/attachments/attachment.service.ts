@@ -72,7 +72,7 @@ export class AttachmentService extends GenericService<typeof Attachment, IAttach
   }
 
   async addOrRemoveReact  (attachmentId: string, userId: string) {
-    const attachment = await this.getById(attachmentId);
+    const attachment : any = await this.getById(attachmentId);
     if (!attachment) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Attachment not found');
     }

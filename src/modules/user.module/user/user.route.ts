@@ -15,7 +15,7 @@ import { setRequestFiltersV2, setRequstFilterAndValue } from '../../../middlewar
 import { imageUploadPipelineForUpdateUserProfile } from './user.middleware';
 import { IsProviderRejected } from '../../../middlewares/provider/IsProviderRejected';
 
-export const optionValidationChecking = <T extends keyof IUser | 'sortBy' | 'page' | 'limit' | 'populate'>(
+export const optionValidationChecking = <T extends keyof IUser | 'sortBy' | 'page' | 'limit' | 'populate'| 'from' | 'to' | 'providerApprovalStatus'>(
   filters: T[]
 ) => {
   return filters;
@@ -37,7 +37,7 @@ const controller = new UserController();
 // Admin | 02-01 | Get All Users from Users Table With Statistics
 //---------------------------------
 router.route('/paginate').get(
-  auth(TRole.admin, TRole.subAdmin, TRole.user),
+  auth(TRole.admin),
   validateFiltersForQuery(optionValidationChecking(['_id', 'name', 'createdAt', ...paginationOptions])),
   setRequstFilterAndValue('role', 'user'),
   controller.getAllWithPaginationV2WithStatistics
@@ -47,7 +47,7 @@ router.route('/paginate').get(
 // Admin | 03-01 | Get All Users from Users Table
 //---------------------------------
 router.route('/paginate/for-user').get(
-  auth(TRole.admin, TRole.subAdmin),
+  auth(TRole.admin),
   validateFiltersForQuery(optionValidationChecking(['_id', 'name', 'createdAt', 'from', 'to', ...paginationOptions])),
   setRequstFilterAndValue('role', 'user'),
   controller.getAllWithPaginationV2
@@ -99,7 +99,7 @@ router.put(
 // Admin | 04-01 | Get All Providers from Users Table 
 //---------------------------------
 router.route('/paginate/for-provider').get(
-  auth(TRole.admin, TRole.subAdmin),
+  auth(TRole.admin),
   // providerApprovalStatus must pass kora lagbe .. 
   // from and to is for date range filter
   validateFiltersForQuery(optionValidationChecking(['_id', 'name', 'email', 'phoneNumber','role', 'providerApprovalStatus', 'from', 'to', ...paginationOptions])),
@@ -138,7 +138,7 @@ router.route('/profile/for-admin').get(
 // Admin | change approvalStatus of a doctor / specialist profile
 //---------------------------------
 router.route('/change-approval-status').put(
-  auth(TRole.admin, TRole.subAdmin),
+  auth(TRole.admin),
   // validateRequest(validation.changeApprovalStatusValidationSchema),
   controller.changeApprovalStatusByUserId
 )
@@ -168,7 +168,7 @@ router.route('/home-page/popular').get(
 // providers API ... so .. we need to give permission to user also to access this API ..
 //---------------------------------
 router.route('/home-page/for-provider').get(
-  auth(TRole.provider, TRole.user),
+  auth(TRole.common),
   IsProviderRejected(),
   controller.getEarningAndCategoricallyBookingCountAndRecentJobRequest
 )
@@ -178,7 +178,7 @@ router.route('/home-page/for-provider').get(
 // User | Profile | 06-01 | get profile information of a user 
 //---------------------------------
 router.route('/profile-info').get(
-  auth(TRole.user, TRole.provider),
+  auth(TRole.common),
   controller.getProfileInformationOfAUser
 )
 
@@ -190,7 +190,7 @@ router.route('/profile-info').get(
  * @desc Update profile information of a user
  *----------------------------------------------*/
 router.route('/profile-info').put(
-  auth(TRole.user, TRole.provider, TRole.commonAdmin),
+  auth(TRole.common),
   // validateRequest(validation.updateProfileInfoValidationSchema), // TODO : MUST : add validation
   controller.updateProfileInformationOfAUser
 )
@@ -207,7 +207,7 @@ router.route('/update-location-test').put(
  * @desc Update Profile Info with profile Image of a admin
  *----------------------------------------------*/
 router.route('/profile-info/for-admin').put(
-  auth(TRole.commonAdmin),
+  auth(TRole.common),
   ...imageUploadPipelineForUpdateUserProfile,
   controller.updateProfileInformationOfAdmin
 )
@@ -233,7 +233,7 @@ router.route('/update/:id').put(
 
 //[🚧][🧑‍💻✅][🧪] // 🆗
 router.route('/').get(
-  auth('commonAdmin'),
+  auth(TRole.common),
   controller.getAll
 );
 

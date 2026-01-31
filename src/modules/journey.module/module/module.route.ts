@@ -8,6 +8,7 @@ import validateRequest from '../../../shared/validateRequest';
 import auth from '../../../middlewares/auth';
 //@ts-ignore
 import multer from "multer";
+import { TRole } from '../../../middlewares/roles';
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -66,12 +67,12 @@ router.route('/').post(
 );
 
 router.route('/:id/permenent').delete(
-  auth(TRole.specialist),
+  auth(TRole.common),
   controller.deleteById
 );
 
 router.route('/:id').delete(
-  auth(TRole.specialist),
+  auth(TRole.common),
   controller.softDeleteById
 );
 

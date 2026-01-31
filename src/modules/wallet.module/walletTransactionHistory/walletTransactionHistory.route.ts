@@ -34,7 +34,7 @@ const paginationOptions: Array<'sortBy' | 'page' | 'limit' | 'populate'> = [
 const controller = new WalletTransactionHistoryController();
 
 router.route('/paginate').get(
-  auth(TRole.provider),
+  auth(TRole.common),
   IsProviderRejected(),
   validateFiltersForQuery(optionValidationChecking(['_id', 'walletId', ...paginationOptions])),
   controller.getAllWithPagination
@@ -50,7 +50,7 @@ router.route('/paginate').get(
  * 
  *----------------------------------------------*/
 router.route('/paginate-with-wallet').get(
-  auth(TRole.provider),
+  auth(TRole.common),
   IsProviderRejected(),
   validateFiltersForQuery(optionValidationChecking(['_id', 'walletId', ...paginationOptions])),
   getLoggedInUserAndSetReferenceToUser('userId'),
@@ -83,7 +83,7 @@ router.route('/update/:id').put(
 
 //[🚧][🧑‍💻✅][🧪] // 🆗
 router.route('/').get(
-  auth('commonAdmin'),
+  auth(TRole.common),
   controller.getAll
 );
 
@@ -94,7 +94,7 @@ router.route('/create').post(
   //     { name: 'attachments', maxCount: 15 }, // Allow up to 5 cover photos
   //   ]),
   // ],
-  auth('common'),
+  auth(TRole.common),
   validateRequest(validation.createHelpMessageValidationSchema),
   controller.create
 );

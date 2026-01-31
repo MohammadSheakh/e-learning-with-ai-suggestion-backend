@@ -14,6 +14,7 @@ export interface IBankInfo {
   bankAccountType: TBankAccount; // 🧩
   bankBranch: string;
   bankName: string;
+  isActive : boolean;
   
   isDeleted? : boolean;  
   createdAt?: Date;

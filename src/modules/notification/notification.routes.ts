@@ -7,18 +7,18 @@ const router = Router();
 
 router
   .route('/clear-all-notifications')
-  .delete(auth('common'), NotificationController.clearAllNotification);
+  .delete(auth(TRole.common), NotificationController.clearAllNotification);
 router
   .route('/admin-notifications')
-  .get(auth(TRole.commonAdmin), NotificationController.getAdminNotifications);
+  .get(auth(TRole.common), NotificationController.getAdminNotifications);
 router
   .route('/')
   .get(auth(TRole.common), NotificationController.getALLNotification);
 
 router
   .route('/:id')
-  .get(auth('common'), NotificationController.getSingleNotification)
-  .patch(auth('common'), NotificationController.viewNotification)
-  .delete(auth('common'), NotificationController.deleteNotification);
+  .get(auth(TRole.common), NotificationController.getSingleNotification)
+  .patch(auth(TRole.common), NotificationController.viewNotification)
+  .delete(auth(TRole.common), NotificationController.deleteNotification);
 
 export const NotificationRoutes = router;
