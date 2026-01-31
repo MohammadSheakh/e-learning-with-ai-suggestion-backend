@@ -8,6 +8,8 @@ import { StatusCodes } from 'http-status-codes';
 import { Request, Response} from 'express';
 import { GenericService } from './generic.services';
 import omit from '../../shared/omit';
+import { AttachmentService } from '../attachments/attachment.service';
+import { TFolderName } from '../../enums/folderNames';
 
 export class GenericController<ModelType, InterfaceType> {
   service: GenericService<ModelType, InterfaceType>  
@@ -30,8 +32,36 @@ export class GenericController<ModelType, InterfaceType> {
     });
   });
 
+  createWithAttachments = catchAsync(async (req: Request, res: Response) => {
+    const data = req.body;
 
-  // Get all items  //[🚧][🧑‍💻✅][🧪] // 🆗
+    let attachments = [];
+      
+    if (req.files && req.files.attachments) {
+    attachments.push(
+        ...(await Promise.all(
+        req.files.attachments.map(async file => {
+            const attachmenId = await new AttachmentService().uploadSingleAttachment(
+                file, // file to upload 
+                TFolderName.common, // folderName
+            );
+            return attachmenId;
+        })
+        ))
+    );
+    }
+
+    const result = await this.service.create(data);
+
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: result,
+      message: `${this.modelName} created successfully`,
+      success: true,
+    });
+  });
+
+
   getAll = catchAsync(async (req: Request, res: Response) => {
     const result = await this.service.getAll();
 
@@ -186,12 +216,12 @@ export class GenericController<ModelType, InterfaceType> {
   
   // Update by ID
   updateById = catchAsync(async (req: Request, res: Response) => {
-    if (!req.params.id) {
-      throw new ApiError(
-        StatusCodes.BAD_REQUEST,
-        `id is required for update ${this.modelName}`
-      );
-    }
+    // if (!req.params.id) { //----- Better approach: validate ObjectId
+    //   throw new ApiError(
+    //     StatusCodes.BAD_REQUEST,
+    //     `id is required for update ${this.modelName}`
+    //   );
+    // }
     
     const id = req.params.id;
 
@@ -210,14 +240,66 @@ export class GenericController<ModelType, InterfaceType> {
     });
   });
 
-  // Delete by ID
-  deleteById = catchAsync(async (req: Request, res: Response) => {
-    if (!req.params.id) {
+  updateWithImageById = catchAsync(async (req: Request, res: Response) => {
+
+    // console.log("req.body coming from nerob vai ->>> ", req.body)
+
+    // if (!req.params.id) { //----- Better approach: validate ObjectId
+    //   throw new ApiError(
+    //     StatusCodes.BAD_REQUEST,
+    //     `id is required for update ${this.modelName}`
+    //   );
+    // }
+    
+    const id = req.params.id;
+
+    const existingObject = await this.service.getById(id);
+
+    // TODO : proper type needs to be pass here... 
+    const existingObjectDTO : any = {
+      attachments : req.uploadedFiles.attachments?.[0] ?? existingObject?.attachments,
+      ...req.body
+    }
+
+    // console.log("existingObjectDTO -> nerob vai ->>>>", existingObjectDTO);
+
+    const updatedObject = await this.service.updateById(id, /*req.body*/ existingObjectDTO);
+    
+    /*-------------------- If you override this controller .. then comment above line and uncomment this block of code
+    const updatedObject = await this.service.updateByIdWithPopulateTestingPurpose(id, existingObjectDTO, [
+      {
+        path: "attachments",
+        select: "attachment"
+      }
+    ]);
+    ---------------------*/
+
+
+    // console.log("updated object ->>>> ", updatedObject);
+
+    if (!updatedObject) {
       throw new ApiError(
-        StatusCodes.BAD_REQUEST,
-        `id is required for delete ${this.modelName}`
+        StatusCodes.NOT_FOUND,
+        `Object with ID ${id} not found`
       );
     }
+    
+    //   return res.status(StatusCodes.OK).json(updatedObject);
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: updatedObject,
+      message: `${this.modelName} updated successfully`,
+    });
+  });
+
+  // Delete by ID
+  deleteById = catchAsync(async (req: Request, res: Response) => {
+    // if (!req.params.id) { //----- Better approach: validate ObjectId
+    //   throw new ApiError(
+    //     StatusCodes.BAD_REQUEST,
+    //     `id is required for delete ${this.modelName}`
+    //   );
+    // }
 
     const id = req.params.id;
     const deletedObject = await this.service.deleteById(id);
@@ -237,12 +319,12 @@ export class GenericController<ModelType, InterfaceType> {
 
   //Soft Delete by ID
   softDeleteById = catchAsync(async (req: Request, res: Response) => {
-    if (!req.params.id) {
-      throw new ApiError(
-        StatusCodes.BAD_REQUEST,
-        `id is required for delete ${this.modelName}`
-      );
-    }
+    // if (!req.params.id) {  //----- Better approach: validate ObjectId
+    //   throw new ApiError(
+    //     StatusCodes.BAD_REQUEST,
+    //     `id is required for delete ${this.modelName}`
+    //   );
+    // }
 
     const id = req.params.id;
     const deletedObject = await this.service.softDeleteById(id);

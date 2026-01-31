@@ -32,12 +32,12 @@ export class UserController extends GenericController<
   }
 
   softDeleteById = catchAsync(async (req: Request, res: Response) => {
-    if (!req.params.id) {
-      throw new ApiError(
-        StatusCodes.BAD_REQUEST,
-        `id is required for delete ${this.modelName}`
-      );
-    }
+    // if (!req.params.id) {  //----- Better approach: validate ObjectId
+    //   throw new ApiError(
+    //     StatusCodes.BAD_REQUEST,
+    //     `id is required for delete ${this.modelName}`
+    //   );
+    // }
 
     const id = req.params.id;
     const deletedObject = await this.userService.softDeleteById(id);
