@@ -8,8 +8,7 @@ const PhaseSchema = new Schema<IPhase>(
   {
     phaseNumber: {
       type: Number,
-      required: [true, 'phaseNumber is required'],
-      min: [1, 'phaseNumber must be at least 1'],
+      required: [false, 'phaseNumber is not required']
     },
     title: {
       type: String,

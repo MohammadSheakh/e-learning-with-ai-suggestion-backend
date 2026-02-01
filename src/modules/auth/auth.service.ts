@@ -230,7 +230,7 @@ const createUserV2 = async (userData: ICreateUser, userProfileId:string) => {
     | Lets send notification to admin that new Provider registered
     └──────────────────────────────────*/
     await enqueueWebNotification(
-      `A ${userData.role} registered successfully . verify document to activate account`,
+      `A ${userData.role} registered successfully `,
       null, // senderId
       null, // receiverId 
       TRole.admin, // receiverRole

@@ -13,6 +13,8 @@ import { BankInfoRoute } from '../modules/wallet.module/bankInfo/bankInfo.route'
 import { WithdrawalRequstRoute } from '../modules/wallet.module/withdrawalRequst/withdrawalRequst.route';
 import { ContactUsRoute } from '../modules/settings.module/contactUs/contactUs.route';
 import { SettingsRoutes } from '../modules/settings.module/settings/settings.routes';
+import { PhaseRoute } from '../modules/question.module/phase/phase.route';
+import { QuestionRoute } from '../modules/question.module/question/question.route';
 
 // import { ChatRoutes } from '../modules/chat/chat.routes';
 // import { MessageRoutes } from '../modules/message/message.routes';
@@ -34,12 +36,15 @@ const apiRoutes = [
 
   ////////////////////// Created By Mohammad Sheakh
 
-  ///////////////////////////////////////// Support Message
-  // { // 🟢
-  //   path: '/support-messages',
-  //   route: SupportMessageRoute,
-  // },
-
+  ///////////////////////////////////////// Question
+  { // 🟢
+    path: '/question-sections',
+    route: PhaseRoute,
+  },
+  { // 🟢
+    path: '/questions',
+    route: QuestionRoute,
+  },
   ///////////////////////////////////////// 
   // { // 🟢
   //   path: '/banners',

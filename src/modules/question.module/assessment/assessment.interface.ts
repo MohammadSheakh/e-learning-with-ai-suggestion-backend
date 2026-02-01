@@ -10,7 +10,7 @@ export interface IAssessment {
   is_completed: boolean;
   current_phaseId: Types.ObjectId;
   current_questionId: Types.ObjectId;
-  current_phased: Types.ObjectId; // note: field name as given (likely typo for phaseId, but kept literal)
+  
   currentPhaseNumber: number;
   currentQuestionNumber: number;
 

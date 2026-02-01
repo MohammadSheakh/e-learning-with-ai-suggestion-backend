@@ -33,7 +33,7 @@ const controller = new QuestionController();
 //
 router.route('/paginate').get(
   //auth('common'),
-  validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
+  validateFiltersForQuery(optionValidationChecking(['_id', 'phaseId', ...paginationOptions])),
   controller.getAllWithPagination
 );
 
@@ -50,19 +50,18 @@ router.route('/:id').put(
 
 //[🚧][🧑‍💻✅][🧪] // 🆗
 router.route('/').get(
-  auth('commonAdmin'),
+  auth(TRole.common),
   controller.getAll
 );
 
-//[🚧][🧑‍💻✅][🧪] // 🆗
+/*-─────────────────────────────────
+| Admin | create question under a phase
+|  @figmaIndex 05-03
+|  @desc
+└──────────────────────────────────*/
 router.route('/').post(
-  // [
-  //   upload.fields([
-  //     { name: 'attachments', maxCount: 15 }, // Allow up to 5 cover photos
-  //   ]),
-  // ],
   auth(TRole.common),
-  validateRequest(validation.createHelpMessageValidationSchema),
+  // validateRequest(validation.createHelpMessageValidationSchema),
   controller.create
 );
 

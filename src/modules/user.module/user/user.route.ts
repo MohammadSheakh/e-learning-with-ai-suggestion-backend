@@ -43,13 +43,24 @@ router.route('/paginate').get(
   controller.getAllWithPaginationV2WithStatistics
 );
 
-//--------------------------------- kaj-bd
-// Admin | 03-01 | Get All Users from Users Table
-//---------------------------------
-router.route('/paginate/for-user').get(
+
+/*-───────────────────────────────── e-learning
+|  Admin | 04-02 | Get All students from Users Table
+└──────────────────────────────────*/
+router.route('/paginate/for-student').get(
   auth(TRole.admin),
   validateFiltersForQuery(optionValidationChecking(['_id', 'name', 'createdAt', 'from', 'to', ...paginationOptions])),
-  setRequstFilterAndValue('role', 'user'),
+  setRequstFilterAndValue('role', 'student'),
+  controller.getAllWithPaginationV2
+);
+
+/*-───────────────────────────────── e-learning
+|  Admin | 04-03 | Get All mentors from Users Table
+└──────────────────────────────────*/
+router.route('/paginate/for-mentor').get(
+  auth(TRole.admin),
+  validateFiltersForQuery(optionValidationChecking(['_id', 'name', 'createdAt', 'from', 'to', ...paginationOptions])),
+  setRequstFilterAndValue('role', 'mentor'),
   controller.getAllWithPaginationV2
 );
 

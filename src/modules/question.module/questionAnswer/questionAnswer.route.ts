@@ -1,11 +1,11 @@
 //@ts-ignore
 import express from 'express';
-import * as validation from './demo.validation';
-import { DemoController} from './demo.controller';
-import { IDemo } from './demo.interface';
-import { validateFiltersForQuery } from '../../middlewares/queryValidation/paginationQueryValidationMiddleware';
-import validateRequest from '../../shared/validateRequest';
-import auth from '../../middlewares/auth';
+import * as validation from './questionAnswer.validation';
+import { QuestionAnswerController} from './questionAnswer.controller';
+import { IQuestionAnswer } from './questionAnswer.interface';
+import { validateFiltersForQuery } from '../../../middlewares/queryValidation/paginationQueryValidationMiddleware';
+import validateRequest from '../../../shared/validateRequest';
+import auth from '../../../middlewares/auth';
 //@ts-ignore
 import multer from "multer";
 const storage = multer.memoryStorage();
@@ -13,7 +13,7 @@ const upload = multer({ storage: storage });
 
 const router = express.Router();
 
-export const optionValidationChecking = <T extends keyof IDemo | 'sortBy' | 'page' | 'limit' | 'populate'>(
+export const optionValidationChecking = <T extends keyof IQuestionAnswer | 'sortBy' | 'page' | 'limit' | 'populate'>(
   filters: T[]
 ) => {
   return filters;
@@ -27,29 +27,29 @@ const paginationOptions: Array<'sortBy' | 'page' | 'limit' | 'populate'> = [
 ];
 
 // const taskService = new TaskService();
-const controller = new DemoController();
+const controller = new QuestionAnswerController();
 
 //
 router.route('/paginate').get(
-  auth(TRole.common),
+  //auth('common'),
   validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
   controller.getAllWithPagination
 );
 
 router.route('/:id').get(
-  auth(TRole.common),
+  // auth('common'),
   controller.getById
 );
 
 router.route('/:id').put(
-  auth(TRole.common),
+  //auth('common'),
   // validateRequest(validation.createHelpMessageValidationSchema),
   controller.updateById
 );
 
 //[🚧][🧑‍💻✅][🧪] // 🆗
 router.route('/').get(
-  auth(TRole.common),
+  auth('commonAdmin'),
   controller.getAll
 );
 
@@ -60,21 +60,21 @@ router.route('/').post(
   //     { name: 'attachments', maxCount: 15 }, // Allow up to 5 cover photos
   //   ]),
   // ],
-  auth(TRole.common),
+  auth('common'),
   validateRequest(validation.createHelpMessageValidationSchema),
   controller.create
 );
 
 router.route('/:id/permenent').delete(
-  auth(TRole.common),
+  auth(TRole.specialist),
   controller.deleteById
 );
 
 router.route('/:id').delete(
-  auth(TRole.common),
+  auth(TRole.specialist),
   controller.softDeleteById
 );
 
 
 
-export const DemoRoute = router;
+export const QuestionAnswerRoute = router;

@@ -23,11 +23,6 @@ const AssessmentSchema = new Schema<IAssessment>(
       ref: 'Question',
       required: [true, 'current_questionId is required'],
     },
-    current_phased: {  //🔗
-      type: Schema.Types.ObjectId,
-      ref: 'Phase',
-      required: [true, 'current_phased is required'],
-    },
     currentPhaseNumber: {
       type: Number,
       required: [true, 'currentPhaseNumber is required'],

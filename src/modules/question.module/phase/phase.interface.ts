@@ -15,6 +15,12 @@ export interface IPhase {
   updatedAt?: Date;
 }
 
+export interface ICreatePhase{
+  phaseNumber: string | IPhase['phaseNumber']
+  title : string;
+  subTitle : string;
+}
+
 export interface IPhaseModel extends Model<IPhase> {
   paginate: (
     query: Record<string, any>,

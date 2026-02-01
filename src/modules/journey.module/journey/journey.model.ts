@@ -1,4 +1,3 @@
-//@ts-ignore
 import { model, Schema } from 'mongoose';
 import { IJourney, IJourneyModel } from './journey.interface';
 import paginate from '../../../common/plugins/paginate';
@@ -6,7 +5,6 @@ import paginate from '../../../common/plugins/paginate';
 
 const JourneySchema = new Schema<IJourney>(
   {
-    
     adminId: {
       type: Schema.Types.ObjectId,
       ref: 'User', // assuming Admins are also Users — adjust if you have a separate Admin model
@@ -39,7 +37,7 @@ JourneySchema.plugin(paginate);
 // Use transform to rename _id to _projectId
 JourneySchema.set('toJSON', {
   transform: function (doc:any, ret:any, options:any) {
-    ret._JourneyId = ret._id; // Rename _id to _subscriptionId
+    ret._journeyId = ret._id; // Rename _id to _subscriptionId
     delete ret._id; // Remove the original _id field
     return ret;
   },

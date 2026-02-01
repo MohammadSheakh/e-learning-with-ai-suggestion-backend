@@ -5,6 +5,8 @@ import { GenericController } from '../../_generic-module/generic.controller';
 import { Journey } from './journey.model';
 import { IJourney } from './journey.interface';
 import { JourneyService } from './journey.service';
+import catchAsync from '../../../shared/catchAsync';
+import sendResponse from '../../../shared/sendResponse';
 
 export class JourneyController extends GenericController<
   typeof Journey,
@@ -16,5 +18,7 @@ export class JourneyController extends GenericController<
     super(new JourneyService(), 'Journey');
   }
 
+
   // add more methods here if needed or override the existing ones 
 }
+

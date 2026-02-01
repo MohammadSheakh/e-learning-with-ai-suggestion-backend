@@ -27,7 +27,7 @@ const QuestionSchema = new Schema<IQuestion>(
       type: String,
       required: [true, 'questionText is required'],
     },
-    answer_type: {
+    answerType: {
       type: String,
       enum: [
         TQuestionAnswer.text,
@@ -40,18 +40,20 @@ const QuestionSchema = new Schema<IQuestion>(
         `answer_type is required it can be ${Object.values(TQuestionAnswer).join(', ')}`,
       ],
     },
-    answers: {
-      type: [
-        {
-          answerTitle: { type: String, required: true },
-          answerSubTitle: { type: String, required: false },
-        },
-      ],
-      required: function (this: IQuestion) {
-        return this.answer_type === TQuestionAnswer.single || this.answer_type === TQuestionAnswer.multi;
-      },
-      default: [],
-    },
+
+    //--------- we keep track of answers in different table 
+    // answers: {
+    //   type: [
+    //     {
+    //       answerTitle: { type: String, required: true },
+    //       answerSubTitle: { type: String, required: false },
+    //     },
+    //   ],
+    //   required: function (this: IQuestion) {
+    //     return this.answer_type === TQuestionAnswer.single || this.answer_type === TQuestionAnswer.multi;
+    //   },
+    //   default: [],
+    // },
 
 
     isDeleted: {

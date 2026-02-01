@@ -12,7 +12,7 @@ const AssessmentAnswerSchema = new Schema<IAssessmentAnswer>(
       ref: 'Assessment',
       required: [true, 'assessmentId is required'],
     },
-    phase_number: {
+    phase_number: { // i dont know why we need this 
       type: Number,
       required: [true, 'phase_number is required'],
       min: [1, 'phase_number must be at least 1'],

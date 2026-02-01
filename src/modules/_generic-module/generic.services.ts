@@ -2,6 +2,7 @@
 import { StatusCodes } from 'http-status-codes';
 import ApiError from '../../errors/ApiError';
 import { PaginateOptions } from '../../types/paginate';
+import mongoose from 'mongoose';
 
 export class GenericService<ModelType, InterfaceType> {
   model: ModelType | any; // FIXME : fix type ..
@@ -14,6 +15,16 @@ export class GenericService<ModelType, InterfaceType> {
     // console.log('req.body from generic create 🧪🧪', data);
     return await this.model.create(data);
   }
+
+
+  async createWithSession(
+    data: Partial<InterfaceType>,
+    session: mongoose.ClientSession
+  ): Promise<InterfaceType> {
+    const [result] = await this.model.create([data], { session });
+    return result;
+  }
+
 
   async createAndPopulateSpecificFields(data:InterfaceType, populateOptions?: (string | any)[]) : Promise<InterfaceType> {
     // Create the document

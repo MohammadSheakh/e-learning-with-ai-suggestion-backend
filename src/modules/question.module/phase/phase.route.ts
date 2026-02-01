@@ -48,21 +48,24 @@ router.route('/:id').put(
   controller.updateById
 );
 
-//[🚧][🧑‍💻✅][🧪] // 🆗
+/*-─────────────────────────────────
+| Admin | get all question section / phase
+|  @figmaIndex 05-03
+|  @desc 
+└──────────────────────────────────*/
 router.route('/').get(
-  auth('commonAdmin'),
+  auth(TRole.admin),
   controller.getAll
 );
 
-//[🚧][🧑‍💻✅][🧪] // 🆗
+/*-─────────────────────────────────
+| Admin | create question phase
+|  @figmaIndex 05-03
+|  @desc
+└──────────────────────────────────*/
 router.route('/').post(
-  // [
-  //   upload.fields([
-  //     { name: 'attachments', maxCount: 15 }, // Allow up to 5 cover photos
-  //   ]),
-  // ],
-  auth(TRole.common),
-  validateRequest(validation.createHelpMessageValidationSchema),
+  auth(TRole.admin),
+  // validateRequest(validation.createHelpMessageValidationSchema),
   controller.create
 );
 
