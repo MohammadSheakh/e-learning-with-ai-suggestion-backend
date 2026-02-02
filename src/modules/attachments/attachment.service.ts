@@ -6,6 +6,7 @@ import { AttachmentType } from './attachment.constant';
 import { GenericService } from '../_generic-module/generic.services';
 import { IAttachment } from './attachment.interface';
 import { deleteFileFromSpace, uploadFileToSpace } from '../../middlewares/digitalOcean';
+import { uploadFileToCloudinary } from '../../middlewares/cloudinary';
 
 export class AttachmentService extends GenericService<typeof Attachment, IAttachment> {
   constructor() {
@@ -19,7 +20,11 @@ export class AttachmentService extends GenericService<typeof Attachment, IAttach
     // attachedToId : string,
     // attachedToType: IAttachment['attachedToType']
   ) {
-    let uploadedFileUrl:string = await uploadFileToSpace(file, folderName);
+    // let uploadedFileUrl:string = await uploadFileToSpace(file, folderName); //🖼️ 
+
+    let { url : uploadedFileUrl, publicId } = await uploadFileToCloudinary(file, folderName);
+
+    console.log('Cloudinary URL:', uploadedFileUrl," --- publicId --- ", publicId);
 
     const videoMimeTypes = [
       'video/mp4',
@@ -42,12 +47,25 @@ export class AttachmentService extends GenericService<typeof Attachment, IAttach
     }else{
       fileType = AttachmentType.unknown;
     }
+    
+    let _id: any;
 
-    // ekhon amader ke ekta attachment create korte hobe ..
-    const { _id } =  await this.create({
-      attachment: uploadedFileUrl,
-      attachmentType: fileType,
-    });
+    if(publicId){
+      // ekhon amader ke ekta attachment create korte hobe ..
+      // const { _id }
+      _id =  await this.create({
+        attachment: uploadedFileUrl,
+        attachmentType: fileType,
+        publicId
+      });
+    }else{
+      // ekhon amader ke ekta attachment create korte hobe ..
+      // const { _id }
+      _id =  await this.create({
+        attachment: uploadedFileUrl,
+        attachmentType: fileType,
+      });
+    }
 
     return _id;
   }

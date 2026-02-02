@@ -9,11 +9,9 @@ export interface IQuestion {
   
   questionText: string;
   type: TQuestion;
-  options?: string[];
-  correctAnswer?: string;
   capsuleId: Types.ObjectId;
 
-  isDeleted? : boolean;  
+  isDeleted? : boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

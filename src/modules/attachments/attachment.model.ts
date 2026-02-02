@@ -19,6 +19,10 @@ const attachmentSchema = new Schema<IAttachment>(
       ],
       required: [true, 'Attached Type is required. It can be pdf / image'],
     },
+    publicId : {
+      type : String,
+      required : [false, 'publicId is not required']
+    },
     // attachedToId : {
     //   type: String,
     //   required: [false, 'AttachedToId is required.'],
@@ -52,7 +56,7 @@ attachmentSchema.plugin(paginate);
 
 // Use transform to rename _id to _projectId
 attachmentSchema.set('toJSON', {
-  transform: function (doc, ret, options) {
+  transform: function (doc: any, ret: any, options: any) {
     ret._attachmentId = ret._id;  // Rename _id to _projectId
     delete ret._id;  // Remove the original _id field
     return ret;

@@ -9,6 +9,8 @@ import auth from '../../../middlewares/auth';
 //@ts-ignore
 import multer from "multer";
 import { TRole } from '../../../middlewares/roles';
+import { imageUploadPipelineForCreateCapsule } from './capsule.middleware';
+import { injectUserReference } from '../../../middlewares/injectUserReference';
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -54,15 +56,16 @@ router.route('/').get(
   controller.getAll
 );
 
-//[🚧][🧑‍💻✅][🧪] // 🆗
+/*-───────────────────────────────── 
+| Admin | create capsule of a journey
+|  @figmaIndex 06-04
+|  @desc 
+└──────────────────────────────────*/
 router.route('/').post(
-  // [
-  //   upload.fields([
-  //     { name: 'attachments', maxCount: 15 }, // Allow up to 5 cover photos
-  //   ]),
-  // ],
-  auth('common'),
-  validateRequest(validation.createHelpMessageValidationSchema),
+  auth(TRole.admin),
+  ...imageUploadPipelineForCreateCapsule,
+  injectUserReference('adminId'),
+  // validateRequest(validation.createHelpMessageValidationSchema),
   controller.create
 );
 

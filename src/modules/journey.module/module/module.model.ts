@@ -14,7 +14,7 @@ const ModuleSchema = new Schema<IModule>(
       type: String,
       required: [true, 'description is required'],
     },
-    attachments: [//🔗🖼️
+    attachments: [//🔗🖼️ // this is module video
       {
         type: Schema.Types.ObjectId,
         ref: 'Attachment',
@@ -27,9 +27,8 @@ const ModuleSchema = new Schema<IModule>(
       required: [true, 'capsuleId is required'],
     },
     estimatedTime: {
-      type: Number,
+      type: String,
       required: [true, 'estimatedTime is required'],
-      min: [0, 'estimatedTime cannot be negative'],
     },
     isDeleted: {
       type: Boolean,

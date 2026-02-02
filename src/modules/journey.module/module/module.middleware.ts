@@ -17,9 +17,9 @@ export const imageUploadPipelineForCreateModule = [
   processUploadedFilesForCreate([
     {
       name: 'attachments',
-      folder: TFolderName.trainingProgram,
+      folder: TFolderName.journeyCapsule,
       required: true, // optional
-      allowedMimeTypes: ['image/jpeg', 'image/png'], // , 'application/pdf'
+      allowedMimeTypes: ['image/jpeg', 'image/png',  'video/mp4'], // , 'application/pdf'
     },
   ]),
 ];

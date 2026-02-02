@@ -11,7 +11,8 @@ export interface IAttachment {
   attachment: string;
   attachmentType: AttachmentType.image | AttachmentType.document 
    | AttachmentType.unknown | AttachmentType.video;
-
+  publicId?: string;
+  
   createdAt?: Date;
   updatedAt?: Date;
 }

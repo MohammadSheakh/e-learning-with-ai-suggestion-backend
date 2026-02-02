@@ -16,6 +16,9 @@ import { SettingsRoutes } from '../modules/settings.module/settings/settings.rou
 import { PhaseRoute } from '../modules/question.module/phase/phase.route';
 import { QuestionRoute } from '../modules/question.module/question/question.route';
 import { JourneyRoute } from '../modules/journey.module/journey/journey.route';
+import { CapsuleRoute } from '../modules/journey.module/capsule/capsule.route';
+import { ModuleRoute } from '../modules/journey.module/module/module.route';
+import { QuestionRoute as JourneyQuestionRoute } from '../modules/journey.module/question/question.route';
 
 // import { ChatRoutes } from '../modules/chat/chat.routes';
 // import { MessageRoutes } from '../modules/message/message.routes';
@@ -51,7 +54,21 @@ const apiRoutes = [
     path: '/journey',
     route: JourneyRoute,
   },
-  
+
+  { // 🟢
+    path: '/journey-capusule',
+    route: CapsuleRoute,
+  },
+
+  { // 🟢
+    path: '/capsule-modules',
+    route: ModuleRoute,
+  },
+  { // 🟢
+    path: '/capsule-questions',
+    route: JourneyQuestionRoute,
+  },
+
   ///////////////////////////////////////// Payment Transaction
   { // 🟢
     path: '/payment-transactions',

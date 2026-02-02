@@ -13,27 +13,12 @@ const QuestionSchema = new Schema<IQuestion>(
     type: {
       type: String,
       enum: [
-        TQuestion.mcq,
         TQuestion.text,
-        TQuestion.code,
       ],
       required: [
         true,
         `type is required it can be ${Object.values(TQuestion).join(', ')}`,
       ],
-    },
-    options: {
-      type: [String],
-      required: function (this: IQuestion) {
-        return this.type === TQuestion.mcq;
-      },
-      default: [],
-    },
-    correctAnswer: {
-      type: String,
-      required: function (this: IQuestion) {
-        return this.type === TQuestion.mcq;
-      },
     },
     capsuleId: {
       type: Schema.Types.ObjectId,

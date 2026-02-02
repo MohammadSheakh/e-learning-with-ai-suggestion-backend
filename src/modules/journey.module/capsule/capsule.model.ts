@@ -87,7 +87,37 @@ const CapsuleSchema = new Schema<ICapsule>(
         required: [false, 'attachments is not required'],
       }
     ],
+
+    //--------------------- Module Related Fields ..
+    moduleTitle : {
+      type: String,
+      required: [true, 'moduleTitle is not required'],
+    },
+    moduleEstimatedTime: {
+      type: String,
+      required: [true, 'moduleEstimatedTime is not required'],
+    },
+    moduleRoadMapBrief : {
+      type: String,
+      required: [true, 'moduleRoadMapBrief is not required'],
+    },
+
+    //--------------------- Questionnaire Related Fields ..
     
+    questionnaireTitle : {
+      type: String,
+      required: [true, 'questionnaireTitle is not required'],
+    },
+    // introEstimatedTime: {
+    //   type: String,
+    //   required: [true, 'introEstimatedTime is required'],
+    // },
+    questionnaireRoadMapBrief : {
+      type: String,
+      required: [true, 'questionnaireRoadMapBrief is not required'],
+    },
+
+
     isDeleted: {
       type: Boolean,
       required: [false, 'isDeleted is not required'],

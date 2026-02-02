@@ -12,14 +12,21 @@ export const imageUploadPipelineForCreateCapsule = [
   [
     upload.fields([
       { name: 'attachments', maxCount: 1 }, // Allow up to 1 cover photo
+      { name : 'introductionVideo', maxCount: 1 }
     ]),
   ],
   processUploadedFilesForCreate([
     {
       name: 'attachments',
-      folder: TFolderName.trainingProgram,
+      folder: TFolderName.journeyCapsule,
       required: true, // optional
       allowedMimeTypes: ['image/jpeg', 'image/png'], // , 'application/pdf'
+    },
+    {
+      name: 'introductionVideo',
+      folder: TFolderName.journeyCapsule,
+      required: true, // optional
+      allowedMimeTypes: ['image/jpeg', 'image/png', 'video/mp4'], // , 'application/pdf'
     },
   ]),
 ];

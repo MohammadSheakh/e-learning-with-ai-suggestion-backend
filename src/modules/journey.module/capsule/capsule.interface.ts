@@ -27,6 +27,17 @@ export interface ICapsule {
   introDescription : string;
   introductionVideo?:  Types.ObjectId[] | undefined;//🖼️🧩  // array of video URLs or file paths
   
+
+  //--------------------- Module Related Fields ..
+  moduleTitle  : string;
+  moduleEstimatedTime  : string;
+  moduleRoadMapBrief  : string;
+
+  //--------------------- Questionnaire Related Fields ..
+  questionnaireTitle  : string;
+  questionnaireRoadMapBrief  : string;
+
+
   isDeleted? : boolean;  
   createdAt?: Date;
   updatedAt?: Date;
