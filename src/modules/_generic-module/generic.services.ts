@@ -17,11 +17,32 @@ export class GenericService<ModelType, InterfaceType> {
   }
 
 
+  //-- new -- e-learning
   async createWithSession(
     data: Partial<InterfaceType>,
     session: mongoose.ClientSession
   ): Promise<InterfaceType> {
     const [result] = await this.model.create([data], { session });
+    return result;
+  }
+
+  async createOrUpdate(data:/*InterfaceType*/ Partial<InterfaceType>) {
+    
+    const result = await this.model.findOneAndUpdate(
+      {}, // Singleton pattern
+      data,
+      {
+        new: true,
+        upsert: true,
+        // runValidators: true,
+        setDefaultsOnInsert: true
+      }
+    );
+
+    if (!result) {
+      throw new Error('Failed to create/update.');
+    }
+
     return result;
   }
 

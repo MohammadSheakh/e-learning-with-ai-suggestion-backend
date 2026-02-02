@@ -15,6 +15,7 @@ import { ContactUsRoute } from '../modules/settings.module/contactUs/contactUs.r
 import { SettingsRoutes } from '../modules/settings.module/settings/settings.routes';
 import { PhaseRoute } from '../modules/question.module/phase/phase.route';
 import { QuestionRoute } from '../modules/question.module/question/question.route';
+import { JourneyRoute } from '../modules/journey.module/journey/journey.route';
 
 // import { ChatRoutes } from '../modules/chat/chat.routes';
 // import { MessageRoutes } from '../modules/message/message.routes';
@@ -45,11 +46,11 @@ const apiRoutes = [
     path: '/questions',
     route: QuestionRoute,
   },
-  ///////////////////////////////////////// 
-  // { // 🟢
-  //   path: '/banners',
-  //   route: BannerRoute,
-  // },
+  /////////////////////////////////////////  Journey
+  { // 🟢
+    path: '/journey',
+    route: JourneyRoute,
+  },
   
   ///////////////////////////////////////// Payment Transaction
   { // 🟢

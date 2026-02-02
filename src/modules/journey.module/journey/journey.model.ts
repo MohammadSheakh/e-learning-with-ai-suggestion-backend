@@ -7,20 +7,28 @@ const JourneySchema = new Schema<IJourney>(
   {
     adminId: {
       type: Schema.Types.ObjectId,
-      ref: 'User', // assuming Admins are also Users — adjust if you have a separate Admin model
+      ref: 'User',
       required: [true, 'adminId is required'],
     },
-    numberOfCapsule: {
+    
+    numberOfCapsule: { // only for show value
       type: Number,
-      required: [true, 'numberOfCapsule is required'],
+      required: [false, 'numberOfCapsule is not required'],
     },
+    
     price: {
       type: Number,
       required: [true, 'price is required'],
     },
-    description: {
+    
+    title: {
       type: String,
-      required: [true, 'description is required'],
+      required: [true, 'title is required'],
+    },
+    
+    brief: {
+      type: String,
+      required: [true, 'brief is required'],
     },
 
     isDeleted: {

@@ -1,3 +1,10 @@
+// PERF: Aggregation pipeline - optimized for large datasets
+// OPT: Uses indexed fields to avoid COLLSCAN
+// NOTE: Requires compound index on { phaseId: 1, isDeleted: 1 }
+// WARNING: Changing sort order may impact performance
+// REVIEW: Monitor performance after MongoDB version upgrade
+// TECHDEBT: Consider caching results for frequently accessed phases
+
 //📈⚙️ OPTIMIZATION: ->  optimization related // PERF:
 // ☑️🟣 Issue Fixed
 // ⚠️ NEED_OPTIMIZATION

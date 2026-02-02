@@ -37,6 +37,26 @@ router.route('/paginate').get(
   controller.getAllWithPagination
 );
 
+/*-─────────────────────────────────
+| Admin | get all question section / phase with question count
+|  @figmaIndex 05-03
+|  @desc 
+└──────────────────────────────────*/
+router.route('/question-count').get(
+  auth(TRole.admin),
+  validateFiltersForQuery(optionValidationChecking(['_id','title', ...paginationOptions])),
+  controller.getAllPhaseWithQuestionCount
+);
+/*-───────────────────────────────── actually it related to QUESTION table ... we can shift this endpoint to question.route.ts
+| Admin | get all question and answers by phaseId
+|  @figmaIndex 05-03
+|  @desc 
+└──────────────────────────────────*/
+router.route('/question-ans/:phaseId').get(
+  auth(TRole.admin), // Adjust guards as needed
+  controller.getQuestionsWithAnswersByPhase
+);
+
 router.route('/:id').get(
   // auth('common'),
   controller.getById
@@ -57,6 +77,7 @@ router.route('/').get(
   auth(TRole.admin),
   controller.getAll
 );
+
 
 /*-─────────────────────────────────
 | Admin | create question phase

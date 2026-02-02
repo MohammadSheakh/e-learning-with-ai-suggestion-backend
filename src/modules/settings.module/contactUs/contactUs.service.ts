@@ -13,6 +13,7 @@ export class ContactUsService extends GenericService<
     super(ContactUs);
   }
 
+  // ⚠️ -> bad code .. need upsert here .. you can find better way in generic controller and service .. 
   async createOrUpdateContactUs( payload: any) {
     
     // Find existing setting by type

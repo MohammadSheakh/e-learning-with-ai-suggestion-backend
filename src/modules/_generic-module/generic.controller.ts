@@ -61,6 +61,20 @@ export class GenericController<ModelType, InterfaceType> {
     });
   });
 
+  // -- e-learning
+  createOrUpdate = catchAsync(async (req: Request, res: Response) => {
+    const data:InterfaceType = req.body;
+    const result = await this.service.createOrUpdate(data);
+
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: result,
+      message: `${this.modelName} upsert successfully`,
+      success: true,
+    });
+  });
+
+
 
   getAll = catchAsync(async (req: Request, res: Response) => {
     const result = await this.service.getAll();

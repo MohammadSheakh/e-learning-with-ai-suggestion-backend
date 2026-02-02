@@ -17,7 +17,7 @@ const CapsuleSchema = new Schema<ICapsule>(
       required: [true, 'title is required'],
       trim: true,
     },
-    subTitle: {
+    roadMapBrief: { // previously it was subTitle
       type: String,
       required: [true, 'subTitle is required'],
       trim: true,
@@ -31,13 +31,7 @@ const CapsuleSchema = new Schema<ICapsule>(
       required: [true, 'missionBriefing is required'],
     },
 
-    introductionVideo: [//🔗🖼️
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'Attachment',
-        required: [false, 'attachments is not required'],
-      }
-    ],
+    
     attachments: [//🔗🖼️
       {
         type: Schema.Types.ObjectId,
@@ -62,7 +56,38 @@ const CapsuleSchema = new Schema<ICapsule>(
       required: [true, 'adminId is required'],
     },
 
+    estimatedTime : {
+      type: String,
+      required: [true, 'estimatedTime is required'],
+    },
 
+    //--------------------- Introduction Related Fields .. 
+    
+    introTitle : {
+      type: String,
+      required: [true, 'introTitle is required'],
+    },
+    introEstimatedTime: {
+      type: String,
+      required: [true, 'introEstimatedTime is required'],
+    },
+    introRoadMapBrief : {
+      type: String,
+      required: [true, 'introRoadMapBrief is required'],
+    },
+    introDescription : {
+      type: String,
+      required: [true, 'introDescription is required'],
+    },
+
+    introductionVideo: [//🔗🖼️
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Attachment',
+        required: [false, 'attachments is not required'],
+      }
+    ],
+    
     isDeleted: {
       type: Boolean,
       required: [false, 'isDeleted is not required'],

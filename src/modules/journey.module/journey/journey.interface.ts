@@ -9,7 +9,9 @@ export interface IJourney {
   adminId: Types.ObjectId; // FK to Admin/User who created it
   numberOfCapsule: number; // display-only value
   price: number;
-  description: string;
+
+  title: string;
+  brief : string;
 
   isDeleted? : boolean;  
   createdAt?: Date;
