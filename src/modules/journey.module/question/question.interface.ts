@@ -8,6 +8,7 @@ export interface IQuestion {
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
   
   questionText: string;
+  helpText : string;
   type: TQuestion;
   capsuleId: Types.ObjectId;
 

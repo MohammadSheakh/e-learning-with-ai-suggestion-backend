@@ -7,16 +7,31 @@ import { IJourney } from './journey.interface';
 import { JourneyService } from './journey.service';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
+import pick from '../../../shared/pick';
 
 export class JourneyController extends GenericController<
   typeof Journey,
   IJourney
 > {
-  JourneyService = new JourneyService();
+  journeyService = new JourneyService();
 
   constructor() {
     super(new JourneyService(), 'Journey');
   }
+
+  getJourneyDetailsWithCapsules = catchAsync(async (req: Request, res: Response) => {
+    
+    const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
+
+    const result = await this.journeyService.getJourneyDetailsWithCapsules(options);
+
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: result,
+      message: `Journey details with capsules retrieved successfully`,
+      success: true,
+    });
+  });
 
 
   // add more methods here if needed or override the existing ones 

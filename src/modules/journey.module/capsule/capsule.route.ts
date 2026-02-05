@@ -39,6 +39,17 @@ router.route('/paginate').get(
   controller.getAllWithPagination
 );
 
+/*-───────────────────────────────── 
+| Admin | get module and questions for a capsule
+|  @figmaIndex 0-0
+|  @desc admin can see a all modules and all questions for a capsule.. 
+└──────────────────────────────────*/
+router.route('/modules-nd-questions').get(
+  auth(TRole.admin),
+  // validateRequest(validation.createHelpMessageValidationSchema),
+  controller.getModulesAndQuestionsByCapsuleId
+);
+
 router.route('/:id').get(
   // auth('common'),
   controller.getById
@@ -75,7 +86,7 @@ router.route('/:id/permenent').delete(
 );
 
 router.route('/:id').delete(
-  auth(TRole.specialist),
+  auth(TRole.common),
   controller.softDeleteById
 );
 

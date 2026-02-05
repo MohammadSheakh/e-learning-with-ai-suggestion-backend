@@ -17,7 +17,7 @@ export class PhaseService extends GenericService<
 
   // PERF: Aggregation pipeline - optimized for large datasets
   async getAllPhaseWithQuestionCount(filters: any,
-  options: PaginateOptions){
+    options: PaginateOptions){
     // 🎯 Build match stage for Phase filtering
     const phaseMatchStage: any = {
       isDeleted: false // Default: only active phases

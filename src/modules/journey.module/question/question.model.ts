@@ -10,13 +10,17 @@ const QuestionSchema = new Schema<IQuestion>(
       type: String,
       required: [true, 'questionText is required'],
     },
+    helpText: { //🆕
+      type: String,
+      required: [true, 'helpText is required'],
+    },
     type: {
       type: String,
       enum: [
         TQuestion.text,
       ],
       required: [
-        true,
+        false,
         `type is required it can be ${Object.values(TQuestion).join(', ')}`,
       ],
     },
@@ -48,4 +52,4 @@ QuestionSchema.set('toJSON', {
 export const Question = model<
   IQuestion,
   IQuestionModel
->('Question', QuestionSchema);
+>('JourneyQuestion', QuestionSchema);

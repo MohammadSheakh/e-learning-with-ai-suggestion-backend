@@ -38,6 +38,19 @@ router.route('/paginate').get(
   controller.getAllWithPagination
 );
 
+/*-───────────────────────────────── 
+| Admin | get journey and its capsules
+|  @figmaIndex 0-0
+|  @desc admin can see a journey details along with its capsules .. 
+└──────────────────────────────────*/
+router.route('/capsule').get(
+  auth(TRole.admin),
+  injectUserReference('adminId'),
+  // validateRequest(validation.createHelpMessageValidationSchema),
+  // controller.create
+  controller.getJourneyDetailsWithCapsules
+);
+
 router.route('/:id').get(
   // auth('common'),
   controller.getById
