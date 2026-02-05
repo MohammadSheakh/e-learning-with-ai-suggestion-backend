@@ -53,13 +53,13 @@ router.route('/').get(
   controller.getAll
 );
 
-//[🚧][🧑‍💻✅][🧪] // 🆗
+/*-───────────────────────────────── 
+|  | create  
+|  @figmaIndex 06-04
+|  @desc 
+└──────────────────────────────────*/
 router.route('/').post(
-  // [
-  //   upload.fields([
-  //     { name: 'attachments', maxCount: 15 }, // Allow up to 5 cover photos
-  //   ]),
-  // ],
+  ...imageUploadPipelineForCreateDemo,
   auth(TRole.common),
   validateRequest(validation.createHelpMessageValidationSchema),
   controller.create
