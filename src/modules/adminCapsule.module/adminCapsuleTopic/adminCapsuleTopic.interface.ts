@@ -2,28 +2,21 @@
 import { Model, Types } from 'mongoose';
 import { PaginateOptions, PaginateResult } from '../../../types/paginate';
 
-
-export interface IAdminModules {
+export interface IAdminCapsuleTopic {
   // _taskId: undefined | Types.ObjectId;
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
   
   title: string;
-  description: string;
-  attachments?: Types.ObjectId[]; //🔗🖼️
-  capsuleId: Types.ObjectId; //🔗
-  estimatedTime: string; 
+  adminCapsuleId: Types.ObjectId; //🔗
 
-  numberOfLessons : number;
-
-  
   isDeleted? : boolean;  
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface IAdminModulesModel extends Model<IAdminModules> {
+export interface IAdminCapsuleTopicModel extends Model<IAdminCapsuleTopic> {
   paginate: (
     query: Record<string, any>,
     options: PaginateOptions
-  ) => Promise<PaginateResult<IAdminModules>>;
+  ) => Promise<PaginateResult<IAdminCapsuleTopic>>;
 }

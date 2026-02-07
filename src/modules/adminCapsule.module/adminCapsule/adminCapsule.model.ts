@@ -10,20 +10,24 @@ const AdminCapsuleSchema = new Schema<IAdminCapsule>(
     
     capsuleNumber: {
       type: Number,
-      required: [true, 'capsuleNumber is required'],
+      required: [false, 'capsuleNumber is not required'],
       min: [1, 'capsuleNumber must be at least 1'],
     },
     title: {
       type: String,
       required: [true, 'title is required'],
     },
-    subTitle: {
+    subTitle: { // in admin end .. this is missing in form
       type: String,
-      required: [true, 'subTitle is required'],
+      required: [false, 'subTitle is not required'],
     },
     description: {
       type: String,
       required: [true, 'description is required'],
+    },
+    price: {
+      type: Number,
+      required: [true, 'price is required'],
     },
     introductionVideo: [//🔗🖼️
       {
@@ -44,13 +48,13 @@ const AdminCapsuleSchema = new Schema<IAdminCapsule>(
       ref: 'CapsuleCategory',
       required: [true, 'capsuleCategoryId is required'],
     },
-    topics: {
-      type: [String],
-      required: [true, 'topics is required'],
-    },
-    estimatedTime: {
-      type: Number,
-      required: [true, 'estimatedTime is required'],
+    // topics: {
+    //   type: [String],
+    //   required: [true, 'topics is required'],
+    // },
+    estimatedTime: { // may be we dont need this .. 
+      type: Number, //// NEED TO TALK WITH UI .. do we really need this ?
+      required: [false, 'estimatedTime is not required'],
       min: [0, 'estimatedTime cannot be negative'],
     },
     totalModule: {

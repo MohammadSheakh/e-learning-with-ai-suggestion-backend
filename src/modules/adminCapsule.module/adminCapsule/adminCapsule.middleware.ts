@@ -11,15 +11,22 @@ const upload = multer({ storage: storage });
 export const imageUploadPipelineForCreateAdminCapsule = [
   [
     upload.fields([
-      { name: 'attachments', maxCount: 1 }, // Allow up to 1 cover photo
+      { name: 'attachments', maxCount: 1 }, // Allow up to 1 photo
+      { name: 'introductionVideo', maxCount: 1 }, // Allow up to 1 introduction video
     ]),
   ],
   processUploadedFilesForCreate([
     {
       name: 'attachments',
-      folder: TFolderName.trainingProgram,
+      folder: TFolderName.adminCapsule,
       required: true, // optional
       allowedMimeTypes: ['image/jpeg', 'image/png'], // , 'application/pdf'
+    },
+    {
+      name: 'introductionVideo',
+      folder: TFolderName.adminCapsule,
+      required: true, // optional
+      allowedMimeTypes: ['image/jpeg', 'image/png', 'video/mp4'], // , 'application/pdf'
     },
   ]),
 ];

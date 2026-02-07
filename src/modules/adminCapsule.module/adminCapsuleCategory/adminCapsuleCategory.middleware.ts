@@ -17,7 +17,7 @@ export const imageUploadPipelineForCreateAdminCapsuleCategory = [
   processUploadedFilesForCreate([
     {
       name: 'attachments',
-      folder: TFolderName.trainingProgram,
+      folder: TFolderName.adminCapsuleCategory,
       required: true, // optional
       allowedMimeTypes: ['image/jpeg', 'image/png'], // , 'application/pdf'
     },

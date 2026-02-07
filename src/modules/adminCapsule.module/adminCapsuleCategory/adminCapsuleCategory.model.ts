@@ -7,9 +7,13 @@ import paginate from '../../../common/plugins/paginate';
 const AdminCapsuleCategorySchema = new Schema<IAdminCapsuleCategory>(
   {
     
-    name: {
+    title: {
       type: String,
       required: [true, 'name is required'],
+    },
+    description: {
+      type: String,
+      required: [true, 'description is required'],
     },
     attachments: [//🔗🖼️
       {

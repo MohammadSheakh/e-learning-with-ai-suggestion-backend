@@ -19,6 +19,9 @@ import { JourneyRoute } from '../modules/journey.module/journey/journey.route';
 import { CapsuleRoute } from '../modules/journey.module/capsule/capsule.route';
 import { ModuleRoute } from '../modules/journey.module/module/module.route';
 import { QuestionRoute as JourneyQuestionRoute } from '../modules/journey.module/question/question.route';
+import { AdminCapsuleCategoryRoute } from '../modules/adminCapsule.module/adminCapsuleCategory/adminCapsuleCategory.route';
+import { AdminCapsuleRoute } from '../modules/adminCapsule.module/adminCapsule/adminCapsule.route';
+import { AdminModulesRoute } from '../modules/adminCapsule.module/adminModules/adminModules.route';
 
 // import { ChatRoutes } from '../modules/chat/chat.routes';
 // import { MessageRoutes } from '../modules/message/message.routes';
@@ -67,6 +70,20 @@ const apiRoutes = [
   { // 🟢
     path: '/capsule-questions',
     route: JourneyQuestionRoute,
+  },
+
+  /////////////////////////////////////////  Admin Capsule
+  { // 🟢
+    path: '/admin-capsule-categories',
+    route: AdminCapsuleCategoryRoute,
+  },
+  { // 🟢
+    path: '/admin-capsules',
+    route: AdminCapsuleRoute,
+  },
+  { // 🟢
+    path: '/admin-modules',
+    route: AdminModulesRoute,
   },
 
   ///////////////////////////////////////// Payment Transaction

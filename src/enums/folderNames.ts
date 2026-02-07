@@ -3,6 +3,9 @@ const parentFolder = "e-learning"; // e-learning // testing // TODO : MUST : sho
 export enum TFolderName {
     journeyModule = `${parentFolder}/journeyModule`,
     journeyCapsule = `${parentFolder}/journeyCapsule`,
+    adminCapsuleCategory = `${parentFolder}/adminCapsuleCategory`,
+    adminCapsule = `${parentFolder}/adminCapsule`,
+    adminModules = `${parentFolder}/adminModules`,
     journey = `${parentFolder}/journey`,
     user = `${parentFolder}/user`,
     wallet = `${parentFolder}/wallet`,

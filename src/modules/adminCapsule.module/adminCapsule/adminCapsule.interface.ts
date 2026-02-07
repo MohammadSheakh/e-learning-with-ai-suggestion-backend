@@ -16,8 +16,9 @@ export interface IAdminCapsule {
   introductionVideo?: Types.ObjectId[]; //🔗🖼️
   attachments?: Types.ObjectId[]; //🔗🖼️
   capsuleCategoryId: Types.ObjectId; //🔗
-  topics: string[];
-  estimatedTime: number;
+  price : number;
+  // topics: string[];
+  estimatedTime?: number; // NEED TO TALK WITH UI .. do we really need this
   totalModule: number;
   level: TAdminCapsuleLevel; //🧩
   adminId: Types.ObjectId; //🔗
@@ -26,6 +27,29 @@ export interface IAdminCapsule {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface ICreateAdminCapsuleWithTopics {
+  // _taskId: undefined | Types.ObjectId;
+  _id?: Types.ObjectId; // undefined |  Types.ObjectId |
+  
+  // capsuleNumber: number; // may be automatically we create this .. or Ui show this in front-end
+  title: string;
+  level: string; // TAdminCapsuleLevel
+  description: string;
+  totalModule: number;
+  price : number;
+  whatYouLearn : string[]; // we create AdminCapsuleTopic for each ..
+
+  introductionVideo?: Types.ObjectId[]; //🔗🖼️
+  attachments?: Types.ObjectId[]; //🔗🖼️
+  capsuleCategoryId: Types.ObjectId; //🔗
+  
+  estimatedTime?: number; // 
+  
+  adminId: Types.ObjectId; //🔗
+
+}
+
 
 export interface IAdminCapsuleModel extends Model<IAdminCapsule> {
   paginate: (

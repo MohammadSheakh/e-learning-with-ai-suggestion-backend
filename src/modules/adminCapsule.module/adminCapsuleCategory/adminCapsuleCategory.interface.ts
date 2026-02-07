@@ -7,7 +7,9 @@ export interface IAdminCapsuleCategory {
   // _taskId: undefined | Types.ObjectId;
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
   
-  name: string;
+  title: string;
+  description : string;
+  
   attachments?: Types.ObjectId[]; //🔗🖼️
 
   isDeleted? : boolean;  

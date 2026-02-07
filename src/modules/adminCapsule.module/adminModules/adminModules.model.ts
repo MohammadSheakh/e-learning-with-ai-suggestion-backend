@@ -6,14 +6,13 @@ import paginate from '../../../common/plugins/paginate';
 
 const AdminModulesSchema = new Schema<IAdminModules>(
   {
-  
     title: {
       type: String,
       required: [true, 'title is required'],
     },
     description: {
       type: String,
-      required: [true, 'description is required'],
+      required: [false, 'description is not required'],
     },
     attachments: [ //🔗🖼️
       {
@@ -28,9 +27,13 @@ const AdminModulesSchema = new Schema<IAdminModules>(
       required: [true, 'capsuleId is required'],
     },
     estimatedTime: {
-      type: Number,
+      type: String,
       required: [true, 'estimatedTime is required'],
-      min: [0, 'estimatedTime cannot be negative'],
+    },
+
+    numberOfLessons : {
+      type: Number,
+      required: [false, 'numberOfLessons is not required'],
     },
 
     isDeleted: {

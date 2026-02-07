@@ -1,21 +1,20 @@
 //@ts-ignore
 import express from 'express';
-import * as validation from './adminCapsuleCategory.validation';
-import { AdminCapsuleCategoryController} from './adminCapsuleCategory.controller';
-import { IAdminCapsuleCategory } from './adminCapsuleCategory.interface';
+import * as validation from './adminCapsuleTopic.validation';
+import { AdminCapsuleTopicController} from './adminCapsuleTopic.controller';
+import { IAdminCapsuleTopic } from './adminCapsuleTopic.interface';
 import { validateFiltersForQuery } from '../../../middlewares/queryValidation/paginationQueryValidationMiddleware';
 import validateRequest from '../../../shared/validateRequest';
 import auth from '../../../middlewares/auth';
 //@ts-ignore
 import multer from "multer";
 import { TRole } from '../../../middlewares/roles';
-import { imageUploadPipelineForCreateAdminCapsuleCategory } from './adminCapsuleCategory.middleware';
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const router = express.Router();
 
-export const optionValidationChecking = <T extends keyof IAdminCapsuleCategory | 'sortBy' | 'page' | 'limit' | 'populate'>(
+export const optionValidationChecking = <T extends keyof IAdminCapsuleTopic | 'sortBy' | 'page' | 'limit' | 'populate'>(
   filters: T[]
 ) => {
   return filters;
@@ -28,15 +27,12 @@ const paginationOptions: Array<'sortBy' | 'page' | 'limit' | 'populate'> = [
   'populate',
 ];
 
-const controller = new AdminCapsuleCategoryController();
+// const taskService = new TaskService();
+const controller = new AdminCapsuleTopicController();
 
-/*-───────────────────────────────── 
-| Admin | create capsule category
-|  @figmaIndex 06-04
-|  @desc 
-└──────────────────────────────────*/
+//
 router.route('/paginate').get(
-  auth(TRole.common),
+  //auth('common'),
   validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
   controller.getAllWithPagination
 );
@@ -58,15 +54,10 @@ router.route('/').get(
   controller.getAll
 );
 
-/*-───────────────────────────────── 
-| Admin | create capsule category
-|  @figmaIndex 06-04
-|  @desc 
-└──────────────────────────────────*/
+//[🚧][🧑‍💻✅][🧪] // 🆗
 router.route('/').post(
-  auth(TRole.admin),
-  ...imageUploadPipelineForCreateAdminCapsuleCategory,
-  // validateRequest(validation.createHelpMessageValidationSchema),
+  auth(TRole.common),
+  validateRequest(validation.createHelpMessageValidationSchema),
   controller.create
 );
 
@@ -80,4 +71,6 @@ router.route('/:id').delete(
   controller.softDeleteById
 );
 
-export const AdminCapsuleCategoryRoute = router;
+
+
+export const AdminCapsuleTopicRoute = router;
