@@ -106,18 +106,15 @@ router.route('/').post(
   controller.create
 );
 
-router.route('/delete/:id').delete(
-  //auth('common'),
+router.route('/:id/permenent').delete(
+  auth(TRole.common),
   controller.deleteById
-); // FIXME : change to admin
-
-router.route('/softDelete/:id').put(
-  //auth('common'),
-  controller.softDeleteById
 );
 
-////////////
-//[🚧][🧑‍💻✅][🧪] // 🆗
+router.route('/:id').delete(
+  auth(TRole.common),
+  controller.softDeleteById
+);
 
 
 export const WithdrawalRequstRoute = router;

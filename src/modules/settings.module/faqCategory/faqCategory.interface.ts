@@ -5,8 +5,8 @@ import { PaginateOptions, PaginateResult } from '../../../types/paginate';
 export interface IFaqCategory {
   // _taskId: undefined | Types.ObjectId;
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
-  userId: Types.ObjectId;
-  message : string;
+  
+  categoryName : string;
 
   isDeleted? : boolean;  
   createdAt?: Date;

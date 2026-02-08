@@ -1,19 +1,26 @@
 //@ts-ignore
 import { model, Schema } from 'mongoose';
-import { IFaq, IFaqModel } from './Faq.interface';
-import paginate from '../../common/plugins/paginate';
+import { IFaq, IFaqModel } from './faq.interface';
+import paginate from '../../../common/plugins/paginate';
 
 
 const FaqSchema = new Schema<IFaq>(
   {
-    userId: { //🔗
+    faqCategoryId: { //🔗
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'FaqCategory',
     },
-    message: {
+    
+    question: {
       type: String,
-      required: [true, 'dateOfBirth is required'],
+      required: [true, 'question is required'],
     },
+
+    answer: {
+      type: String,
+      required: [true, 'answer is required'],
+    },
+
     isDeleted: {
       type: Boolean,
       required: [false, 'isDeleted is not required'],

@@ -29,51 +29,56 @@ const paginationOptions: Array<'sortBy' | 'page' | 'limit' | 'populate'> = [
 // const taskService = new TaskService();
 const controller = new DemoController();
 
-//
-router.route('/paginate').get(
-  auth(TRole.common),
-  validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
-  controller.getAllWithPagination
-);
 
-router.route('/:id').get(
-  auth(TRole.common),
-  controller.getById
-);
+// router.route('/paginate').get(
+//   auth(TRole.common),
+//   validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
+//   controller.getAllWithPagination
+// );
 
-router.route('/:id').put(
-  auth(TRole.common),
-  // validateRequest(validation.createHelpMessageValidationSchema),
-  controller.updateById
-);
 
-//[🚧][🧑‍💻✅][🧪] // 🆗
-router.route('/').get(
-  auth(TRole.common),
-  controller.getAll
-);
+// router.route('/:id').get(
+//   auth(TRole.common),
+//   controller.getById
+// );
+
+
+// router.route('/:id').put(
+//   auth(TRole.common),
+//   // validateRequest(validation.createHelpMessageValidationSchema),
+//   controller.updateById
+// );
+
+
+// router.route('/').get(
+//   auth(TRole.common),
+//   controller.getAll
+// );
+
 
 /*-───────────────────────────────── 
 |  | create  
 |  @figmaIndex 06-04
 |  @desc 
 └──────────────────────────────────*/
-router.route('/').post(
-  ...imageUploadPipelineForCreateDemo,
-  auth(TRole.common),
-  validateRequest(validation.createHelpMessageValidationSchema),
-  controller.create
-);
+// router.route('/').post(
+//   ...imageUploadPipelineForCreateDemo,
+//   auth(TRole.common),
+//   validateRequest(validation.createHelpMessageValidationSchema),
+//   controller.create
+// );
 
-router.route('/:id/permenent').delete(
-  auth(TRole.common),
-  controller.deleteById
-);
 
-router.route('/:id').delete(
-  auth(TRole.common),
-  controller.softDeleteById
-);
+// router.route('/:id/permenent').delete(
+//   auth(TRole.common),
+//   controller.deleteById
+// );
+
+
+// router.route('/:id').delete(
+//   auth(TRole.common),
+//   controller.softDeleteById
+// );
 
 
 

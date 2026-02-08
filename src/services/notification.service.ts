@@ -32,7 +32,7 @@ export async function enqueueWebNotification(
 ) {
 
   const notifAdded = await notificationQueue.add(
-    'send-notification-kajbd',
+    'notificationQueue-e-learning',
     {
       title,
       senderId,

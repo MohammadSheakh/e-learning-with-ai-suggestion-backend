@@ -41,14 +41,6 @@ const WalletSchema = new Schema<IWallet>(
       default: TWalletStatus.active,
       required: [false, 'status is not required'],
     },
-    // userRole: {  /// do we need this field ???
-    //   type: String,
-    //   enum: {
-    //     values: Roles,
-    //     message: '{VALUE} is not a valid role',
-    //   },
-    //   required: [true, 'Role is required'],
-    // },
     isDeleted: {
       type: Boolean,
       required: [false, 'isDeleted is not required'],
@@ -60,18 +52,9 @@ const WalletSchema = new Schema<IWallet>(
 
 WalletSchema.plugin(paginate);
 
-WalletSchema.pre('save', function (next) {
-  // Rename _id to _projectId
-  // this._taskId = this._id;
-  // this._id = undefined;  // Remove the default _id field
-  //this.renewalFee = this.initialFee
-
-  next();
-});
-
 // Use transform to rename _id to _projectId
 WalletSchema.set('toJSON', {
-  transform: function (doc, ret, options) {
+  transform: function (doc: any, ret: any, options: any) {
     ret._walletId = ret._id; // Rename _id to _subscriptionId
     delete ret._id; // Remove the original _id field
     return ret;

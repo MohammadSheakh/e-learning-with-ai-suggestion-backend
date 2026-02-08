@@ -16,7 +16,7 @@ export class WalletTransactionHistoryController extends GenericController<
   typeof WalletTransactionHistory,
   IWalletTransactionHistory
 > {
-  WalletTransactionHistoryService = new WalletTransactionHistoryService();
+  walletTransactionHistoryService = new WalletTransactionHistoryService();
 
   constructor() {
     super(new WalletTransactionHistoryService(), 'WalletTransactionHistory');
@@ -27,8 +27,6 @@ export class WalletTransactionHistoryController extends GenericController<
     const filters =  omit(req.query, ['sortBy', 'limit', 'page', 'populate']); ;
     const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
 
-    // console.log('filters : ', filters);
-    // console.log('options : ', options);
     options.sortBy='-createdAt';
 
     // ✅ Default values
@@ -47,11 +45,7 @@ export class WalletTransactionHistoryController extends GenericController<
 
     const result = await this.service.getAllWithPagination(filters, options, populateOptions , select );
 
-    // console.log('result: ', result);
-
     const wallet = await Wallet.findOne({ userId: req.user.userId });
-
-    // console.log('wallet: ', wallet);
 
     sendResponse(res, {
       code: StatusCodes.OK,
@@ -64,12 +58,10 @@ export class WalletTransactionHistoryController extends GenericController<
 
   // Get specialist's own earnings overview - suplify
   getMyEarningsOverview = catchAsync(async (req: Request, res: Response) => {
-    const userId = req.user._id;
-    const result = await this.WalletTransactionHistoryService.getSpecialistEarningsOverview(userId);
-
+    
     sendResponse(res, {
       code: StatusCodes.OK,
-      data: result,
+      data: null,
       message: 'My earnings overview retrieved successfully',
       success: true,
     });

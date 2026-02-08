@@ -3,7 +3,7 @@ import { model, Schema } from 'mongoose';
 import { IWithdrawalRequst, IWithdrawalRequstModel } from './withdrawalRequst.interface';
 import paginate from '../../../common/plugins/paginate';
 import { TWithdrawalRequst } from './withdrawalRequst.constant';
-import { TAccountType, TBankAccount, TWithdrawalRequstType } from '../bankInfo/bankInfo.constant';
+import { TBankAccount } from '../bankInfo/bankInfo.constant';
 
 
 const WithdrawalRequstSchema = new Schema<IWithdrawalRequst>(
@@ -56,31 +56,6 @@ const WithdrawalRequstSchema = new Schema<IWithdrawalRequst>(
       required: [false, 'bankName is not required'],
     },
 
-    type: {
-      type: String,
-      enum : [
-        TWithdrawalRequstType.bank,
-        TWithdrawalRequstType.bkash,
-        TWithdrawalRequstType.nagad,
-        TWithdrawalRequstType.rocket 
-      ],
-      required: [true, 'type is required'],
-    },
-
-    mobileNo: {
-      type: String,
-      required: [false, 'mobileNo is not required'],
-    },
-
-    accountType : {
-      type: String,
-      enum : [
-        TAccountType.personal,
-        TAccountType.merchant,
-      ],
-      required: [false, 'accountType is not required'],
-    },
-
     status:{
       type: String,
       enum:[
@@ -127,18 +102,10 @@ const WithdrawalRequstSchema = new Schema<IWithdrawalRequst>(
 
 WithdrawalRequstSchema.plugin(paginate);
 
-WithdrawalRequstSchema.pre('save', function (next) {
-  // Rename _id to _projectId
-  // this._taskId = this._id;
-  // this._id = undefined;  // Remove the default _id field
-  //this.renewalFee = this.initialFee
-
-  next();
-});
 
 // Use transform to rename _id to _projectId
 WithdrawalRequstSchema.set('toJSON', {
-  transform: function (doc, ret, options) {
+  transform: function (doc: any, ret: any, options: any) {
     ret._withdrawalRequstId = ret._id; // Rename _id to _subscriptionId
     delete ret._id; // Remove the original _id field
     return ret;

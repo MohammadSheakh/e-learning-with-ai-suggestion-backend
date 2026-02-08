@@ -15,37 +15,33 @@ export class BankInfoService extends GenericService<
   //---------------------------------
   // Specialist / Doctor | create or update bank info
   //---------------------------------
-  async createOrUpdate(id: string , data: IBankInfo) {
+  async createOrUpdateBankInfo(userId: string , data: IBankInfo) {
     const bankInfo:IBankInfo = await BankInfo.findOne({
-      userId: id
+      userId: userId
     });
 
 
     let bank;
     if (!bankInfo) {
-      //---- lets create
-      bank = await BankInfo.create(data);
 
-      console.log('if block :: ',bank )
+      bank = await BankInfo.create(data);
     
     }else{
-      //----- lets update
+
       bankInfo.bankAccountHolderName = data.bankAccountHolderName;
       bankInfo.bankAccountNumber = data.bankAccountNumber;
       bankInfo.bankAccountType = data.bankAccountType;
       bankInfo.bankBranch = data.bankBranch;
       bankInfo.bankName = data.bankName;
       bankInfo.bankRoutingNumber = data.bankRoutingNumber;
-      bankInfo.userId = id;
+      bankInfo.userId = userId;
 
       bank = await BankInfo.findByIdAndUpdate(bankInfo._id,
          bankInfo
          ,{ new: true });
-      console.log('else block :: ',bank )
 
     }
 
-  
     return bank;
   }
 }

@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import { GenericController } from '../_generic-module/generic.controller';
-import { Faq } from './Faq.model';
+import { GenericController } from '../../_generic-module/generic.controller';
+import { Faq } from './faq.model';
 import { IFaq } from './Faq.interface';
-import { FaqService } from './Faq.service';
+import { FaqService } from './faq.service';
 
 export class FaqController extends GenericController<
   typeof Faq,

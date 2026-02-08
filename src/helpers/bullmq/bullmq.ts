@@ -16,7 +16,7 @@ import mongoose from 'mongoose';
 /*-─────────────────────────────────
 |  Notification Queue
 └──────────────────────────────────*/
-export const notificationQueue = new Queue("notificationQueue-suplify", {
+export const notificationQueue = new Queue("notificationQueue-e-learning", {
   connection: redisPubClient.options,
 });
 // new QueueScheduler("notificationQueue", { connection: redisPubClient.options });
@@ -32,7 +32,7 @@ interface IScheduleJobForNotification {
 
 export const startNotificationWorker = () => {
   const worker = new Worker(
-    "notificationQueue-suplify",
+    "notificationQueue-e-learning",
     async (
       job: IScheduleJobForNotification
       // job : Job<INotification, any, NotificationJobName>

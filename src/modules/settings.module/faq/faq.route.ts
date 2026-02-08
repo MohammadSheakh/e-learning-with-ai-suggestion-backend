@@ -1,13 +1,14 @@
 //@ts-ignore
 import express from 'express';
-import * as validation from './Faq.validation';
-import { FaqController} from './Faq.controller';
-import { IFaq } from './Faq.interface';
-import { validateFiltersForQuery } from '../../middlewares/queryValidation/paginationQueryValidationMiddleware';
-import validateRequest from '../../shared/validateRequest';
-import auth from '../../middlewares/auth';
+import * as validation from './faq.validation';
+import { FaqController} from './faq.controller';
+import { IFaq } from './faq.interface';
+import { validateFiltersForQuery } from '../../../middlewares/queryValidation/paginationQueryValidationMiddleware';
+import validateRequest from '../../../shared/validateRequest';
+import auth from '../../../middlewares/auth';
 //@ts-ignore
 import multer from "multer";
+import { TRole } from '../../../middlewares/roles';
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -32,7 +33,7 @@ const controller = new FaqController();
 //
 router.route('/paginate').get(
   auth(TRole.common),
-  validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
+  validateFiltersForQuery(optionValidationChecking(['_id', 'faqCategoryId', ...paginationOptions])),
   controller.getAllWithPagination
 );
 
@@ -54,14 +55,13 @@ router.route('/').get(
 );
 
 /*-───────────────────────────────── 
-|  | create  
-|  @figmaIndex 06-04
+|  create faq  
+|  @figmaIndex 00-00
 |  @desc 
 └──────────────────────────────────*/
 router.route('/').post(
-  ...imageUploadPipelineForCreateFaq,
-  auth(TRole.common),
-  validateRequest(validation.createHelpMessageValidationSchema),
+  auth(TRole.admin),
+  // validateRequest(validation.createHelpMessageValidationSchema),
   controller.create
 );
 

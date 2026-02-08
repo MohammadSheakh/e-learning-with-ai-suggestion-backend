@@ -5,10 +5,13 @@ import { PaginateOptions, PaginateResult } from '../../../types/paginate';
 export interface IFaq {
   // _taskId: undefined | Types.ObjectId;
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
-  userId: Types.ObjectId;
-  message : string;
+  
+  faqCategoryId: Types.ObjectId;
+  
+  question : string;
+  answer : string;
 
-  isDeleted? : boolean;  
+  isDeleted? : boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

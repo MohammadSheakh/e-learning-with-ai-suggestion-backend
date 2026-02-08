@@ -65,10 +65,10 @@ router.route('/paginate-with-wallet').get(
 //-------------------------------- Suplify
 // Specialist | Get Overview of Earnings
 //---------------------------------
-router.route('/overview').get(
-  auth(TRole.admin),
-  controller.getMyEarningsOverview
-);
+// router.route('/overview').get(
+//   auth(TRole.admin),
+//   controller.getMyEarningsOverview
+// );
 
 router.route('/:id').get(
   // auth('common'),
@@ -88,29 +88,21 @@ router.route('/').get(
 );
 
 //[🚧][🧑‍💻✅][🧪] // 🆗
-router.route('/create').post(
-  // [
-  //   upload.fields([
-  //     { name: 'attachments', maxCount: 15 }, // Allow up to 5 cover photos
-  //   ]),
-  // ],
+router.route('/').post(
   auth(TRole.common),
   validateRequest(validation.createHelpMessageValidationSchema),
   controller.create
 );
 
-router.route('/delete/:id').delete(
-  //auth('common'),
+router.route('/:id/permenent').delete(
+  auth(TRole.common),
   controller.deleteById
-); // FIXME : change to admin
-
-router.route('/softDelete/:id').put(
-  //auth('common'),
-  controller.softDeleteById
 );
 
-////////////
-//[🚧][🧑‍💻✅][🧪] // 🆗
+router.route('/:id').delete(
+  auth(TRole.common),
+  controller.softDeleteById
+);
 
 
 export const WalletTransactionHistoryRoute = router;
