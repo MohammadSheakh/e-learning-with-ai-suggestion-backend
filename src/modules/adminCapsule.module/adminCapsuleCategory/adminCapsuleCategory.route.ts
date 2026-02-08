@@ -41,6 +41,17 @@ router.route('/paginate').get(
   controller.getAllWithPagination
 );
 
+/*-───────────────────────────────── 
+| Admin | get a category details with all capsules
+|  @figmaIndex 06-04
+|  @desc 
+└──────────────────────────────────*/
+router.route('/:capsuleCategoryId/capsules').get(
+  // auth('common'),
+  controller.getAllCapsulesByCategoryId 
+);
+
+
 router.route('/:id').get(
   // auth('common'),
   controller.getById

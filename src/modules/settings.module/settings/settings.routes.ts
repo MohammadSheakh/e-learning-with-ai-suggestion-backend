@@ -18,7 +18,7 @@ router
   // Admin | Upload Introduction video
   //----------------------------------
   .post(
-    auth(TRole.commonAdmin),
+    auth(TRole.admin),
     SettingsController.createOrUpdateSettings
   );
 export const SettingsRoutes = router;

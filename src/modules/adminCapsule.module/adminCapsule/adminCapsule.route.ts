@@ -38,6 +38,16 @@ router.route('/paginate').get(
   controller.getAllWithPagination
 );
 
+/*-───────────────────────────────── 
+| Admin | get all modules by capsuleId
+|  @figmaIndex 00-00
+|  @desc 
+└──────────────────────────────────*/
+router.route('/:capsuleId/modules').get(
+  auth(TRole.common),
+  controller.getAllModulesByCapsuleId 
+);
+
 router.route('/:id').get(
   // auth('common'),
   controller.getById

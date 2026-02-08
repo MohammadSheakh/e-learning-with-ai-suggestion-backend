@@ -9,6 +9,10 @@ import { logger } from '../../../shared/logger';
 import { IAdminCapsuleTopic } from '../adminCapsuleTopic/adminCapsuleTopic.interface';
 import { AdminCapsuleTopic } from '../adminCapsuleTopic/adminCapsuleTopic.model';
 import { TAdminCapsuleLevel } from './adminCapsule.constant';
+import { PaginateOptions } from '../../../types/paginate';
+import { AdminModules } from '../adminModules/adminModules.model';
+import PaginationService from '../../../common/service/paginationService';
+import ApiError from '../../../errors/ApiError';
 
 export class AdminCapsuleService extends GenericService<
   typeof AdminCapsule,
@@ -69,6 +73,94 @@ export class AdminCapsuleService extends GenericService<
       session.endSession();
     }
 
+  }
+
+  async getAllModulesByCapsuleId(
+    options: PaginateOptions,
+    capsuleId : string)
+  {
+    const capsule = await AdminCapsule.findOne(
+      { _id: capsuleId, isDeleted: false },
+      {
+        title: 1,
+        subTitle: 1,
+        description: 1,
+        price: 1,
+        level: 1,
+        estimatedTime: 1,
+        totalModule: 1,
+        attachments: 1,
+        introductionVideo: 1,
+      }
+    )
+    .populate([
+      { path: 'attachments', select: 'attachment' },
+      { path: 'introductionVideo', select: 'attachment' },
+    ])
+    .lean();
+
+    if (!capsule) {
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Capsule not found');
+    }
+
+    capsule.attachments = capsule.attachments.map((a: any) => a.attachment);
+    capsule.introductionVideo = capsule.introductionVideo.map(
+      (v: any) => v.attachment
+    );
+
+
+    const topics = await AdminCapsuleTopic.find(
+      { adminCapsuleId: capsuleId, isDeleted: false },
+      { title: 1 }
+    )
+    .sort({ createdAt: 1 })
+    .lean();
+
+
+    const modulePipeline = [
+      {
+        $match: {
+          capsuleId: new mongoose.Types.ObjectId(capsuleId),
+          isDeleted: false,
+        },
+      },
+      {
+        $lookup: {
+          from: 'attachments',
+          localField: 'attachments',
+          foreignField: '_id',
+          as: 'attachments',
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          description: 1,
+          estimatedTime: 1,
+          numberOfLessons: 1,
+          attachments: {
+            $map: {
+              input: '$attachments',
+              as: 'att',
+              in: '$$att.attachment',
+            },
+          },
+        },
+      },
+    ];
+
+    const modules = await PaginationService.aggregationPaginate(
+      AdminModules,
+      modulePipeline,
+      options // page, limit, sort
+    );
+
+    return {
+      capsule,
+      topics,
+      modules, // paginated result
+    };
+    
   }
 
 }

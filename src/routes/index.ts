@@ -22,6 +22,7 @@ import { QuestionRoute as JourneyQuestionRoute } from '../modules/journey.module
 import { AdminCapsuleCategoryRoute } from '../modules/adminCapsule.module/adminCapsuleCategory/adminCapsuleCategory.route';
 import { AdminCapsuleRoute } from '../modules/adminCapsule.module/adminCapsule/adminCapsule.route';
 import { AdminModulesRoute } from '../modules/adminCapsule.module/adminModules/adminModules.route';
+import { LessonRoute } from '../modules/adminCapsule.module/lesson/lesson.route';
 
 // import { ChatRoutes } from '../modules/chat/chat.routes';
 // import { MessageRoutes } from '../modules/message/message.routes';
@@ -84,6 +85,10 @@ const apiRoutes = [
   { // 🟢
     path: '/admin-modules',
     route: AdminModulesRoute,
+  },
+  {
+    path : '/admin-lessons',
+    route: LessonRoute,
   },
 
   ///////////////////////////////////////// Payment Transaction

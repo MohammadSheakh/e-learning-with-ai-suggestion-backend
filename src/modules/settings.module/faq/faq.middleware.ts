@@ -1,14 +1,14 @@
 //@ts-ignore
 import multer from "multer";
-import { processUploadedFilesForCreate, processUploadedFilesForUpdate } from "../../../middlewares/processUploadedFiles";
-import { TFolderName } from "../../../enums/folderNames";
+import { processUploadedFilesForCreate, processUploadedFilesForUpdate } from "../../middlewares/processUploadedFiles";
+import { TFolderName } from "../../enums/folderNames";
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 //---------------------------
 // 🥇 we move image upload thing to controller to middleware level
 //---------------------------
-export const imageUploadPipelineForCreateLesson = [
+export const imageUploadPipelineForCreateFaq = [
   [
     upload.fields([
       { name: 'attachments', maxCount: 1 }, // Allow up to 1 cover photo
@@ -17,15 +17,15 @@ export const imageUploadPipelineForCreateLesson = [
   processUploadedFilesForCreate([
     {
       name: 'attachments',
-      folder: TFolderName.adminLesson,
+      folder: TFolderName.trainingProgram,
       required: true, // optional
-      allowedMimeTypes: ['video/mp4'], // , 'application/pdf'
+      allowedMimeTypes: ['image/jpeg', 'image/png'], // , 'application/pdf', 'video/mp4',
     },
   ]),
 ];
 
 
-export const imageUploadPipelineForUpdateLesson = [
+export const imageUploadPipelineForUpdateFaq = [
   [
     upload.fields([
       { name: 'attachments', maxCount: 1 }, // Allow up to 1 cover photo

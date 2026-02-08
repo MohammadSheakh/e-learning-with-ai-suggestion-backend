@@ -8,10 +8,10 @@ export interface ILesson {
   
   title: string;
   attachments?: Types.ObjectId[]; //🔗🖼️
-  moduleRefId: Types.ObjectId; //🔗 FK to parent (e.g., Capsule or Roadmap)
-  duration: string; // e.g., "5m", "1h30m", "2d"
+  moduleId: Types.ObjectId; //🔗 FK to parent (e.g., Capsule or Roadmap)
+  estimatedTime: string; // e.g., "5m", "1h30m", "2d"
 
-  isDeleted? : boolean;  
+  isDeleted? : boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

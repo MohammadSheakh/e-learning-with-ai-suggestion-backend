@@ -1,21 +1,19 @@
 //@ts-ignore
 import express from 'express';
-import * as validation from './lesson.validation';
-import { LessonController} from './lesson.controller';
-import { ILesson } from './lesson.interface';
-import { validateFiltersForQuery } from '../../../middlewares/queryValidation/paginationQueryValidationMiddleware';
-import validateRequest from '../../../shared/validateRequest';
-import auth from '../../../middlewares/auth';
+import * as validation from './Faq.validation';
+import { FaqController} from './Faq.controller';
+import { IFaq } from './Faq.interface';
+import { validateFiltersForQuery } from '../../middlewares/queryValidation/paginationQueryValidationMiddleware';
+import validateRequest from '../../shared/validateRequest';
+import auth from '../../middlewares/auth';
 //@ts-ignore
 import multer from "multer";
-import { TRole } from '../../../middlewares/roles';
-import { imageUploadPipelineForCreateLesson } from './lesson.middleware';
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const router = express.Router();
 
-export const optionValidationChecking = <T extends keyof ILesson | 'sortBy' | 'page' | 'limit' | 'populate'>(
+export const optionValidationChecking = <T extends keyof IFaq | 'sortBy' | 'page' | 'limit' | 'populate'>(
   filters: T[]
 ) => {
   return filters;
@@ -29,22 +27,22 @@ const paginationOptions: Array<'sortBy' | 'page' | 'limit' | 'populate'> = [
 ];
 
 // const taskService = new TaskService();
-const controller = new LessonController();
+const controller = new FaqController();
 
 //
 router.route('/paginate').get(
-  //auth('common'),
+  auth(TRole.common),
   validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
   controller.getAllWithPagination
 );
 
 router.route('/:id').get(
-  // auth('common'),
+  auth(TRole.common),
   controller.getById
 );
 
 router.route('/:id').put(
-  //auth('common'),
+  auth(TRole.common),
   // validateRequest(validation.createHelpMessageValidationSchema),
   controller.updateById
 );
@@ -56,14 +54,14 @@ router.route('/').get(
 );
 
 /*-───────────────────────────────── 
-| Admin | create lesson for a admin module
-|  @figmaIndex 0-0
-|  @desc  
+|  | create  
+|  @figmaIndex 06-04
+|  @desc 
 └──────────────────────────────────*/
 router.route('/').post(
+  ...imageUploadPipelineForCreateFaq,
   auth(TRole.common),
-  ...imageUploadPipelineForCreateLesson,
-  // validateRequest(validation.createHelpMessageValidationSchema),
+  validateRequest(validation.createHelpMessageValidationSchema),
   controller.create
 );
 
@@ -77,4 +75,6 @@ router.route('/:id').delete(
   controller.softDeleteById
 );
 
-export const LessonRoute = router;
+
+
+export const FaqRoute = router;

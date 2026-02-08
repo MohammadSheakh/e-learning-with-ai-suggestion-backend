@@ -6,12 +6,10 @@ import paginate from '../../../common/plugins/paginate';
 
 const LessonSchema = new Schema<ILesson>(
   {
-    
     title: {
       type: String,
       required: [true, 'title is required'],
     },
-    
     attachments: [//🔗🖼️
       {
         type: Schema.Types.ObjectId,
@@ -19,16 +17,16 @@ const LessonSchema = new Schema<ILesson>(
         required: [false, 'attachments is not required'],
       }
     ],
-    moduleRefId: { //🔗
+    moduleId: { //🔗
       type: Schema.Types.ObjectId,
       ref: 'Capsule', // adjust ref if it points to Roadmap or other
-      required: [true, 'moduleRefId is required'],
+      required: [true, 'moduleId is required'],
     },
 
-    duration: {
+    estimatedTime: {
       type: String,
-      required: [true, 'duration is required'],
-      match: [/^(\d+[hmd])+/i, 'duration must be in format like "5m", "1h30m", "2d"'],
+      required: [true, 'estimatedTime is required'],
+      // match: [/^(\d+[hmd])+/i, 'duration must be in format like "5m", "1h30m", "2d"'],
     },
 
     isDeleted: {

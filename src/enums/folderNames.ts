@@ -6,6 +6,8 @@ export enum TFolderName {
     adminCapsuleCategory = `${parentFolder}/adminCapsuleCategory`,
     adminCapsule = `${parentFolder}/adminCapsule`,
     adminModules = `${parentFolder}/adminModules`,
+    adminLesson = `${parentFolder}/adminLesson`,
+    
     journey = `${parentFolder}/journey`,
     user = `${parentFolder}/user`,
     wallet = `${parentFolder}/wallet`,
