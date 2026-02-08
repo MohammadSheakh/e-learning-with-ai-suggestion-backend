@@ -6,13 +6,13 @@ import { TMentorClass } from './mentorProfile.constant';
 
 const MentorProfileSchema = new Schema<IMentorProfile>(
   {
-    attachments: [//🔗🖼️
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'Attachment',
-        required: [false, 'attachments is not required'],
-      }
-    ],
+    // attachments: [//🔗🖼️
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'Attachment',
+    //     required: [false, 'attachments is not required'],
+    //   }
+    // ],
     title: {
       type: String,
       required: [true, 'title is required'],

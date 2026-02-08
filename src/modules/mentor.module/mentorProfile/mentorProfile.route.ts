@@ -42,6 +42,15 @@ router.route('/:id').get(
   controller.getById
 );
 
+/*-─────────────────────────────────
+|  Update Profile Info With Phase Id 
+└──────────────────────────────────*/
+router.route('/update-mentor-profile').put(
+  auth(TRole.mentor),
+  // validateRequest(validation.createHelpMessageValidationSchema),
+  controller.updateMentorProfile
+);
+
 router.route('/:id').put(
   //auth('common'),
   // validateRequest(validation.createHelpMessageValidationSchema),
@@ -66,15 +75,15 @@ router.route('/').post(
   controller.create
 );
 
-router.route('/:id/permenent').delete(
-  auth(TRole.common),
-  controller.deleteById
-);
+// router.route('/:id/permenent').delete(
+//   auth(TRole.common),
+//   controller.deleteById
+// );
 
-router.route('/:id').delete(
-  auth(TRole.common),
-  controller.softDeleteById
-);
+// router.route('/:id').delete(
+//   auth(TRole.common),
+//   controller.softDeleteById
+// );
 
 
 

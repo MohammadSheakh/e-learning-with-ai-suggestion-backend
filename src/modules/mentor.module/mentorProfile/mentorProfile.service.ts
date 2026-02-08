@@ -11,4 +11,9 @@ export class MentorProfileService extends GenericService<
   constructor() {
     super(MentorProfile);
   }
+
+  async updateMentorProfile (data : string, mentorId: string) {
+    await this.
+  } 
+
 }
