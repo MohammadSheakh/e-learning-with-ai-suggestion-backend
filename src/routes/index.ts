@@ -25,6 +25,7 @@ import { AdminModulesRoute } from '../modules/adminCapsule.module/adminModules/a
 import { LessonRoute } from '../modules/adminCapsule.module/lesson/lesson.route';
 import { FaqCategoryRoute } from '../modules/settings.module/faqCategory/faqCategory.route';
 import { FaqRoute } from '../modules/settings.module/faq/faq.route';
+import { CalendlyRoute } from '../modules/calendly.module/calendly/calendly.route';
 
 // import { ChatRoutes } from '../modules/chat/chat.routes';
 // import { MessageRoutes } from '../modules/message/message.routes';
@@ -54,6 +55,12 @@ const apiRoutes = [
   { // 🟢
     path: '/questions',
     route: QuestionRoute,
+  },
+
+  /////////////////////////////////////////  Calendly
+  { // 🟢
+    path: '/calendly',
+    route: CalendlyRoute,
   },
   /////////////////////////////////////////  Journey
   { // 🟢

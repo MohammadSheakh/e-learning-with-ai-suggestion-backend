@@ -44,7 +44,7 @@ app.use(
 );
 
 // // Step 2: Handle OAuth callback
-app.post('/api/calendly/callback', express.raw({ type: 'application/json'  }), calendlyOAuthCallbackHandler);
+app.get('/api/calendly/callback', express.raw({ type: 'application/json'  }), calendlyOAuthCallbackHandler);
 
 app.post('/api/webhooks/calendly', express.raw({ type: 'application/json' , limit: '1mb' }), verifyCalendlySignature , calendlyWebHookHandler);
 

@@ -17,17 +17,21 @@ export class CalendlyController  {
       userId: req.user.id, 
       timestamp: Date.now() 
     })).toString('base64');
+
+    console.log("state :: ", state);
     
     const authUrl = this.calendlyService.getAuthUrl(state);
 
-    res.redirect(authUrl);
+    console.log("authUrl :: ", authUrl)
 
-    // sendResponse(res, {
-    //   code: StatusCodes.OK,
-    //   data: result,
-    //   message: `${this.modelName} created successfully`,
-    //   success: true,
-    // });
+    // res.redirect(authUrl);
+
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: authUrl,
+      message: `url received successfully`,
+      success: true,
+    });
   });
 
   // add more methods here if needed or override the existing ones 

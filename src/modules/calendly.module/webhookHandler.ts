@@ -33,15 +33,15 @@ export const calendlyOAuthCallbackHandler = async (req: Request, res: Response):
           const updatedUser = await User.findByIdAndUpdate(
                req.user.id,
                {
-               $set: {
-                    'calendly.userId': tokenData.calendly_user_uuid,
-                    'calendly.organizationId': tokenData.organization_uuid,
-                    'calendly.encryptedAccessToken': encrypt(tokenData.access_token),
-                    'calendly.webhookSubscriptionId': webhook.id,
-                    'calendly.profileUrl': userDetails.scheduling_url,
-                    'calendly.connectedAt': new Date(),
-                    'calendly.disconnectedAt': null
-               }
+                    $set: {
+                         'calendly.userId': tokenData.calendly_user_uuid,
+                         'calendly.organizationId': tokenData.organization_uuid,
+                         'calendly.encryptedAccessToken': encrypt(tokenData.access_token),
+                         'calendly.webhookSubscriptionId': webhook.id,
+                         'calendly.profileUrl': userDetails.scheduling_url,
+                         'calendly.connectedAt': new Date(),
+                         'calendly.disconnectedAt': null
+                    }
                },
                { new: true, runValidators: true }
           );
