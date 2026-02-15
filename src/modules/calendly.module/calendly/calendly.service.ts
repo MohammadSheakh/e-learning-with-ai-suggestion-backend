@@ -7,8 +7,6 @@ dotenv.config();
 
 export class CalendlyService{
   
-
-
   const CALENDLY_API = 'https://api.calendly.com';
 
   // Get OAuth authorization URL

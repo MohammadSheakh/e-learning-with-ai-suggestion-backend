@@ -1,12 +1,13 @@
 import crypto from 'crypto';
 import dotenv from 'dotenv';
-import Buffer from 'buffer';
+import { config } from '../config';
 dotenv.config();
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
 const AUTH_TAG_LENGTH = 16;
-const KEY = Buffer.from(process.env.ENCRYPTION_KEY, 'hex'); // Must be 32 bytes
+
+const KEY = Buffer.from(config.calendly.encryptionKey, 'hex'); // Must be 32 bytes
 
 export function encrypt(text:string) {
   if (!text) return null;

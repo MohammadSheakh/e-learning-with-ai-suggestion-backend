@@ -1,10 +1,10 @@
 import crypto from 'crypto';
-
+import Buffer from 'buffer'
 import dotenv from 'dotenv';
 dotenv.config();
 
 // MUST use raw body parser before this middleware!
-const verifyCalendlySignature = (req, res, next) => {
+export const verifyCalendlySignature = (req, res, next) => {
   const signature = req.headers['x-calendly-signature'];
   const payload = req.rawBody; // Set by raw body parser
   
@@ -37,5 +37,3 @@ const verifyCalendlySignature = (req, res, next) => {
     return res.status(400).json({ error: 'Invalid JSON payload' });
   }
 };
-
-module.exports = verifyCalendlySignature;

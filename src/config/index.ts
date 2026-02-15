@@ -17,6 +17,10 @@ export const config = {
   //   },
   // },
 
+  calendly:{
+    encryptionKey : process.env.ENCRYPTION_KEY,
+  },
+
   firebase : {
     translation : process.env.Firebase_Service_Account_Path_For_Translation,
   },

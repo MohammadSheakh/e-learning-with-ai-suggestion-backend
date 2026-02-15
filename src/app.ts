@@ -16,6 +16,7 @@ import i18nextMiddleware from 'i18next-http-middleware';
 import webhookHandler from './modules/payment.module/stripeWebhook/webhookHandler';
 import { welcome } from './utils/welcome';
 import { calendlyOAuthCallbackHandler, calendlyWebHookHandler }  from './modules/calendly.module/webhookHandler';
+import { verifyCalendlySignature } from './middlewares/calendly/verifyCalendlySignature';
 // import i18nextFsBackend from 'i18next-fs-backend';
 
 const app = express();
@@ -43,9 +44,9 @@ app.use(
 );
 
 // // Step 2: Handle OAuth callback
-app.post('/api/calendly/callback', express.raw({ type: 'application/json' }), calendlyOAuthCallbackHandler);
+app.post('/api/calendly/callback', express.raw({ type: 'application/json'  }), calendlyOAuthCallbackHandler);
 
-app.post('/api/webhooks/calendly', express.raw({ type: 'application/json' }), calendlyWebHookHandler);
+app.post('/api/webhooks/calendly', express.raw({ type: 'application/json' , limit: '1mb' }), verifyCalendlySignature , calendlyWebHookHandler);
 
 
 app.use(express.json());
