@@ -36,7 +36,7 @@ export class CalendlyService{
   // Create webhook subscription
   async createWebhookSubscription(accessToken: string) {
     const response = await axios.post(
-      `${this.CALENDLY_API}/webhook_subscriptions`,
+      `${this.CALENDLY_API}/webhook_subscriptions`.trim(),
       {
         url: process.env.CALENDLY_WEBHOOK_URL,
         events: ['invitee.created', 'invitee.canceled'],

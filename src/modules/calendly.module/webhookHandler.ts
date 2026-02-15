@@ -13,22 +13,34 @@ const calendlyService = new CalendlyService();
 export const calendlyOAuthCallbackHandler = async (req: Request, res: Response): Promise<void> => {
      try {
           const { code, state } = req.query;
+
+          console.log("code .. state .. ", code, " -- ", state);
           
           // Validate state (prevent CSRF)
           if (!state) throw new Error('Invalid state parameter');
           const stateData = JSON.parse(Buffer.from(state, 'base64').toString());
-          if (stateData.userId !== req.user.id) throw new Error('State mismatch');
+          
+          // if (stateData.userId !== req.user.id) throw new Error('State mismatch');
+
           if (Date.now() - stateData.timestamp > 10 * 60 * 1000) throw new Error('State expired');
           
           // Exchange code for tokens
           const tokenData = await calendlyService.getAccessToken(code);
+
+          console.log("tokenData :: ", tokenData);
           
           // Get user details for profile URL
           const userDetails = await calendlyService.getUserDetails(tokenData.access_token);
           
+
+          console.log("userDetails :: ", userDetails);
+
           // Create webhook subscription
           const webhook = await calendlyService.createWebhookSubscription(tokenData.access_token);
           
+
+          console.log("webhook :: ", webhook);
+
           // Update user record (ENCRYPT token before saving!)
           const updatedUser = await User.findByIdAndUpdate(
                req.user.id,
@@ -40,7 +52,7 @@ export const calendlyOAuthCallbackHandler = async (req: Request, res: Response):
                          'calendly.webhookSubscriptionId': webhook.id,
                          'calendly.profileUrl': userDetails.scheduling_url,
                          'calendly.connectedAt': new Date(),
-                         'calendly.disconnectedAt': null
+                         'calendly.disconnectedAt': null,
                     }
                },
                { new: true, runValidators: true }

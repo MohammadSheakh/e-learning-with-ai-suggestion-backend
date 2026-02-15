@@ -8,7 +8,6 @@ import { Buffer } from 'buffer';
 export class CalendlyController  {
   calendlyService = new CalendlyService();
 
-  
 
   redirectToCalendlyAuth = catchAsync(async (req: Request, res: Response) => {
     
