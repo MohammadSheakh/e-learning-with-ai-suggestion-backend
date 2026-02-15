@@ -15,6 +15,7 @@ import i18next from './i18n/i18n'; // Import the i18next configuration
 import i18nextMiddleware from 'i18next-http-middleware';
 import webhookHandler from './modules/payment.module/stripeWebhook/webhookHandler';
 import { welcome } from './utils/welcome';
+import { calendlyOAuthCallbackHandler, calendlyWebHookHandler }  from './modules/calendly.module/webhookHandler';
 // import i18nextFsBackend from 'i18next-fs-backend';
 
 const app = express();
@@ -41,7 +42,10 @@ app.use(
   })
 );
 
-app.post('/api/v1/stripe/webhook', express.raw({ type: 'application/json' }), webhookHandler);
+// // Step 2: Handle OAuth callback
+app.post('/api/calendly/callback', express.raw({ type: 'application/json' }), calendlyOAuthCallbackHandler);
+
+app.post('/api/webhooks/calendly', express.raw({ type: 'application/json' }), calendlyWebHookHandler);
 
 
 app.use(express.json());

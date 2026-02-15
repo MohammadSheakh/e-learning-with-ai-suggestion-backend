@@ -61,20 +61,28 @@ const userSchema = new Schema<IUser, UserModal>(
       default: { imageUrl: '/uploads/users/user.png' },
     },
 
-    // fcmToken: { type: String, default: null }, 
-    //-- now we Store Firebase Token into different table 
-
-  
-    //------- we move this status to different table
-    //-------- as we have different status for different user
-    
-
     isEmailVerified: {
       type: Boolean,
       default: false,
     },
     phoneNumber : { // TODO : add proper validation
       type: String,
+    },
+
+    // 🔑 CALendly Integration Fields
+    calendly: {
+      userId: { 
+        type: String, 
+        unique: true,
+        sparse: true,
+        index: true 
+      },
+      organizationId: String,
+      encryptedAccessToken: String, // NEVER store raw tokens
+      webhookSubscriptionId: String,
+      profileUrl: String, // e.g., "https://calendly.com/mentor-john"
+      connectedAt: Date,
+      disconnectedAt: Date
     },
     
     lastPasswordChange: { type: Date },
