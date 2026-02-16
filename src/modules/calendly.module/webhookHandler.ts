@@ -1,5 +1,6 @@
 //@ts-ignore
 import { Request, Response } from 'express';
+import { Secret } from 'jsonwebtoken';
 //@ts-ignore
 import { StatusCodes } from 'http-status-codes';
 import { CalendlyService } from './calendly/calendly.service';
@@ -7,6 +8,9 @@ import { User } from '../user.module/user/user.model';
 import { encrypt } from '../../services/calendly.service';
 import { handleInviteeCreated } from './webhookHandlers/handleInviteeCreated';
 import { handleInviteeCanceled } from './webhookHandlers/handleMeetingCanceled';
+import { TokenService } from '../token/token.service';
+import { config } from '../../config';
+import { TokenType } from '../token/token.interface';
 
 const calendlyService = new CalendlyService();
 
@@ -19,6 +23,8 @@ export const calendlyOAuthCallbackHandler = async (req: Request, res: Response):
           // Validate state (prevent CSRF)
           if (!state) throw new Error('Invalid state parameter');
           const stateData = JSON.parse(Buffer.from(state, 'base64').toString());
+
+          console.log("stateData =>> " , stateData);
           
           // if (stateData.userId !== req.user.id) throw new Error('State mismatch');
 
@@ -28,27 +34,30 @@ export const calendlyOAuthCallbackHandler = async (req: Request, res: Response):
           const tokenData = await calendlyService.getAccessToken(code);
 
           console.log("tokenData :: ", tokenData);
-          
-          // Get user details for profile URL
+
           const userDetails = await calendlyService.getUserDetails(tokenData.access_token);
           
 
           console.log("userDetails :: ", userDetails);
+     
+         
 
           // Create webhook subscription
-          const webhook = await calendlyService.createWebhookSubscription(tokenData.access_token);
+          const webhook = await calendlyService.createWebhookSubscription(tokenData.access_token, userDetails.uri);
           
-
           console.log("webhook :: ", webhook);
+
+          
+          const userId = stateData.userId; // ✅ your DB userId
 
           // Update user record (ENCRYPT token before saving!)
           const updatedUser = await User.findByIdAndUpdate(
-               req.user.id,
+               userId,
                {
                     $set: {
-                         'calendly.userId': tokenData.calendly_user_uuid,
-                         'calendly.organizationId': tokenData.organization_uuid,
-                         'calendly.encryptedAccessToken': encrypt(tokenData.access_token),
+                         'calendly.userId': tokenData.owner,
+                         'calendly.organizationId': tokenData.organization,
+                         'calendly.encryptedAccessToken': tokenData.access_token, // need to store hashed 
                          'calendly.webhookSubscriptionId': webhook.id,
                          'calendly.profileUrl': userDetails.scheduling_url,
                          'calendly.connectedAt': new Date(),
@@ -60,6 +69,7 @@ export const calendlyOAuthCallbackHandler = async (req: Request, res: Response):
           
           // Success redirect
           res.redirect(`/dashboard?calendly=connected&name=${encodeURIComponent(userDetails.name)}`);
+     
      } catch (error) {
           console.error('Calendly OAuth error:', error);
           res.redirect(`/dashboard?calendly=error&message=${encodeURIComponent(error.message)}`);
@@ -107,3 +117,6 @@ export const calendlyWebHookHandler = async (req: Request, res: Response): Promi
      // DO NOT throw - we already sent 200 response
      }
 };
+
+
+

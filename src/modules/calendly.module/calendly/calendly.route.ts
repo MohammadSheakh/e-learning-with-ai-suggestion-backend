@@ -28,6 +28,13 @@ router.route('/connect').get(
   controller.redirectToCalendlyAuth
 );
 
+router.route('/delete-subscription').get(
+  auth(TRole.common),
+  controller.disconnectCalendly
+);
+
+
+
 // router.route('/paginate').get(
 //   auth(TRole.common),
 //   validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
