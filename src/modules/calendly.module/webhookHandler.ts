@@ -58,7 +58,7 @@ export const calendlyOAuthCallbackHandler = async (req: Request, res: Response):
                          'calendly.userId': tokenData.owner,
                          'calendly.organizationId': tokenData.organization,
                          'calendly.encryptedAccessToken': tokenData.access_token, // need to store hashed 
-                         'calendly.webhookSubscriptionId': webhook.id,
+                         'calendly.webhookSubscriptionId': webhook.uri,
                          'calendly.profileUrl': userDetails.scheduling_url,
                          'calendly.connectedAt': new Date(),
                          'calendly.disconnectedAt': null,
