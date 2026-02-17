@@ -1,6 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
 import axios from 'axios';
 import dotenv from 'dotenv';
+import { User } from '../../user.module/user/user.model';
+import ApiError from '../../../errors/ApiError';
 
 dotenv.config();
 
@@ -94,6 +96,107 @@ export class CalendlyService{
       { headers: { Authorization: `Bearer ${accessToken}` } }
     );
     return response.data.resource;
+  }
+
+  //=============================  Upcoming scheduled events list  =====================
+
+  async getScheduledEvents(accessToken: string, userUri: string) {
+    const res = await axios.get(`https://api.calendly.com/scheduled_events`, {
+      params: {
+        user: userUri,
+        sort: 'start_time:desc',  // most recent first
+        count: 20,                // adjust as needed
+        // status: 'active',      // uncomment to filter only active bookings
+      },
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    return {
+      events: res.data.collection,
+      pagination: res.data.pagination, // has next_page_token if needed
+    };
+  }
+
+  // service
+  async getEventInvitees(accessToken: string, eventUuid: string) {
+    const res = await axios.get(
+      `https://api.calendly.com/scheduled_events/${eventUuid}/invitees`,
+      {
+        params: {
+          count: 20,
+          status: 'active', // remove this to include cancelled invitees too
+        },
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+
+    return {
+      invitees: res.data.collection,
+      pagination: res.data.pagination,
+    };
+  }
+
+  async getEventTypes(accessToken: string, userUri: string) {
+    const res = await axios.get('https://api.calendly.com/event_types', {
+      params: {
+        user: userUri,
+        active: true,
+        count: 20,
+      },
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    return {
+      eventTypes: res.data.collection,
+      pagination: res.data.pagination,
+    };
+  }
+
+
+  //=============================  Get new accessToken By refreshToken  =====================
+
+
+  async getValidAccessToken(userId: string) {
+    const user = await User.findById(userId).select('calendly');
+
+    if (!user?.calendly?.encryptedAccessToken) {
+      throw new ApiError(StatusCodes.UNAUTHORIZED, 'Calendly not connected');
+    }
+
+    const isExpired = user.calendly.expiresAt
+      ? new Date() >= new Date(user.calendly.expiresAt)
+      : false;
+
+    if (isExpired) {
+      console.log('Access token expired, refreshing...');
+      return await this.refreshAccessToken(userId, user.calendly.refreshToken);
+    }
+
+    return user.calendly.encryptedAccessToken;
+  }
+
+  async refreshAccessToken(userId: string, refreshToken: string) {
+    const res = await axios.post(
+      'https://auth.calendly.com/oauth/token',
+      {
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: process.env.CALENDLY_CLIENT_ID,
+        client_secret: process.env.CALENDLY_CLIENT_SECRET,
+      },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+
+    const { access_token, refresh_token, expires_in } = res.data;
+
+    // Save new tokens to DB
+    await User.findByIdAndUpdate(userId, {
+      'calendly.encryptedAccessToken': access_token,
+      'calendly.refreshToken': refresh_token,
+      'calendly.expiresAt': new Date(Date.now() + expires_in * 1000),
+    });
+
+    return access_token;
   }
 
 

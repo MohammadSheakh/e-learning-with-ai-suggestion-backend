@@ -22,15 +22,51 @@ const paginationOptions: Array<'sortBy' | 'page' | 'limit' | 'populate'> = [
 // const taskService = new TaskService();
 const controller = new CalendlyController();
 
+/*-─────────────────────────────────
+|  Connect with calendly account for mentor or admin
+└──────────────────────────────────*/
 // Step 1: Redirect to Calendly OAuth
 router.route('/connect').get(
   auth(TRole.common),
   controller.redirectToCalendlyAuth
 );
 
+/*-─────────────────────────────────
+|  Remove calendly account
+└──────────────────────────────────*/
 router.route('/delete-subscription').get(
   auth(TRole.common),
   controller.disconnectCalendly
+);
+
+
+/*-─────────────────────────────────
+|  Get Admins calendly account for first time meeting as mentor
+└──────────────────────────────────*/
+
+
+/*-─────────────────────────────────
+|  Admin |  List meeting templates (event types)
+└──────────────────────────────────*/
+router.route('/event-types').get(
+  auth(TRole.admin, TRole.mentor),
+  controller.getEventTypes
+);
+
+/*-─────────────────────────────────
+|  Admin |  real bookings (scheduled events)
+└──────────────────────────────────*/
+router.route('/scheduled-events').get(
+  auth(TRole.admin, TRole.mentor),
+  controller.getScheduledEvents
+);
+
+/*-─────────────────────────────────
+|  Admin |  Who booked a specific meeting
+└──────────────────────────────────*/
+router.route('/event-invitees/:eventUuid').get(
+  auth(TRole.admin, TRole.mentor),
+  controller.getEventInvitees
 );
 
 

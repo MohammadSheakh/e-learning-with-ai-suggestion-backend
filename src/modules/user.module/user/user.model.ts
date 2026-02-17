@@ -77,8 +77,17 @@ const userSchema = new Schema<IUser, UserModal>(
         sparse: true,
         index: true 
       },
-      organizationId: String,
+
+      // ✅ store full URIs — needed for all API calls
+      userUri: String,
+      organizationUri : String,
+
+      // tokens
       encryptedAccessToken: String, // NEVER store raw tokens
+      refreshToken : String,
+      expiresAt : Date,
+
+      // meta
       webhookSubscriptionId: String,
       profileUrl: String, // e.g., "https://calendly.com/mentor-john"
       connectedAt: Date,

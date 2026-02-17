@@ -14,6 +14,9 @@ import { TokenType } from '../token/token.interface';
 
 const calendlyService = new CalendlyService();
 
+/*-─────────────────────────────────
+|  💎✨🔍 -> V2 Found which is corrected 
+└──────────────────────────────────*/
 export const calendlyOAuthCallbackHandler = async (req: Request, res: Response): Promise<void> => {
      try {
           const { code, state } = req.query;
@@ -59,6 +62,7 @@ export const calendlyOAuthCallbackHandler = async (req: Request, res: Response):
                          'calendly.organizationId': tokenData.organization,
                          'calendly.encryptedAccessToken': tokenData.access_token, // need to store hashed 
                          'calendly.webhookSubscriptionId': webhook.uri,
+                         'calendly.refreshToken': tokenData.refresh_token,
                          'calendly.profileUrl': userDetails.scheduling_url,
                          'calendly.connectedAt': new Date(),
                          'calendly.disconnectedAt': null,
@@ -74,6 +78,81 @@ export const calendlyOAuthCallbackHandler = async (req: Request, res: Response):
           console.error('Calendly OAuth error:', error);
           res.redirect(`/dashboard?calendly=error&message=${encodeURIComponent(error.message)}`);
      }
+};
+
+
+export const calendlyOAuthCallbackHandlerV2 = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { code, state } = req.query;
+
+    // 1. validate state
+    if (!state) throw new Error('Invalid state parameter');
+
+    const stateData = JSON.parse(
+      Buffer.from(state as string, 'base64').toString('utf-8')
+    );
+
+    if (Date.now() - stateData.timestamp > 10 * 60 * 1000) {
+      throw new Error('State expired');
+    }
+
+    const userId = stateData.userId;
+
+    // 2. exchange code for tokens
+    const tokenData = await calendlyService.getAccessToken(code as string);
+    console.log('tokenData ::', tokenData);
+
+    // 3. get user details from Calendly
+    const userDetails = await calendlyService.getUserDetails(
+      tokenData.access_token
+    );
+    console.log('userDetails ::', userDetails);
+
+    // 4. create webhook subscription
+    const webhook = await calendlyService.createWebhookSubscription(
+      tokenData.access_token,
+      userDetails.uri
+    );
+    console.log('webhook ::', webhook);
+
+    // 5. ✅ save everything to DB
+    await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          // ✅ store full URIs — needed for all API calls
+          'calendly.userUri': userDetails.uri,
+          'calendly.organizationUri': userDetails.current_organization,
+
+          // tokens
+          'calendly.encryptedAccessToken': tokenData.access_token,
+          'calendly.refreshToken': tokenData.refresh_token,
+          'calendly.expiresAt': new Date(Date.now() + tokenData.expires_in * 1000), // ✅
+
+          // meta
+          'calendly.webhookSubscriptionUri': webhook?.uri || null,
+          'calendly.profileUrl': userDetails.scheduling_url,
+          'calendly.connectedAt': new Date(),
+          'calendly.disconnectedAt': null,
+        },
+      },
+      { new: true, runValidators: true }
+    );
+
+    // 6. redirect to frontend
+    res.redirect(
+      `${process.env.FRONTEND_URL}/dashboard?calendly=connected&name=${encodeURIComponent(userDetails.name)}`
+    );
+
+  } catch (error) {
+    console.error('Calendly OAuth error:', error);
+    res.redirect(
+      `${process.env.FRONTEND_URL}/dashboard?calendly=error&message=${encodeURIComponent(error.message)}`
+    );
+  }
 };
 
 export const calendlyWebHookHandler = async (req: Request, res: Response): Promise<void> => {

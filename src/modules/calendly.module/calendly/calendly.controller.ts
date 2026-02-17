@@ -5,6 +5,8 @@ import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import { Buffer } from 'buffer';
 import axios from 'axios';
+import { User } from '../../user.module/user/user.model';
+import ApiError from '../../../errors/ApiError';
 
 export class CalendlyController  {
   calendlyService = new CalendlyService();
@@ -72,18 +74,134 @@ export class CalendlyController  {
 
   disconnectCalendly = catchAsync(async (req: Request, res: Response) => {
 
-    const userId = req.user.id;
+  
+    const {  organization } = req.query;
 
-    const { accessToken, organization } = req.query;
+    // 1. get user from DB
+    const user = await User.findById(req.user.userId).select('calendly ');
+
+    const accessToken = await this.calendlyService.getValidAccessToken(req.user.userId);
 
     // 2️⃣ delete webhooks FIRST
     await this.calendlyService.deleteAllWebhooks(accessToken, organization);
+
+    // 3. ✅ clear calendly data from DB
+    await User.findByIdAndUpdate(req.user.userId, {
+      $set: {
+        'calendly.disconnectedAt': new Date(),
+      },
+      $unset: {
+        'calendly.encryptedAccessToken': '',
+        'calendly.refreshToken': '',
+        'calendly.userUri': '',
+        'calendly.organizationUri': '',
+        'calendly.profileUrl': '',
+        'calendly.expiresAt': '',
+      },
+    });
 
     sendResponse(res, {
       code: StatusCodes.OK,
       success: true,
       message: "Calendly disconnected successfully",
       data: null,
+    });
+  });
+
+
+  getScheduledEvents = catchAsync(async (req: Request, res: Response) => {
+
+    // ✅ always get a valid (possibly refreshed) token
+    const accessToken = await this.calendlyService.getValidAccessToken(req.user.userId);
+
+    const me = await axios.get(
+        'https://api.calendly.com/users/me',
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+
+
+    console.log("me :: ", me);  
+
+    const userUri = me.data.resource.uri;
+
+    const data = await this.calendlyService.getScheduledEvents(
+      accessToken,
+      userUri
+    );
+
+    const user = await User.findById(req.user.userId).select('calendly name role');
+    console.log("user =>getScheduledEvents> ", user);
+
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      success: true,
+      message: "Upcoming scheduled events list retrive successfully",
+      data: data,
+    });
+  });
+
+  getEventTypes = catchAsync(async (req: Request, res: Response) => {
+
+
+    const accessToken = await this.calendlyService.getValidAccessToken(req.user.userId);
+
+    const user = await User.findById(req.user.userId).select('calendly name role');
+
+
+
+    // if (!user?.calendly?.encryptedAccessToken) {
+    //   throw new ApiError(StatusCodes.UNAUTHORIZED, 'Calendly not connected');
+    // }
+
+    const me = await axios.get(
+      'https://api.calendly.com/users/me',
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+
+
+    // console.log("me :: ", me);  
+
+    const userUri = me.data.resource.uri;
+
+    const data = await this.calendlyService.getEventTypes(
+      accessToken,
+      userUri
+    );
+
+    console.log("user =>getEventTypes> ", user);
+
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      success: true,
+      message: 'Event types retrieved successfully',
+      data,
+    });
+  });
+
+
+  // controller
+  getEventInvitees = catchAsync(async (req: Request, res: Response) => {
+    const { eventUuid } = req.params;
+    const userId = req.user.userId;
+
+    const user = await User.findById(userId).select('calendly name role');
+
+    if (!user?.calendly?.encryptedAccessToken) {
+      throw new ApiError(StatusCodes.UNAUTHORIZED, 'Calendly not connected');
+    }
+
+    const data = await this.calendlyService.getEventInvitees(
+      user.calendly.encryptedAccessToken,
+      eventUuid
+    );
+
+    console.log("user =>getEventInvitees> ", user);
+
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      success: true,
+      message: 'Event invitees retrieved successfully',
+      data,
     });
   });
 
