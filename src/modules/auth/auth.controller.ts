@@ -247,7 +247,10 @@ const googleLogin = async (idToken: string,
 
         // Save FCM token
         if (fcmToken) {
-          localUser.fcmToken = fcmToken;
+          // As this Marie Wagner Project is Website .. so this project have no fcmToken usecase
+
+          // For a mobile application usecase .. we need to save fcmTokens to different models .. 
+
           await localUser.save();
         }
 

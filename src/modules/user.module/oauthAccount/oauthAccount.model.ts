@@ -7,7 +7,7 @@ import { TAuthProvider } from './oauthAccount.constant';
 
 const OAuthAccountSchema = new Schema<IOAuthAccount>(
   {
-    userId: {
+    userId: { //🔗 back reference
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
@@ -26,15 +26,6 @@ const OAuthAccountSchema = new Schema<IOAuthAccount>(
       // Ensure uniqueness per provider to prevent duplicate links
       unique: true, // or use compound index with authProvider
     },
-    email: {
-      type: String,
-      lowercase: true,
-      // Optional: you can add validation like email format if needed
-    },
-    isVerified: {
-      type: Boolean,
-      default: false,
-    },
     accessToken: {
       type: String,
       // ⚠️ Store encrypted! Never plain text.
@@ -43,9 +34,19 @@ const OAuthAccountSchema = new Schema<IOAuthAccount>(
       type: String,
       // ⚠️ Store encrypted!
     },
+    email: {
+      type: String,
+      lowercase: true,
+      // Optional: you can add validation like email format if needed
+    },
     tokenExpiry: {
       type: Date,
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    
     isDeleted: {
       type: Boolean,
       default: false,
