@@ -95,6 +95,21 @@ export async function createOTP(key: string) {
   return code;
 }
 
+
+async storeOTP(email: string, otp: string): Promise<void> {
+    const key = `${authConfig.redis.otpPrefix}${email}`;
+    await this.client.setex(
+      key, 
+      authConfig.otp.expiresIn, 
+      JSON.stringify({
+        otp,
+        attempts: 0,
+        createdAt: new Date().toISOString()
+      })
+    );
+  }
+
+
 export async function verifyOTP(key: string, input: string) {
   const data = await redis.get(key);
   if (!data) throw new Error('OTP expired');

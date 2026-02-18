@@ -20,6 +20,14 @@ export interface IOAuthAccount {
   updatedAt?: Date;
 }
 
+export interface OAuthPayload {
+  provider:   'google' | 'apple';
+  providerId: string;
+  email:      string;
+  name?:      string;
+  picture?:   string;
+}
+
 export interface IOAuthAccountModel extends Model<IOAuthAccount> {
   paginate: (
     query: Record<string, any>,
