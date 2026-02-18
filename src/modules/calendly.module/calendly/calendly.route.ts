@@ -70,7 +70,6 @@ router.route('/event-invitees/:eventUuid').get(
 );
 
 
-
 // router.route('/paginate').get(
 //   auth(TRole.common),
 //   validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),

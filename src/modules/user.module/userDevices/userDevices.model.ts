@@ -36,6 +36,9 @@ const UserDevicesSchema = new Schema<IUserDevices>(
       type: String,
       trim: true,
     },
+    
+    // we can add location also 
+
     lastActive: {
       type: Date,
     },

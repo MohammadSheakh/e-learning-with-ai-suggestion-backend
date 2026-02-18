@@ -3,6 +3,7 @@ import { model, Schema } from 'mongoose';
 import { IUserRoleData, IUserRoleDataModel } from './sessionStore.interface';
 import paginate from '../../../common/plugins/paginate';
 
+// This enables logout-all-devices, revoke device, detect token theft.
 const UserRoleDataSchema = new Schema<IUserRoleData>(
   {
     sessionId: {
@@ -17,6 +18,13 @@ const UserRoleDataSchema = new Schema<IUserRoleData>(
         type : String,
         required : true,
     },
+    expiresAt : { //🆕
+      type : Date,
+    },
+    rotatedFrom : { // 🆕 Previous session Id
+        type : String,
+        required : true,
+    },
     deviceId: { //🔗
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -24,6 +32,9 @@ const UserRoleDataSchema = new Schema<IUserRoleData>(
     },
     isRevoked : { //🆕
       type : Boolean,
+    },
+    revokedAt : { //🆕
+      type : Date,
     },
     lastUsedAt : { //🆕
         type : Date,

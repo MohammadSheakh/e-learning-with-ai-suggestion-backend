@@ -49,9 +49,11 @@ const userSchema = new Schema<IUser, UserModal>(
       },
       required: [true, 'Role is required'],
     },
+
+    // nullable for social login .. 
     password: {
       type: String,
-      required: [true, 'Password is required'],
+      required: [false, 'Password is not required'],
       select: false,
       minlength: [8, 'Password must be at least 8 characters long'],
     },

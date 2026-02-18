@@ -74,7 +74,6 @@ export class CalendlyController  {
 
   disconnectCalendly = catchAsync(async (req: Request, res: Response) => {
 
-  
     const {  organization } = req.query;
 
     // 1. get user from DB
@@ -178,8 +177,6 @@ export class CalendlyController  {
     });
   });
 
-
-  // controller
   getEventInvitees = catchAsync(async (req: Request, res: Response) => {
     const { eventUuid } = req.params;
     const userId = req.user.userId;

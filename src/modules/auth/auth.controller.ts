@@ -26,7 +26,7 @@ import { translateTextToTargetLang } from '../../utils/translateTextToTargetLang
 // const APPLE_PRIVATE_KEY = process.env.APPLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-const client = new OAuth2Client(CLIENT_ID);
+const googleClient = new OAuth2Client(CLIENT_ID);
 
 const register = catchAsync(async (req :Request, res:Response) => {
 
@@ -165,7 +165,7 @@ const googleLogin = async (idToken: string,
  ) => {
   try {
     // 🔐 Verify ID token
-    const ticket = await client.verifyIdToken({
+    const ticket = await googleClient.verifyIdToken({
       idToken,
       audience: CLIENT_ID,
     });
