@@ -584,6 +584,11 @@ const logout = async (refreshToken: string) => {};
 
 const refreshAuth = async (refreshToken: string) => {};
 
+
+const googleLoginV2 = async () => {
+
+}
+
 export const AuthService = {
   createUser,
   createUserV2,

@@ -26,6 +26,9 @@ import { LessonRoute } from '../modules/adminCapsule.module/lesson/lesson.route'
 import { FaqCategoryRoute } from '../modules/settings.module/faqCategory/faqCategory.route';
 import { FaqRoute } from '../modules/settings.module/faq/faq.route';
 import { CalendlyRoute } from '../modules/calendly.module/calendly/calendly.route';
+import { AdminCapsuleReviewRoute } from '../modules/review.module/adminCapsuleReview/adminCapsuleReview.route';
+import { MentorReviewRoute } from '../modules/review.module/mentorReview/mentorReview.route';
+import { PurchasedJourneyRoute } from '../modules/journey.module/purchasedJourney/purchasedJourney.route';
 
 // import { ChatRoutes } from '../modules/chat/chat.routes';
 // import { MessageRoutes } from '../modules/message/message.routes';
@@ -67,6 +70,10 @@ const apiRoutes = [
     path: '/journey',
     route: JourneyRoute,
   },
+  { // 🟢
+    path: '/purchased-journey',
+    route: PurchasedJourneyRoute,
+  },
 
   { // 🟢
     path: '/journey-capusule',
@@ -82,6 +89,13 @@ const apiRoutes = [
     route: JourneyQuestionRoute,
   },
 
+  /////////////////////////////////////////  Mentor Review
+
+  { // 🟢
+    path: '/mentor-review',
+    route: MentorReviewRoute,
+  },
+
   /////////////////////////////////////////  Admin Capsule
   { // 🟢
     path: '/admin-capsule-categories',
@@ -91,6 +105,12 @@ const apiRoutes = [
     path: '/admin-capsules',
     route: AdminCapsuleRoute,
   },
+
+  { // 🟢
+    path: '/admin-capsules-reviews',
+    route: AdminCapsuleReviewRoute,
+  },
+
   { // 🟢
     path: '/admin-modules',
     route: AdminModulesRoute,
@@ -167,10 +187,7 @@ const apiRoutes = [
     route: ContactUsRoute,
   },
   ///////////////////////////////////////////// Reviews
-  // {
-  //   path: '/reviews',
-  //   route: ReviewRoute,
-  // },
+
   {
     path: '/attachments',
     route: AttachmentRoutes,
@@ -184,10 +201,10 @@ const apiRoutes = [
     route: MessageRoute,
   },
 
-  // {
-  //   path: '/payments',
-  //   route: PaymentTransactionRoute,
-  // },
+  {
+    path: '/payments',
+    route: PaymentTransactionRoute,
+  },
 
   //////////////////////////////////////// Subscription Or Purchase
   // {  // 🟢 from kappes

@@ -26,7 +26,7 @@ const paymentTransactionSchema = new Schema<IPaymentTransaction>(
       type: String,
       enum: [
         TTransactionFor.UserSubscription, // previously it was SubscriptionPlan
-        TTransactionFor.ServiceBooking,
+        TTransactionFor.PurchasedJourney,
       ],
       required: [true, `referenceFor is required .. it can be  ${Object.values(TTransactionFor).join(
         ', '
@@ -70,7 +70,7 @@ const paymentTransactionSchema = new Schema<IPaymentTransaction>(
     },
     currency: {
       type: String,
-      enum: [TCurrency.bdt], // BDT
+      enum: [TCurrency.usd], // BDT
       required: true
     },
     paymentStatus: {

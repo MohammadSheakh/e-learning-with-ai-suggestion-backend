@@ -11,6 +11,7 @@ import multer from "multer";
 import { TRole } from '../../../middlewares/roles';
 import { imageUploadPipelineForCreateCapsule } from './capsule.middleware';
 import { injectUserReference } from '../../../middlewares/injectUserReference';
+import { setQueryOptions } from '../../../middlewares/setQueryOptions';
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -32,11 +33,22 @@ const paginationOptions: Array<'sortBy' | 'page' | 'limit' | 'populate'> = [
 // const taskService = new TaskService();
 const controller = new CapsuleController();
 
-//
+/*-───────────────────────────────── 
+| Student | Exploration Journey | get all capsule by journeyId
+|  @figmaIndex 02
+|  @desc admin can see a all modules and all questions for a capsule.. 
+└──────────────────────────────────*/
 router.route('/paginate').get(
   //auth('common'),
-  validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
-  controller.getAllWithPagination
+  validateFiltersForQuery(optionValidationChecking(['_id', 'journeyId', ...paginationOptions])),
+  setQueryOptions({
+      // populate: [
+      //   { path: 'proofOfPayment', select: 'attachment', /* populate: { path : ""} */ },
+      //   { path : "walletId", select: "amount"}
+      // ],
+      select: 'description title capsuleNumber'
+    }),
+  controller.getAllWithPaginationV2
 );
 
 /*-───────────────────────────────── 

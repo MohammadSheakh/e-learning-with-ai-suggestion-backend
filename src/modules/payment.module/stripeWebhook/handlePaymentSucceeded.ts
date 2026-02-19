@@ -5,7 +5,7 @@ import { TNotificationType } from "../../notification/notification.constants";
 import { IUser } from "../../token/token.interface";
 import { User } from "../../user.module/user/user.model";
 import { WalletService } from "../../wallet.module/wallet/wallet.service";
-import { TPaymentGateway, TPaymentStatus, TTransactionFor } from "../paymentTransaction/paymentTransaction.constant";
+import { TPaymentGateway, TPaymentStatus } from "../paymentTransaction/paymentTransaction.constant";
 import { PaymentTransaction } from "../paymentTransaction/paymentTransaction.model";
 //@ts-ignore
 import Stripe from "stripe";
@@ -13,6 +13,9 @@ import Stripe from "stripe";
 import { StatusCodes } from 'http-status-codes';
 //@ts-ignore
 import mongoose from "mongoose";
+import { PurchasedJourney } from "../../journey.module/purchasedJourney/purchasedJourney.model";
+import { TTransactionFor } from "../../../constants/TTransactionFor";
+import { IPurchasedJourney } from "../../journey.module/purchasedJourney/purchasedJourney.interface";
 
 
 const walletService = new WalletService();
@@ -81,15 +84,14 @@ export const handlePaymentSucceeded = async (session: Stripe.Checkout.Session) =
           });
 
           let updatedObjectOfReferenceFor: any;
-          if (referenceFor === TTransactionFor.Order) {
-               // updatedObjectOfReferenceFor = 
-               // updateOrderInformation(
-               //      _user,
-               //      referenceId, // orderId
-               //      newPayment._id, 
-               //      referenceId2, // cartId
-               //      referenceFor2 // Cart
-               // );
+          if (referenceFor === TTransactionFor.PurchasedJourney) {
+               
+               updatedObjectOfReferenceFor = updatePurchasedJourney(
+                    _user,
+                    referenceId, // purchasedJourneyId
+                    newPayment._id, 
+               );
+
           }else{
                console.log(`🔎🔎🔎🔎🔎 May be we need to handle this  ${referenceFor} :: ${referenceId}`)
           }
@@ -113,3 +115,36 @@ export const handlePaymentSucceeded = async (session: Stripe.Checkout.Session) =
 //  const refModel = mongoose.model(result.type);
 //  const isExistRefference = await refModel.findById(result.refferenceId).session(session);
 //---------------------------------
+
+async function updatePurchasedJourney(
+     user: IUser,
+     purchasedJourneyId: string,
+     paymentTransactionId: string
+){
+
+     // isBookingExists = await Order.findOne({ _id: orderId });
+
+     const updatedPurchasedJourney:IPurchasedJourney = await PurchasedJourney.findByIdAndUpdate(purchasedJourneyId, { 
+          /* update fields */ 
+          paymentTransactionId : paymentTransactionId,
+          paymentStatus: TPaymentStatus.completed,
+     }, { new: true });
+
+     
+     await enqueueWebNotification(
+          `A Student ${user.userId} ${user.userName} purchased a journey, TxnId : ${paymentTransactionId}`,
+          user.userId, // senderId
+          null, // receiverId 
+          TRole.admin, // receiverRole
+          TNotificationType.payment, // type
+          //---------------------------------
+          // In UI there is a details page for order in admin end 
+          //---------------------------------
+          '', // linkFor // TODO : MUST add the query params 
+          orderId, // linkId
+          // TTransactionFor.TrainingProgramPurchase, // referenceFor
+          // purchaseTrainingProgram._id // referenceId
+     );
+
+     return updatedPurchasedJourney;
+}

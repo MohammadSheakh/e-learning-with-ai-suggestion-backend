@@ -18,6 +18,7 @@ import { ICreateUser, IRegisterData } from './auth.interface';
 import { IUserProfile } from '../user.module/userProfile/userProfile.interface';
 import { detectLanguage } from '../../utils/detectLanguageByFranc';
 import { translateTextToTargetLang } from '../../utils/translateTextToTargetLang';
+import { OAuthAccountService } from '../user.module/oauthAccount/oauthAccount.service';
 // import * as appleSignin from 'apple-signin-auth';
 
 // const APPLE_CLIENT_ID = process.env.APPLE_CLIENT_ID;
@@ -27,6 +28,8 @@ import { translateTextToTargetLang } from '../../utils/translateTextToTargetLang
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const googleClient = new OAuth2Client(CLIENT_ID);
+
+const oAuthAccountService = new OAuthAccountService();
 
 const register = catchAsync(async (req :Request, res:Response) => {
 
@@ -158,7 +161,7 @@ const loginV2 = catchAsync(async (req :Request, res:Response) => {
   });
 });
 
-// 🧹♻️
+// 💎✨🔍 -> V2 Found
 const googleLogin = async (idToken: string,
    fcmToken?: string,  
   deviceInfo?: { deviceType?: string, deviceName?: string}
@@ -293,6 +296,144 @@ const googleLogin = async (idToken: string,
       newUser.fcmToken = fcmToken;
       await newUser.save();
     }
+
+    const tokens = await TokenService.accessAndRefreshToken(newUser);
+    const { hashedPassword, ...userWithoutPassword } = newUser.toObject();
+
+    return {
+      user: userWithoutPassword,
+      tokens,
+    };
+
+  } catch (error) {
+    console.error('Google login error:', error);
+    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, 'Something went wrong during Google login');
+  }
+};
+
+const googleLoginV2 = async (idToken: string,
+  role : string,
+  fcmToken?: string,  
+  deviceInfo?: { deviceType?: string, deviceName?: string}
+ ) => {
+  try {
+    
+    const { provider, providerId, email, name, picture} = await oAuthAccountService.verifyGoogleToken(idToken);
+
+    if (!email || !providerId) {
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Email or provider ID missing');
+    }
+
+    // 🔍 Check if Google account already exists
+    let googleAccount = await OAuthAccount.findOne({
+      authProvider: 'google',
+      providerId,
+    }).populate('userId');
+
+    if (googleAccount && googleAccount.userId) {
+      // ✅ Existing Google user → log in
+      const user = await User.findById(googleAccount.userId);
+      if (!user || user.isDeleted) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, 'User not found or deactivated');
+      }
+
+      // -------- for this marie wagner .. we dont need to store fcmToken
+      // In googleLogin and appleLogin functions, after successful login:
+      if (fcmToken) {
+        const deviceType = deviceInfo?.deviceType || 'web';
+        const deviceName = deviceInfo?.deviceName || 'Unknown Device';
+
+        let device : IUserDevices | any = await UserDevices.findOne({
+          userId: user._id,
+          fcmToken,
+        });
+
+        if (!device) {
+          device = await UserDevices.create({
+            userId: user._id,
+            fcmToken,
+            deviceType,
+            deviceName,
+            lastActive: new Date(),
+          });
+        } else {
+          device.lastActive = new Date();
+          await device.save();
+        }
+      }
+
+      const tokens = await TokenService.accessAndRefreshToken(user);
+      const { hashedPassword, ...userWithoutPassword } = user.toObject();
+
+      return {
+        user: userWithoutPassword,
+        tokens,
+      };
+    }
+
+    // 🔍 Check for existing LOCAL account with same email
+    const localUser = await User.findOne({
+      email: email.toLowerCase(),
+      hashedPassword: { $ne: null }, // has password → local account
+    });
+
+    if (localUser) {
+      // 🔄 Auto-link if email is verified by Google AND user
+      if (localUser.isEmailVerified) {
+        // 🔗 Link Google to existing local user
+        await OAuthAccount.create({
+          userId: localUser._id,
+          authProvider: 'google',
+          providerId,
+          email: email.toLowerCase(),
+          isVerified: true,
+        });
+
+        // This marie wagner is a web app .. so we dont need to store fcm token
+        // if (fcmToken) {
+        //   await localUser.save();
+        // }
+
+        const tokens = await TokenService.accessAndRefreshToken(localUser);
+        const { hashedPassword, ...userWithoutPassword } = localUser.toObject();
+
+        return {
+          user: userWithoutPassword,
+          tokens,
+        };
+      } else {
+        // 🛑 Don't auto-link if email isn't verified
+        throw new ApiError(
+          StatusCodes.CONFLICT,
+          'An account with this email exists. Please log in with your password or verify your email.'
+        );
+      }
+    }
+
+    // ➕ No existing account → create new user
+    const newUser = await User.create({
+      email: email.toLowerCase(),
+      name: name || email.split('@')[0],
+      isEmailVerified: true,
+      role, // default role
+      //@ts-ignore
+      profileId: await UserProfile.create({ acceptTOC: true }).then(p => p._id),
+    });
+
+    // Create OAuthAccount record
+    await OAuthAccount.create({
+      userId: newUser._id,
+      authProvider: 'google',
+      providerId,
+      email: email.toLowerCase(),
+      isVerified: true,
+    });
+
+    // Save FCM token
+    // if (fcmToken) {
+    //   newUser.fcmToken = fcmToken;
+    //   await newUser.save();
+    // }
 
     const tokens = await TokenService.accessAndRefreshToken(newUser);
     const { hashedPassword, ...userWithoutPassword } = newUser.toObject();
@@ -532,6 +673,7 @@ export const AuthController = {
   login,
   loginV2, // 🆕
   googleLogin,
+  googleLoginV2,
   verifyEmail,
   resendOtp,
   logout,

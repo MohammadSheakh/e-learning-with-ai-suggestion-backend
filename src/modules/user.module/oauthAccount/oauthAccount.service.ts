@@ -22,6 +22,10 @@ export class OAuthAccountService extends GenericService<
       audience: process.env.GOOGLE_CLIENT_ID,
     });
     const p = ticket.getPayload()!;
+
+    console.log("p ======> 🆕🆕", p)
+    // { sub: providerId, email, email_verified: isEmailVerified }
+
     return { provider: 'google', providerId: p.sub, email: p.email!, name: p.name, picture: p.picture };
   };
 

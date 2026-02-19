@@ -42,6 +42,7 @@ app.use(
     credentials: true,
   })
 );
+app.post('/api/v1/stripe/webhook', express.raw({ type: 'application/json' }), webhookHandler);
 
 // // Step 2: Handle OAuth callback
 app.get('/api/calendly/callback',

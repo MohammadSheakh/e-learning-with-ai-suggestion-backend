@@ -1,3 +1,5 @@
+import { User } from "../../user.module/user/user.model";
+
 // 6. CANCEL SUBSCRIPTION (USER REQUEST)
 async function cancelUserSubscription(userId, cancelImmediately = false) {
   try {

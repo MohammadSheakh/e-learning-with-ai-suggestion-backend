@@ -42,6 +42,18 @@ router.route('/paginate').get(
 );
 
 /*-───────────────────────────────── 
+| Landing Page | get all capsule category and top 3 mentor review 
+|  @figmaIndex 06-04
+|  @desc 
+└──────────────────────────────────*/
+router.route('/landing').get(
+  auth(TRole.common),
+  validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
+  controller.getAllCapsuleCategoryAndTopThreeMentorReview
+);
+
+
+/*-───────────────────────────────── 
 | Admin | get a category details with all capsules
 |  @figmaIndex 06-04
 |  @desc 
@@ -50,6 +62,17 @@ router.route('/:capsuleCategoryId/capsules').get(
   // auth('common'),
   controller.getAllCapsulesByCategoryId 
 );
+
+/*-───────────────────────────────── 
+| Landing | get all capsule with rating info by category
+|  @figmaIndex 
+|  @desc 
+└──────────────────────────────────*/
+router.route('/:capsuleCategoryId/capsules-with-rating').get(
+  // auth('common'),
+  controller.getAllCapsulesWithRatingInfoByCategoryId 
+);
+
 
 
 router.route('/:id').get(

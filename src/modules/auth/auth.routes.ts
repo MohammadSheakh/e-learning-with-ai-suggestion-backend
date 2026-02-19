@@ -47,6 +47,13 @@ router.post(
   AuthController.googleLogin,
 );
 
+// 🆕
+router.post(
+  '/google-login/v2',
+  // validateRequest(AuthValidation.googleLoginValidationSchema),
+  AuthController.googleLoginV2,
+);
+
 
 //[🚧][🧑‍💻✅][🧪] // 🆗 
 router.post(

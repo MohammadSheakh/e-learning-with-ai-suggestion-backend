@@ -48,6 +48,7 @@ router.route('/:capsuleId/modules').get(
   controller.getAllModulesByCapsuleId 
 );
 
+
 router.route('/:id').get(
   // auth('common'),
   controller.getById

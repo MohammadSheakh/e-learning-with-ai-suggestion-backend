@@ -246,7 +246,7 @@ export const handleSuccessfulPayment = async (invoice) => {
         console.log("⚡ This is subscription update payment (plan change, proration, etc.)");
     
     
-      }else if(invoice.billing_reason === 'trial_end'){
+    }else if(invoice.billing_reason === 'trial_end'){
         console.log("⚠️ This is trial end - usually triggers subscription_create invoice");
     }else {
         console.log("⚡ Other billing reason:", invoice.billing_reason);

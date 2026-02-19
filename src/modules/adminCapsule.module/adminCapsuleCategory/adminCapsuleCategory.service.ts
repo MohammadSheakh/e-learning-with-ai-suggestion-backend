@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 import PaginationService from '../../../common/service/paginationService';
 import { AdminCapsule } from '../adminCapsule/adminCapsule.model';
 import ApiError from '../../../errors/ApiError';
+import { MentorReview } from '../../review.module/mentorReview/mentorReview.model';
 
 export class AdminCapsuleCategoryService extends GenericService<
   typeof AdminCapsuleCategory,
@@ -160,4 +161,125 @@ export class AdminCapsuleCategoryService extends GenericService<
       capsules
     }
   } 
+
+
+  async getAllCapsulesWithRatingInfoByCategoryIdV2 (options: PaginateOptions,
+    capsuleCategoryId : string) {
+
+    const category = await AdminCapsuleCategory.findOne(
+      { _id: capsuleCategoryId, isDeleted: false },
+      { title: 1, description: 1, attachments: 1 }
+    )
+    .populate({
+      path: 'attachments',
+      select: 'attachment', // only what you need
+    })
+    .lean();
+
+    if (!category) throw new ApiError(StatusCodes.BAD_REQUEST, 'Category not found');
+
+    const pipeline = [
+      {
+        $match: {
+          capsuleCategoryId: new mongoose.Types.ObjectId(capsuleCategoryId),
+          isDeleted: false,
+        },
+      },
+      {
+        $lookup: {
+          from: 'attachments',
+          localField: 'attachments',
+          foreignField: '_id',
+          as: 'attachments',
+        },
+      },
+
+      //------------------------
+
+      {
+        $lookup: {
+          from: 'admincapsulereviews',
+          let: { capsuleId: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$adminCapsuleId', '$$capsuleId'] },
+                    { $eq: ['$isDeleted', false] },
+                  ],
+                },
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                avgRating: { $avg: '$rating' },
+                totalReviews: { $sum: 1 },
+              },
+            },
+          ],
+          as: 'reviewStats',
+        },
+      },
+
+      // flatten review result
+      {
+        $addFields: {
+          avgRating: {
+            $ifNull: [{ $arrayElemAt: ['$reviewStats.avgRating', 0] }, 0],
+          },
+          totalReviews: {
+            $ifNull: [{ $arrayElemAt: ['$reviewStats.totalReviews', 0] }, 0],
+          },
+        },
+      },
+
+      //--------------------------
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          description: 1,
+          estimatedTime: 1,
+          attachments: {
+            $map: {
+              input: '$attachments',
+              as: 'att',
+              in: '$$att.attachment',
+            },
+          },
+
+          //---
+          
+          avgRating: { $round: ['$avgRating', 1] },
+          totalReviews: 1,
+        },
+      },
+    ];
+
+    const capsules = await PaginationService.aggregationPaginate(
+      AdminCapsule,
+      pipeline,
+      options
+    );
+
+    return {
+      category,
+      capsules
+    }
+  } 
+
+
+  
+
+
+  async topThreeMentorReview() {
+    const review = await MentorReview.find({
+      rating : { $gt: 4 },
+      isDeleted: false,
+    }).limit(3);
+
+    return review;
+  }
 }

@@ -1,5 +1,6 @@
 import { Model, Types } from 'mongoose';
 import { PaginateOptions, PaginateResult } from '../../../types/paginate';
+import { PaymentMethod, TPaymentStatus } from '../../payment.module/paymentTransaction/paymentTransaction.constant';
 
 
 export interface IPurchasedJourney {
@@ -10,6 +11,15 @@ export interface IPurchasedJourney {
   studentId: Types.ObjectId; //🔗
   studentsAnswer: string;
   aiSummary: string;
+
+  price: number;
+
+  paymentTransactionId: Types.ObjectId | null; //🔗
+  paymentMethod: PaymentMethod.online | null;
+  paymentStatus: TPaymentStatus.pending |
+    TPaymentStatus.completed |
+    TPaymentStatus.refunded |
+    TPaymentStatus.failed ;
 
   isDeleted? : boolean;  
   createdAt?: Date;

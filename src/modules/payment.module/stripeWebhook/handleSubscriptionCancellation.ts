@@ -1,3 +1,5 @@
+import { User } from "../../user.module/user/user.model";
+
 // 7. HANDLE SUBSCRIPTION CANCELLATION WEBHOOK
 export const handleSubscriptionCancellation = async (subscription) => {
   try {

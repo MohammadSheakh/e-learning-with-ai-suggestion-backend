@@ -2,6 +2,7 @@
 import { model, Schema } from 'mongoose';
 import { IPurchasedJourney, IPurchasedJourneyModel } from './purchasedJourney.interface';
 import paginate from '../../../common/plugins/paginate';
+import { PaymentMethod, TPaymentStatus } from '../../payment.module/paymentTransaction/paymentTransaction.constant';
 
 
 const PurchasedJourneySchema = new Schema<IPurchasedJourney>(
@@ -18,12 +19,55 @@ const PurchasedJourneySchema = new Schema<IPurchasedJourney>(
     },
     studentsAnswer: {
       type: String,
-      required: [true, 'studentsAnswer is required'],
+      required: [false, 'studentsAnswer is not required'],
     },
     aiSummary: {
       type: String,
-      required: [true, 'aiSummary is required'],
+      required: [false, 'aiSummary is not required'],
     },
+
+    price: {
+      type: Number,
+      required: [true, 'price is required'],
+    },
+
+    paymentTransactionId: { //🔗 Same as PaymentId of kappes
+      type: Schema.Types.ObjectId,
+      ref: 'PaymentTransaction',
+      default: null, 
+      //---------------------------------
+      // First This should be null ..
+      // In Webhook Handler .. we will update this paymentTransactionId
+      //---------------------------------
+    },
+
+    paymentMethod: {
+      type: String,
+      enum: PaymentMethod,
+      default: PaymentMethod.online,
+    },
+
+    paymentStatus : {
+      type: String,
+      enum: [
+        TPaymentStatus.pending,
+        TPaymentStatus.completed,
+        TPaymentStatus.refunded,
+        TPaymentStatus.failed
+      ],
+      default: TPaymentStatus.pending,
+      required: [false, `paymentStatus is required .. it can be  ${Object.values(TPaymentStatus).join(
+                ', '
+              )}`],
+
+      //---------------------------------
+      // First This should be unpaid ..
+      // In Webhook Handler .. we will update this paid
+      //---------------------------------
+
+    },
+
+
     isDeleted: {
       type: Boolean,
       required: [false, 'isDeleted is not required'],
