@@ -1,4 +1,4 @@
-![alt text](dbSchema.png)
+![alt text](flow-e-learning-v2.png)
 ![alt text](flow.png)
 # express-typescript-generic-boilerplate
 
