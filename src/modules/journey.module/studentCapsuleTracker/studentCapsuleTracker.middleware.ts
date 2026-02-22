@@ -8,7 +8,7 @@ const upload = multer({ storage: storage });
 //---------------------------
 // 🥇 we move image upload thing to controller to middleware level
 //---------------------------
-export const imageUploadPipelineForCreateStudentRoadMapTracker = [
+export const imageUploadPipelineForCreateStudentCapsuleTracker = [
   [
     upload.fields([
       { name: 'attachments', maxCount: 1 }, // Allow up to 1 cover photo
@@ -19,13 +19,13 @@ export const imageUploadPipelineForCreateStudentRoadMapTracker = [
       name: 'attachments',
       folder: TFolderName.trainingProgram,
       required: true, // optional
-      allowedMimeTypes: ['image/jpeg', 'image/png'], // , 'application/pdf'
+      allowedMimeTypes: ['image/jpeg', 'image/png'], // , 'application/pdf', 'video/mp4',
     },
   ]),
 ];
 
 
-export const imageUploadPipelineForUpdateStudentRoadMapTracker = [
+export const imageUploadPipelineForUpdateStudentCapsuleTracker = [
   [
     upload.fields([
       { name: 'attachments', maxCount: 1 }, // Allow up to 1 cover photo
