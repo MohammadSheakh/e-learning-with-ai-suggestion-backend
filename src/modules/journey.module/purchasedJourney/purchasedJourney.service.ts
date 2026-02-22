@@ -163,7 +163,8 @@ export class PurchasedJourneyService extends GenericService<
             currency: TCurrency.usd,
             amount: purchasedJourney[0].price!.toString(), // TODO : FIX :  Must Check
             user: JSON.stringify(user), // who created this order  // as we have to send notification also may be need to send email
-            // referenceId2: null,
+            referenceId2: existingJourney._id.toString(), // we need journeyId .. because based on this journey we need to find out all the capsules .. and create studentCapsuleTracker
+            referenceFor2 : 'Journey',
             /******
              * 📝
              * With this information .. first we create a 

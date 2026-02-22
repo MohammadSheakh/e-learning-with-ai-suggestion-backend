@@ -51,6 +51,18 @@ router.route('/capsule').get(
   controller.getJourneyDetailsWithCapsules
 );
 
+/*-───────────────────────────────── 
+| Student | check student is purchased or not journey .. if purchased .. return capsules with history
+|  @figmaIndex 0-0
+|  @desc - if not purchased .. return all capsules
+└──────────────────────────────────*/
+router.route('/isPurchased').get(
+  auth(TRole.student),
+  // validateRequest(validation.createHelpMessageValidationSchema),
+  // controller.create
+  controller.isPurchasedByStudent
+);
+
 router.route('/:id').get(
   // auth('common'),
   controller.getById

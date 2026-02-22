@@ -10,12 +10,12 @@ const StudentCapsuleTrackerSchema = new Schema<IStudentCapsuleTracker>(
 
     capsuleNumber: {
       type: Number,
-      required: [true, 'capsuleNumber is required'],
-      min: [1, 'capsuleNumber must be ≥ 1'],
+      required: [false, 'capsuleNumber is not required'],
+      // min: [1, 'capsuleNumber must be ≥ 1'],
     },
     title: {
       type: String,
-      required: [true, 'title is required'],
+      required: [false, 'title is not required'],
     },
     capsuleId: { //🔗
       type: Schema.Types.ObjectId,
@@ -64,17 +64,17 @@ const StudentCapsuleTrackerSchema = new Schema<IStudentCapsuleTracker>(
     },
     progressPercentage: {
       type: Number,
-      required: [true, 'progressPercentage is required'],
-      min: [0, 'must be ≥ 0'],
-      max: [100, 'must be ≤ 100'],
+      required: [false, 'progressPercentage is not required'],
+      // min: [0, 'must be ≥ 0'],
+      // max: [100, 'must be ≤ 100'],
     },
     aiSummaryContent: {
       type: String,
-      required: [true, 'aiSummaryContent is required'],
+      required: [false, 'aiSummaryContent is not required'],
     },
     aiSummaryGeneratedAt: {
       type: Date,
-      required: [true, 'aiSummaryGeneratedAt is required'],
+      required: [false, 'aiSummaryGeneratedAt is not required'],
     },
 
     isDeleted: {

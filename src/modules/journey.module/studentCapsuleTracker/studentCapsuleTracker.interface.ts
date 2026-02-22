@@ -8,10 +8,8 @@ export interface IStudentCapsuleTracker {
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
   // userId: Types.ObjectId;
   
-
-  studentCapsuleTrackerId: string;
-  capsuleNumber: number;
-  title: string;
+  capsuleNumber?: number;
+  title?: string;
   capsuleId: Types.ObjectId; //🔗
   studentId: Types.ObjectId; //🔗
   currentSection: TCurrentSection.introduction | 
@@ -24,9 +22,9 @@ export interface IStudentCapsuleTracker {
   scienceStatus: TTrackerStatus;
   aiSummaryStatus: TTrackerStatus;
   overallStatus: TTrackerStatus;
-  progressPercentage: number;
-  aiSummaryContent: string;
-  aiSummaryGeneratedAt: Date;
+  progressPercentage? : number;
+  aiSummaryContent? : string;
+  aiSummaryGeneratedAt? : Date;
 
 
   isDeleted? : boolean;  

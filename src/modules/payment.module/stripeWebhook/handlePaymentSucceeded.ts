@@ -16,6 +16,11 @@ import mongoose from "mongoose";
 import { PurchasedJourney } from "../../journey.module/purchasedJourney/purchasedJourney.model";
 import { TTransactionFor } from "../../../constants/TTransactionFor";
 import { IPurchasedJourney } from "../../journey.module/purchasedJourney/purchasedJourney.interface";
+import { Capsule } from "../../journey.module/capsule/capsule.model";
+import { ICapsule } from "../../journey.module/capsule/capsule.interface";
+import { IStudentCapsuleTracker } from "../../journey.module/studentCapsuleTracker/studentCapsuleTracker.interface";
+import { TCurrentSection, TTrackerStatus } from "../../journey.module/studentCapsuleTracker/studentCapsuleTracker.constant";
+import { StudentCapsuleTracker } from "../../journey.module/studentCapsuleTracker/studentCapsuleTracker.model";
 
 
 const walletService = new WalletService();
@@ -90,6 +95,8 @@ export const handlePaymentSucceeded = async (session: Stripe.Checkout.Session) =
                     _user,
                     referenceId, // purchasedJourneyId
                     newPayment._id, 
+                    referenceId2, // journeyId,
+                    referenceFor2, // Journey Model Name 
                );
 
           }else{
@@ -119,7 +126,9 @@ export const handlePaymentSucceeded = async (session: Stripe.Checkout.Session) =
 async function updatePurchasedJourney(
      user: IUser,
      purchasedJourneyId: string,
-     paymentTransactionId: string
+     paymentTransactionId: string,
+     journeyId : string,
+     JourneyModelName : string,
 ){
 
      // isBookingExists = await Order.findOne({ _id: orderId });
@@ -129,6 +138,37 @@ async function updatePurchasedJourney(
           paymentTransactionId : paymentTransactionId,
           paymentStatus: TPaymentStatus.completed,
      }, { new: true });
+
+
+     // Create all Student Capsule Tracker at purchase time 
+     // get all capsules by purchasedJourneyId
+
+     const capsules: ICapsule[] = await Capsule.find({
+          journeyId : journeyId,
+          isDeleted : false,
+     }) 
+
+     // prepare StudentCapsuleTracker for bulk insert
+     const studentCapsuleTrackers : IStudentCapsuleTracker[] = capsules.map((capsule : ICapsule) => ({
+          capsuleNumber : capsule.capsuleNumber,
+          title : capsule.title,
+          capsuleId : capsule._id,
+          studentId : user.userId,
+          overallStatus : TTrackerStatus.notStarted,
+          introStatus : TTrackerStatus.notStarted,
+          inspirationStatus : TTrackerStatus.notStarted,
+          diagnosticsStatus : TTrackerStatus.notStarted,
+          scienceStatus : TTrackerStatus.notStarted,
+          aiSummaryStatus : TTrackerStatus.notStarted,
+          currentSection : TCurrentSection.introduction,
+
+     }))
+
+     console.log("studentCapsuleTrackers 🆕🆕 : ", studentCapsuleTrackers)
+
+     const res = await StudentCapsuleTracker.insertMany(studentCapsuleTrackers);
+
+     console.log("res ::: ⚡⚡⚡ ", res)
 
      
      await enqueueWebNotification(

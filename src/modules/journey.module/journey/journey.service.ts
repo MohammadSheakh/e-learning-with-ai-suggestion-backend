@@ -5,6 +5,9 @@ import { GenericService } from '../../_generic-module/generic.services';
 import ApiError from '../../../errors/ApiError';
 import { PaginateOptions } from '../../../types/paginate';
 import PaginationService from '../../../common/service/paginationService';
+import { PurchasedJourney } from '../purchasedJourney/purchasedJourney.model';
+import { StudentCapsuleTracker } from '../studentCapsuleTracker/studentCapsuleTracker.model';
+import { IStudentCapsuleTracker } from '../studentCapsuleTracker/studentCapsuleTracker.interface';
 
 
 export class JourneyService extends GenericService<
@@ -76,4 +79,59 @@ export class JourneyService extends GenericService<
 
     return result;
   } 
+
+
+  async isPurchasedByStudent(userId: string,
+    filters: Partial<IJourney> , // Partial<INotification> // FixMe : fix type
+    options: PaginateOptions,
+    populateOptions?: any,
+    select ? : string | string[]
+  ){
+
+    // check journey exist or not
+    const isJourneyExist : IJourney = await Journey.findOne({
+      isDeleted : false,
+    });
+
+    if(!isJourneyExist){
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Journey is not exist');
+    }
+
+    /*---------------------- --------------------*/
+
+    
+
+    // check this user purchased any journey or not
+    const isPurchased = await PurchasedJourney.findOne({
+      journeyId : isJourneyExist._id,
+      studentId : userId,
+    })
+
+    let result;
+
+    if(!isPurchased){
+      // return all capsule by journeyId .. with journeyId ..
+      // so that student can purchase
+      filters._id = isJourneyExist._id;
+
+      result = await this.getAllWithPagination(filters,options,populateOptions, select)
+    }else{
+      // return capsules with history
+
+      // result = StudentCapsuleTracker.find({
+      //   studentId: userId
+      // })
+      filters.studentId = userId;
+
+      result = await StudentCapsuleTracker.paginate(
+        filters, options, populateOptions, select
+      )
+    }
+
+    return {
+      result,
+      journeyId : isJourneyExist._id,
+    };
+
+  }
 }
