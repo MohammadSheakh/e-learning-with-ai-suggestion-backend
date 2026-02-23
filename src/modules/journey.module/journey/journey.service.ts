@@ -8,7 +8,10 @@ import PaginationService from '../../../common/service/paginationService';
 import { PurchasedJourney } from '../purchasedJourney/purchasedJourney.model';
 import { StudentCapsuleTracker } from '../studentCapsuleTracker/studentCapsuleTracker.model';
 import { IStudentCapsuleTracker } from '../studentCapsuleTracker/studentCapsuleTracker.interface';
+import { CapsuleService } from '../capsule/capsule.service';
+import { TPaymentStatus } from '../../payment.module/paymentTransaction/paymentTransaction.constant';
 
+const capsuleService = new CapsuleService();
 
 export class JourneyService extends GenericService<
   typeof Journey,
@@ -105,6 +108,7 @@ export class JourneyService extends GenericService<
     const isPurchased = await PurchasedJourney.findOne({
       journeyId : isJourneyExist._id,
       studentId : userId,
+      paymentStatus : TPaymentStatus.completed,
     })
 
     let result;
@@ -112,9 +116,13 @@ export class JourneyService extends GenericService<
     if(!isPurchased){
       // return all capsule by journeyId .. with journeyId ..
       // so that student can purchase
-      filters._id = isJourneyExist._id;
+      filters.journeyId = isJourneyExist._id;
 
-      result = await this.getAllWithPagination(filters,options,populateOptions, select)
+      populateOptions = [];
+      
+      select = 'capsuleNumber title roadMapBrief'; 
+
+      result = await capsuleService.getAllWithPagination(filters,options,populateOptions, select)
     }else{
       // return capsules with history
 
@@ -122,6 +130,7 @@ export class JourneyService extends GenericService<
       //   studentId: userId
       // })
       filters.studentId = userId;
+    
 
       result = await StudentCapsuleTracker.paginate(
         filters, options, populateOptions, select
@@ -131,6 +140,7 @@ export class JourneyService extends GenericService<
     return {
       result,
       journeyId : isJourneyExist._id,
+      isPurchased : !!isPurchased,
     };
 
   }

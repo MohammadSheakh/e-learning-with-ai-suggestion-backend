@@ -8,6 +8,8 @@ import validateRequest from '../../../shared/validateRequest';
 import auth from '../../../middlewares/auth';
 //@ts-ignore
 import multer from "multer";
+import { TRole } from '../../../middlewares/roles';
+import { setQueryOptions } from '../../../middlewares/setQueryOptions';
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -30,24 +32,46 @@ const paginationOptions: Array<'sortBy' | 'page' | 'limit' | 'populate'> = [
 const controller = new StudentCapsuleTrackerController();
 
 
-// router.route('/paginate').get(
-//   auth(TRole.common),
-//   validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
-//   controller.getAllWithPagination
-// );
+router.route('/paginate').get(
+  auth(TRole.common),
+  validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
+  controller.getAllWithPagination
+);
+
+/*-───────────────────────────────── 
+| Student | get capsule introduction by id
+|  @figmaIndex Exploration Journey Section | After purchase | 3 no. screen
+|  @desc 
+└──────────────────────────────────*/
+router.route('/:id/introduction').get(
+  auth(TRole.common),
+  setQueryOptions({
+      populate: [
+        { 
+          path : "capsuleId", 
+          select: "capsuleNumber title introDescription introductionVideo",
+          populate: { 
+            path : "introductionVideo",
+            select : "attachment"
+          } 
+        }
+      ],
+      select: '-isDeleted -createdAt -updatedAt -title -capsuleNumber -__v -aiSummaryContent -aiSummaryStatus -aiSummaryGeneratedAt'
+    }),
+  controller.getByIdV2
+);
 
 
-// router.route('/:id').get(
-//   auth(TRole.common),
-//   controller.getById
-// );
-
-
-// router.route('/:id').put(
-//   auth(TRole.common),
-//   // validateRequest(validation.createHelpMessageValidationSchema),
-//   controller.updateById
-// );
+/*-───────────────────────────────── 
+| Student | change 'introStatus' to  'completed' and 'inspirationStatus' to 'inProgress'
+|  @figmaIndex Exploration Journey Section | After purchase | 3 no. screen
+|  @desc  update status and calculate progressPercentage and update overAllStatus
+└──────────────────────────────────*/
+router.route('/:id').put(
+  auth(TRole.common),
+  // validateRequest(validation.createHelpMessageValidationSchema),
+  controller.updateById
+);
 
 
 // router.route('/').get(

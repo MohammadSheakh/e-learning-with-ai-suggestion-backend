@@ -45,7 +45,8 @@ export class PurchasedJourneyService extends GenericService<
 
     const checkAlreadyPurchased = await PurchasedJourney.findOne({
       journeyId,
-      studentId: user.userId
+      studentId: user.userId,
+      paymentStatus : TPaymentStatus.completed,
     });
 
     if(checkAlreadyPurchased){

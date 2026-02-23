@@ -62,6 +62,11 @@ router.route('/modules-nd-questions').get(
   controller.getModulesAndQuestionsByCapsuleId
 );
 
+/*-───────────────────────────────── 
+| Student | get capsule details by id
+|  @figmaIndex Exploration Journey Section | 3 no. screen
+|  @desc 
+└──────────────────────────────────*/
 router.route('/:id').get(
   // auth('common'),
   controller.getById

@@ -29,6 +29,7 @@ import { CalendlyRoute } from '../modules/calendly.module/calendly/calendly.rout
 import { AdminCapsuleReviewRoute } from '../modules/review.module/adminCapsuleReview/adminCapsuleReview.route';
 import { MentorReviewRoute } from '../modules/review.module/mentorReview/mentorReview.route';
 import { PurchasedJourneyRoute } from '../modules/journey.module/purchasedJourney/purchasedJourney.route';
+import { StudentCapsuleTrackerRoute } from '../modules/journey.module/studentCapsuleTracker/studentCapsuleTracker.route';
 
 // import { ChatRoutes } from '../modules/chat/chat.routes';
 // import { MessageRoutes } from '../modules/message/message.routes';
@@ -88,6 +89,13 @@ const apiRoutes = [
     path: '/capsule-questions',
     route: JourneyQuestionRoute,
   },
+
+  { // 🟢
+    path: '/student-capsule-trackers',
+    route: StudentCapsuleTrackerRoute,
+  },
+
+  
 
   /////////////////////////////////////////  Mentor Review
 

@@ -155,13 +155,22 @@ async function updatePurchasedJourney(
           capsuleId : capsule._id,
           studentId : user.userId,
           overallStatus : TTrackerStatus.notStarted,
-          introStatus : TTrackerStatus.notStarted,
-          inspirationStatus : TTrackerStatus.notStarted,
-          diagnosticsStatus : TTrackerStatus.notStarted,
-          scienceStatus : TTrackerStatus.notStarted,
-          aiSummaryStatus : TTrackerStatus.notStarted,
-          currentSection : TCurrentSection.introduction,
+          /*---------
+          
+               only introStatus inProgress e thakbe .. 
+               baki gula notStarted e thakbe .. 
 
+               jokhon e ek page theke arek page e jaowa hobe .. shei page er status 
+               'notStarted' -> 'inProgress' e shift hoye jabe 
+
+          -----------*/
+          introStatus : TTrackerStatus.inProgress, // TTrackerStatus.notStarted
+          inspirationStatus : TTrackerStatus.notStarted, // TTrackerStatus.notStarted
+          diagnosticsStatus : TTrackerStatus.notStarted, // TTrackerStatus.notStarted
+          scienceStatus : TTrackerStatus.notStarted, // TTrackerStatus.notStarted
+          aiSummaryStatus : TTrackerStatus.notStarted, // TTrackerStatus.notStarted
+          currentSection : TCurrentSection.introduction,
+          progressPercentage : 0,
      }))
 
      console.log("studentCapsuleTrackers 🆕🆕 : ", studentCapsuleTrackers)
