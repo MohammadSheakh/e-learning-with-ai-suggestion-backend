@@ -148,7 +148,9 @@ async function updatePurchasedJourney(
           isDeleted : false,
      }) 
 
-     // prepare StudentCapsuleTracker for bulk insert
+     /*-─────────────────────────────────
+     |  prepare StudentCapsuleTracker for bulk insert
+     └──────────────────────────────────*/
      const studentCapsuleTrackers : IStudentCapsuleTracker[] = capsules.map((capsule : ICapsule) => ({
           capsuleNumber : capsule.capsuleNumber,
           title : capsule.title,
@@ -176,8 +178,6 @@ async function updatePurchasedJourney(
      console.log("studentCapsuleTrackers 🆕🆕 : ", studentCapsuleTrackers)
 
      const res = await StudentCapsuleTracker.insertMany(studentCapsuleTrackers);
-
-     console.log("res ::: ⚡⚡⚡ ", res)
 
      
      await enqueueWebNotification(

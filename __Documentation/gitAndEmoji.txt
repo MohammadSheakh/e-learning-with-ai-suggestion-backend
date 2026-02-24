@@ -1,3 +1,4 @@
+
 // PERF: Aggregation pipeline - optimized for large datasets
 // OPT: Uses indexed fields to avoid COLLSCAN
 // NOTE: Requires compound index on { phaseId: 1, isDeleted: 1 }

@@ -9,8 +9,13 @@ export interface IStudentModuleTracker {
   
   moduleId: Types.ObjectId;  //🔗
   studentId: Types.ObjectId;  //🔗
+  capsuleId : Types.ObjectId;  // 🔗 🆕
+  
+  // also it will be better if we keep studentCapsuleTracker here .. but cant do that .. 
+  // need to think about which one will be better 
+
   status: TStudentModuleTrackerStatus; //🧩 
-  progressPercentage: number;
+  // progressPercentage: number; // we dont need this 
 
   isDeleted? : boolean;  
   createdAt?: Date;

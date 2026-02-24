@@ -6,8 +6,6 @@ import { TCurrentSection, TTrackerStatus } from './studentCapsuleTracker.constan
 
 const StudentCapsuleTrackerSchema = new Schema<IStudentCapsuleTracker>(
   {
-    
-
     capsuleNumber: {
       type: Number,
       required: [false, 'capsuleNumber is not required'],

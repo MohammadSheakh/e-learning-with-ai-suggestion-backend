@@ -18,10 +18,15 @@ const StudentModuleTrackerSchema = new Schema<IStudentModuleTracker>(
       ref: 'User',
       required: [true, 'studentId is required'],
     },
+    capsuleId: { //🔗  🆕
+      type: Schema.Types.ObjectId,
+      ref: 'Capsule',
+      required: [true, 'capsuleId is required'],
+    },
     status: {
       type: String,
       enum: [
-        TStudentModuleTrackerStatus.inProgress,
+        TStudentModuleTrackerStatus.notStarted,
         TStudentModuleTrackerStatus.completed,
       ],
       required: [
@@ -29,12 +34,13 @@ const StudentModuleTrackerSchema = new Schema<IStudentModuleTracker>(
         `status is required it can be ${Object.values(TStudentModuleTrackerStatus).join(', ')}`,
       ],
     },
-    progressPercentage: {
-      type: Number,
-      required: [true, 'progressPercentage is required'],
-      min: [0, 'progressPercentage cannot be less than 0'],
-      max: [100, 'progressPercentage cannot exceed 100'],
-    },
+     
+    // progressPercentage: { // we dont need this
+    //   type: Number,
+    //   required: [true, 'progressPercentage is required'],
+    //   min: [0, 'progressPercentage cannot be less than 0'],
+    //   max: [100, 'progressPercentage cannot exceed 100'],
+    // },
 
     isDeleted: {
       type: Boolean,
