@@ -8,7 +8,9 @@ export interface IStudentAnswer {
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
   
   questionId: Types.ObjectId; //🔗
-  studentId: Types.ObjectId; //🔗
+  studentId : Types.ObjectId; //🔗
+  capsuleId : Types.ObjectId; //🔗
+
   status: TStudentAnswerStatus; //🧩
   answer: string;
   isCorrect?: boolean;

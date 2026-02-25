@@ -17,6 +17,13 @@ const StudentAnswerSchema = new Schema<IStudentAnswer>(
       ref: 'User',
       required: [true, 'studentId is required'],
     },
+
+    capsuleId: {  //🔗
+      type: Schema.Types.ObjectId,
+      ref: 'Capsule',
+      required: [true, 'capsuleId is required'],
+    },
+
     status: {
       type: String,
       enum: [

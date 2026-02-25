@@ -25,6 +25,8 @@ export interface IStudentCapsuleTracker {
   progressPercentage? : number;
   aiSummaryContent? : string;
   aiSummaryGeneratedAt? : Date;
+  //🆕
+  studentsAnswer : string;
 
 
   isDeleted? : boolean;  

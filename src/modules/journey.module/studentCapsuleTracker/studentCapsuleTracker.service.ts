@@ -10,6 +10,12 @@ import { Module } from '../module/module.model';
 import { IStudentModuleTracker } from '../studentModuleTracker/studentModuleTracker.interface';
 import { TStudentModuleTrackerStatus } from '../studentModuleTracker/studentModuleTracker.constant';
 import { PaginateOptions } from '../../../types/paginate';
+import mongoose from 'mongoose';
+import { Question } from '../question/question.model';
+import PaginationService from '../../../common/service/paginationService';
+import { StudentAnswer } from '../studentAnswer/studentAnswer.model';
+import { TStudentAnswerStatus } from '../studentAnswer/studentAnswer.constant';
+import { IStudentAnswer } from '../studentAnswer/studentAnswer.interface';
 
 
 export class StudentCapsuleTrackerService extends GenericService<
@@ -161,9 +167,6 @@ export class StudentCapsuleTrackerService extends GenericService<
 
   }
 
-
-  
-
   async updateModuleTracker(capsuleId: string, studentModuleTrackerId: string, data: Partial<IStudentModuleTracker>) {
     // 1. Update the module tracker
     const updatedModuleTracker: IStudentModuleTracker = await StudentModuleTracker.findByIdAndUpdate(
@@ -211,12 +214,134 @@ export class StudentCapsuleTrackerService extends GenericService<
     filters: any, // Partial<INotification> // FixMe : fix type
     options: PaginateOptions,
     studentId : string,
+    capsuleId : string,
     populateOptions?: any,
     select ? : string | string[],
   ){
-    const
+    const matchStage: any = {};
+
+    // Dynamically apply filters
+    for (const key in filters) {
+
+      const value = filters[key];
+
+      if (value === '' || value === null || value === undefined) continue;
+
+      // --- Match for Users collection ---
+      if (['capsuleId', '_id'].includes(key)) {
+        if (key === 'capsuleId') {
+          matchStage[key] = new mongoose.Types.ObjectId(value);
+        }
+        else if (Array.isArray(value)) {
+          matchStage[key] = { $in: value };
+        }else if (key == '_id') {
+          matchStage[key] = new mongoose.Types.ObjectId(value);
+        } else {
+          matchStage[key] = value;
+        }
+      }
+    }
+
+    matchStage.capsuleId = new mongoose.Types.ObjectId(capsuleId)
+
+    const pipeline = [
+
+      // Step 1: Filter questions by capsuleId
+      { $match: matchStage },
+
+      // Step 2: Lookup answers for each question by questionId + studentId
+      {
+        $lookup: {
+          from: 'studentanswers', // your answers collection name
+          let: { questionId: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$questionId', '$$questionId'] },
+                    { $eq: ['$studentId', new mongoose.Types.ObjectId(studentId)] },
+                  ],
+                },
+              },
+            },
+          ],
+          as: 'studentAnswers',
+        },
+      },
+
+      // Step 3: Unwind answers (preserveNull so unanswered questions still appear)
+      {
+        $unwind: {
+          path: '$studentAnswers',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+
+      // Step 4: Project required fields
+      {
+        $project: {
+          _id: 1,
+          capsuleId: 1,
+          questionText: 1,
+          questionType: 1,
+          options: 1,
+          createdAt: 1,
+
+          // Answer fields
+          answer: '$studentAnswers.answer',
+          answeredAt: '$studentAnswers.createdAt',
+          isAnswered: {
+            $cond: {
+              if: { $ifNull: ['$studentAnswers._id', false] },
+              then: true,
+              else: false,
+            },
+          },
+        },
+      },
+    ];
+
+    const res = await PaginationService.aggregationPaginate(
+      Question, // your Question model
+      pipeline,
+      options,
+    );
+
+    return res;
+
   }
 
+  async autoSaveAnswer(capsuleId: string, answer:string, questionId:string, studentId:string) {
+    
+    const savedAnswer = await StudentAnswer.findOneAndUpdate(
+      // 🔍 Find by these fields
+      {
+        studentId: new mongoose.Types.ObjectId(studentId),
+        questionId: new mongoose.Types.ObjectId(questionId),
+      },
+      // ✏️ Update these fields
+      {
+        $set: {
+          answer,
+          capsuleId,
+          status: TStudentAnswerStatus.completed, // not 'submitted' yet
+          isAnswered : true,
+        },
+      },
+      // ⚙️ Options
+      {
+        upsert: true,       // create if not found
+        new: true,          // return updated doc
+        // runValidators: true,
+      }
+    );
 
+    return savedAnswer;
+  }
+
+  async getOrGenerateAISummaryWithPurchasedJourneyStatus(){
+    
+  }
 
 }

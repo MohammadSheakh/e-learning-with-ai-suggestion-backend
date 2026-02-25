@@ -17,14 +17,17 @@ const PurchasedJourneySchema = new Schema<IPurchasedJourney>(
       ref: 'User',
       required: [true, 'studentId is required'],
     },
-    studentsAnswer: {
-      type: String,
-      required: [false, 'studentsAnswer is not required'],
-    },
-    aiSummary: {
-      type: String,
-      required: [false, 'aiSummary is not required'],
-    },
+
+    // we move this student answer and aiSummary to studentCapsuleTracker
+    
+    // studentsAnswer: {
+    //   type: String,
+    //   required: [false, 'studentsAnswer is not required'],
+    // },
+    // aiSummary: {
+    //   type: String,
+    //   required: [false, 'aiSummary is not required'],
+    // },
 
     price: {
       type: Number,

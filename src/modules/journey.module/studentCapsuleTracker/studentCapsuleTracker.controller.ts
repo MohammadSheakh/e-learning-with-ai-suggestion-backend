@@ -103,7 +103,31 @@ export class StudentCapsuleTrackerController extends GenericController<
     }
 
     const updatedObject = await this.studentCapsuleTrackerService.getQuestionsWithAnswersWithCapsuleTrackerInfo(
-      filters, options, req.user.userId, populateOptions, select); // here we pass studentId
+      filters, options, req.user.userId, req.params.capsuleId, populateOptions, select); // here we pass studentId
+    
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: updatedObject,
+      message: `Question with student's answer retrived successfully`,
+    });
+  });
+
+  submitAnswerAutoSaveFeature = catchAsync(async (req: Request, res: Response) => {
+  
+    const updatedObject = await this.studentCapsuleTrackerService.autoSaveAnswer(
+      req.body.capsuleId, req.body.answer, req.params.questionId, req.user.userId); // here we pass studentId
+    
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: updatedObject,
+      message: `Question with student's answer retrived successfully`,
+    });
+  });
+
+
+  getOrGenerateAISummaryWithPurchasedJourneyStatus = catchAsync(async (req: Request, res: Response) => {
+  
+    const updatedObject = await this.studentCapsuleTrackerService.getOrGenerateAISummaryWithPurchasedJourneyStatus(); // here we pass studentId
     
     sendResponse(res, {
       code: StatusCodes.OK,

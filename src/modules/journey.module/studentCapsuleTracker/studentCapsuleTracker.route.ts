@@ -83,6 +83,16 @@ router.route('/:capsuleId/questions').get(
 );
 
 /*-───────────────────────────────── 
+| Student | when student type answer for a question .. for autosave ...  
+|  @figmaIndex Exploration Journey Section | After purchase | 8 no. screen
+|  @desc 
+└──────────────────────────────────*/
+router.route('/submit-answer/:questionId').post(
+  auth(TRole.student),
+  controller.submitAnswerAutoSaveFeature
+);
+
+/*-───────────────────────────────── 
 | Student | change a StudentModuleTracker's Status 'notStarted' -> 'completed'
 |  @figmaIndex Exploration Journey Section | After purchase | 6 no. screen
 |  @desc 
@@ -90,6 +100,18 @@ router.route('/:capsuleId/questions').get(
 router.route('/:capsuleId/module-tracker/:studentModuleTrackerId').put(
   auth(TRole.student),  // ROLE MUST BE STUDENT
   controller.updateModuleTracker
+);
+
+/*-───────────────────────────────── 
+| Student | if ai summary is already generated for this student capsule
+|           then return that .. otherwise .. generate ai summary .. 
+|        -- also we need to return 'status' of 'purchased Journey'
+|  @figmaIndex Exploration Journey Section | After purchase | 10 no. screen
+|  @desc  :id is studentCapsuleTracker Id
+└──────────────────────────────────*/
+router.route('/:id/ai-summary').get(
+  auth(TRole.student),
+  controller.getOrGenerateAISummaryWithPurchasedJourneyStatus
 );
 
 
@@ -102,7 +124,18 @@ router.route('/:capsuleId/module-tracker/:studentModuleTrackerId').put(
 | need to check StudentCapsuleTracker's 'inspirationStatus' is 'completed'
 | if "completed" then change 'diagnosticsStatus' to 'inProgress'  and
 | 'currentSection' to "diagnostics"
-|
+| so.. 
+|   "diagnosticsStatus" : "inProgress",
+    "currentSection" : "diagnostics"
+| ------------------------------------------------------------------------------------
+| | 8 no. screen
+    update ::::
+|   "diagnosticsStatus" : "completed",
+    "scienceStatus" : "inProgress",
+    "currentSection" : "science"
+| ------------------------------------------------------------------------------------
+| | 9 no. screen
+| update "studentsAnswer" of studentCapsuleTracker .. which will later go to AI for summary
 └──────────────────────────────────*/
 router.route('/:id').put(
   auth(TRole.student), // ROLE MUST BE student 

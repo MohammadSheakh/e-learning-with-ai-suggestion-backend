@@ -75,6 +75,12 @@ const StudentCapsuleTrackerSchema = new Schema<IStudentCapsuleTracker>(
       required: [false, 'aiSummaryGeneratedAt is not required'],
     },
 
+    //🆕
+    studentsAnswer: {
+      type: String,
+      required: [false, 'aiSummaryContent is not required'],
+    },
+
     isDeleted: {
       type: Boolean,
       required: [false, 'isDeleted is not required'],

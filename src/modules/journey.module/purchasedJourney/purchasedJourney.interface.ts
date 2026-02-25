@@ -9,8 +9,9 @@ export interface IPurchasedJourney {
   
   journeyId: Types.ObjectId; //🔗
   studentId: Types.ObjectId; //🔗
-  studentsAnswer: string;
-  aiSummary: string;
+  
+  // studentsAnswer: string; // we move this student answer and aiSummary to studentCapsuleTracker
+  // aiSummary: string;
 
   price: number;
 
