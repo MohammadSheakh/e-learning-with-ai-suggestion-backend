@@ -228,6 +228,7 @@ async function updatePurchasedAdminCapsule(
           paymentStatus: TPaymentStatus.completed,
      }, { new: true });
 
+     console.log("updatedPurchasedAdminCapsule :: ", updatedPurchasedAdminCapsule);
 
      // Create all Student Capsule Tracker at purchase time 
      // get all capsules by purchasedJourneyId 
@@ -236,6 +237,8 @@ async function updatePurchasedAdminCapsule(
           capsuleId : adminCapsuleId,
           isDeleted : false,
      })
+     
+     console.log("adminModules :: ", adminModules)
 
      /*-─────────────────────────────────
      |  prepare StudentCapsuleTracker for bulk insert
@@ -256,6 +259,8 @@ async function updatePurchasedAdminCapsule(
      // console.log("adminModuleProgresss 🆕🆕 : ", adminModuleProgresss)
 
      const res = await PurchasedAdminCapsule.insertMany(adminModuleProgresss);
+
+     console.log("res :: ", res);
 
      
      await enqueueWebNotification(

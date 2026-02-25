@@ -3,6 +3,7 @@ import { model, Schema } from 'mongoose';
 import { IPurchasedAdminCapsule, IPurchasedAdminCapsuleModel } from './purchasedAdminCapsule.interface';
 import paginate from '../../../common/plugins/paginate';
 import { TPurchasedAdminCapsuleStatus } from './purchasedAdminCapsule.constant';
+import { PaymentMethod, TPaymentStatus } from '../../payment.module/paymentTransaction/paymentTransaction.constant';
 
 
 const PurchasedAdminCapsuleSchema = new Schema<IPurchasedAdminCapsule>(
@@ -41,6 +42,12 @@ const PurchasedAdminCapsuleSchema = new Schema<IPurchasedAdminCapsule>(
         required: [false, 'uploadedCertificate is not required'],
       }
     ],
+
+    price: {
+      type: Number,
+      required: [true, 'price is required'],
+    },
+
     isCertificateUploaded: {
       type: Boolean,
       required: [true, 'isCertificateUploaded is required'],
@@ -60,6 +67,37 @@ const PurchasedAdminCapsuleSchema = new Schema<IPurchasedAdminCapsule>(
       required: [false, 'progressPercent is required'],
       min: [0, 'progressPercent cannot be less than 0'],
       max: [100, 'progressPercent cannot exceed 100'],
+    },
+
+
+    paymentTransactionId: { //🔗 Same as PaymentId of kappes
+      type: Schema.Types.ObjectId,
+      ref: 'PaymentTransaction',
+      default: null, 
+      //---------------------------------
+      // First This should be null ..
+      // In Webhook Handler .. we will update this paymentTransactionId
+      //---------------------------------
+    },
+
+    paymentMethod: {
+      type: String,
+      enum: PaymentMethod,
+      default: PaymentMethod.online,
+    },
+
+    paymentStatus : {
+      type: String,
+      enum: [
+        TPaymentStatus.pending,
+        TPaymentStatus.completed,
+        TPaymentStatus.refunded,
+        TPaymentStatus.failed
+      ],
+      default: TPaymentStatus.pending,
+      required: [false, `paymentStatus is required .. it can be  ${Object.values(TPaymentStatus).join(
+        ', '
+      )}`],
     },
 
     isDeleted: {

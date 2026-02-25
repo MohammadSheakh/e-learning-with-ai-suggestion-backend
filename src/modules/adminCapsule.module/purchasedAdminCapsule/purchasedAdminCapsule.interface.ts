@@ -1,6 +1,7 @@
 import { Model, Types } from 'mongoose';
 import { PaginateOptions, PaginateResult } from '../../../types/paginate';
 import { TPurchasedAdminCapsuleStatus } from './purchasedAdminCapsule.constant';
+import { PaymentMethod, TPaymentStatus } from '../../payment.module/paymentTransaction/paymentTransaction.constant';
 
 
 export interface IPurchasedAdminCapsule {
@@ -16,6 +17,14 @@ export interface IPurchasedAdminCapsule {
   completedModules: number;
   totalModules: number;
   progressPercent: number;
+  price : number;
+
+  paymentTransactionId: Types.ObjectId | null; //🔗
+    paymentMethod: PaymentMethod.online | null;
+    paymentStatus: TPaymentStatus.pending |
+      TPaymentStatus.completed |
+      TPaymentStatus.refunded |
+      TPaymentStatus.failed ;
 
   isDeleted? : boolean;  
   createdAt?: Date;

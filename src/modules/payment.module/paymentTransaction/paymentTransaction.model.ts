@@ -27,6 +27,7 @@ const paymentTransactionSchema = new Schema<IPaymentTransaction>(
       enum: [
         TTransactionFor.UserSubscription, // previously it was SubscriptionPlan
         TTransactionFor.PurchasedJourney,
+        TTransactionFor.PurchasedAdminCapsule,
       ],
       required: [true, `referenceFor is required .. it can be  ${Object.values(TTransactionFor).join(
         ', '

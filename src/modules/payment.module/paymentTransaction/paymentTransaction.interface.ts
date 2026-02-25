@@ -1,8 +1,9 @@
 //@ts-ignore
 import { Model, Types, Schema } from 'mongoose';
 import { PaginateOptions, PaginateResult } from '../../../types/paginate';
-import { TPaymentGateway, TPaymentStatus, TTransactionFor } from './paymentTransaction.constant';
+import { TPaymentGateway, TPaymentStatus } from './paymentTransaction.constant';
 import { TCurrency } from '../../../enums/payment';
+import { TTransactionFor } from '../../../constants/TTransactionFor';
 
 export interface IPaymentTransaction {
   // _taskId: undefined | Types.ObjectId;
@@ -21,7 +22,7 @@ export interface IPaymentTransaction {
   paymentIntent : string; // from kappes
 
   amount: number;
-  currency : TCurrency.bdt
+  currency : TCurrency.usd
   paymentStatus :  
   
   TPaymentStatus.pending | 
