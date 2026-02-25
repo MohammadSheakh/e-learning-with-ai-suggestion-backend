@@ -47,7 +47,7 @@ const PurchasedAdminCapsuleSchema = new Schema<IPurchasedAdminCapsule>(
     },
     completedModules: {
       type: Number,
-      required: [true, 'completedModules is required'],
+      required: [false, 'completedModules is required'],
       min: [0, 'completedModules cannot be negative'],
     },
     totalModules: {
@@ -57,7 +57,7 @@ const PurchasedAdminCapsuleSchema = new Schema<IPurchasedAdminCapsule>(
     },
     progressPercent: {
       type: Number,
-      required: [true, 'progressPercent is required'],
+      required: [false, 'progressPercent is required'],
       min: [0, 'progressPercent cannot be less than 0'],
       max: [100, 'progressPercent cannot exceed 100'],
     },

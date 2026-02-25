@@ -50,7 +50,7 @@ export class PurchasedJourneyService extends GenericService<
     });
 
     if(checkAlreadyPurchased){
-      throw new ApiError(StatusCodes.BAD_REQUEST, 'You have already purchased this training program');
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'You have already purchased this journey');
     }
 
     const existingJourney :IJourney = await Journey.findOne({

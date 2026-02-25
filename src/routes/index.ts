@@ -30,6 +30,7 @@ import { AdminCapsuleReviewRoute } from '../modules/review.module/adminCapsuleRe
 import { MentorReviewRoute } from '../modules/review.module/mentorReview/mentorReview.route';
 import { PurchasedJourneyRoute } from '../modules/journey.module/purchasedJourney/purchasedJourney.route';
 import { StudentCapsuleTrackerRoute } from '../modules/journey.module/studentCapsuleTracker/studentCapsuleTracker.route';
+import { PurchasedAdminCapsuleRoute } from '../modules/adminCapsule.module/purchasedAdminCapsule/purchasedAdminCapsule.route';
 
 // import { ChatRoutes } from '../modules/chat/chat.routes';
 // import { MessageRoutes } from '../modules/message/message.routes';
@@ -114,6 +115,10 @@ const apiRoutes = [
     route: AdminCapsuleRoute,
   },
 
+  { // 🟢
+    path: '/purchased-admin-capsule',
+    route: PurchasedAdminCapsuleRoute,
+  },
   { // 🟢
     path: '/admin-capsules-reviews',
     route: AdminCapsuleReviewRoute,

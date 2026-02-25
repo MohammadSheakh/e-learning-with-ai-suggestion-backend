@@ -7,6 +7,7 @@ import { IPurchasedJourney } from './purchasedJourney.interface';
 import { PurchasedJourneyService } from './purchasedJourney.service';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
+import { IUser } from '../../token/token.interface';
 
 export class PurchasedJourneyController extends GenericController<
   typeof PurchasedJourney,

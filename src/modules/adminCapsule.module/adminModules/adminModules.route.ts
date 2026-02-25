@@ -62,7 +62,7 @@ router.route('/').get(
 └──────────────────────────────────*/
 router.route('/').post(
   auth(TRole.common),
-  // ...imageUploadPipelineForCreateAdminModules, // TODO : MUST :  uncomment this line 
+  ...imageUploadPipelineForCreateAdminModules, // TODO : MUST :  uncomment this line 
   // validateRequest(validation.createHelpMessageValidationSchema),
   controller.create
 );

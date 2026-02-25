@@ -8,7 +8,7 @@ const AdminModulesSchema = new Schema<IAdminModules>(
   {
     title: {
       type: String,
-      required: [true, 'title is required'],
+      required: [false, 'title is required'], // it must be true
     },
     description: {
       type: String,
@@ -21,14 +21,14 @@ const AdminModulesSchema = new Schema<IAdminModules>(
         required: [false, 'attachments is not required'],
       }
     ],
-    capsuleId: { //🔗
+    capsuleId: { //🔗 // it must be true
       type: Schema.Types.ObjectId,
       ref: 'Capsule',
-      required: [true, 'capsuleId is required'],
+      required: [false, 'capsuleId is required'],
     },
-    estimatedTime: {
+    estimatedTime: { // it must be true
       type: String,
-      required: [true, 'estimatedTime is required'],
+      required: [false, 'estimatedTime is required'],
     },
 
     numberOfLessons : {

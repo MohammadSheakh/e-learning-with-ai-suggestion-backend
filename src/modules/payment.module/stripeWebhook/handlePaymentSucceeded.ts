@@ -21,6 +21,12 @@ import { ICapsule } from "../../journey.module/capsule/capsule.interface";
 import { IStudentCapsuleTracker } from "../../journey.module/studentCapsuleTracker/studentCapsuleTracker.interface";
 import { TCurrentSection, TTrackerStatus } from "../../journey.module/studentCapsuleTracker/studentCapsuleTracker.constant";
 import { StudentCapsuleTracker } from "../../journey.module/studentCapsuleTracker/studentCapsuleTracker.model";
+import { IPurchasedAdminCapsule } from "../../adminCapsule.module/purchasedAdminCapsule/purchasedAdminCapsule.interface";
+import { PurchasedAdminCapsule } from "../../adminCapsule.module/purchasedAdminCapsule/purchasedAdminCapsule.model";
+import { AdminModules } from "../../adminCapsule.module/adminModules/adminModules.model";
+import { IAdminModules } from "../../adminCapsule.module/adminModules/adminModules.interface";
+import { IAdminModuleProgress } from "../../adminCapsule.module/adminModuleProgress/adminModuleProgress.interface";
+import { TAdminModuleProgress } from "../../adminCapsule.module/adminModuleProgress/adminModuleProgress.constant";
 
 
 const walletService = new WalletService();
@@ -99,6 +105,14 @@ export const handlePaymentSucceeded = async (session: Stripe.Checkout.Session) =
                     referenceFor2, // Journey Model Name 
                );
 
+          }else if (referenceFor === TTransactionFor.PurchasedAdminCapsule){
+               updatedObjectOfReferenceFor = updatePurchasedAdminCapsule(
+                    _user,
+                    referenceId, // purchasedJourneyId
+                    newPayment._id, 
+                    referenceId2, // adminCapsuleId,
+                    referenceFor2, // AdminCapsule Model Name 
+               );
           }else{
                console.log(`🔎🔎🔎🔎🔎 May be we need to handle this  ${referenceFor} :: ${referenceId}`)
           }
@@ -196,4 +210,68 @@ async function updatePurchasedJourney(
      );
 
      return updatedPurchasedJourney;
+}
+
+async function updatePurchasedAdminCapsule(
+     user: IUser,
+     purchasedAdminCapsuleId: string,
+     paymentTransactionId: string,
+     adminCapsuleId : string,
+     AdminCapsuleModelName : string,
+){
+
+     // isBookingExists = await Order.findOne({ _id: orderId });
+
+     const updatedPurchasedAdminCapsule : IPurchasedAdminCapsule = await PurchasedAdminCapsule.findByIdAndUpdate(purchasedAdminCapsuleId, { 
+          /* update fields */ 
+          paymentTransactionId : paymentTransactionId,
+          paymentStatus: TPaymentStatus.completed,
+     }, { new: true });
+
+
+     // Create all Student Capsule Tracker at purchase time 
+     // get all capsules by purchasedJourneyId 
+
+     const adminModules: IAdminModules[] = await AdminModules.find({
+          capsuleId : adminCapsuleId,
+          isDeleted : false,
+     })
+
+     /*-─────────────────────────────────
+     |  prepare StudentCapsuleTracker for bulk insert
+     └──────────────────────────────────*/
+     const adminModuleProgresss : IAdminModuleProgress[] = adminModules.map((adminModule : IAdminModules) => ({
+          moduleId : adminModule._id,
+          capsuleId : adminCapsuleId,
+          studentId : user.userId,
+          totalLessons : adminModule.numberOfLessons, // but sure na .. 
+          status : TAdminModuleProgress.notStarted, 
+          completedLessonsCount : 0,
+          /*---------
+               
+          -----------*/
+          
+     }))
+
+     // console.log("adminModuleProgresss 🆕🆕 : ", adminModuleProgresss)
+
+     const res = await PurchasedAdminCapsule.insertMany(adminModuleProgresss);
+
+     
+     await enqueueWebNotification(
+          `A Student ${user.userId} ${user.userName} purchased a capsule, TxnId : ${paymentTransactionId}`,
+          user.userId, // senderId
+          null, // receiverId 
+          TRole.admin, // receiverRole
+          TNotificationType.payment, // type
+          //---------------------------------
+          // In UI there is a details page for order in admin end 
+          //---------------------------------
+          '', // linkFor // TODO : MUST add the query params 
+          orderId, // linkId
+          // TTransactionFor.TrainingProgramPurchase, // referenceFor
+          // purchaseTrainingProgram._id // referenceId
+     );
+
+     return updatedPurchasedAdminCapsule;
 }
