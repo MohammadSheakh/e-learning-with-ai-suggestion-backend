@@ -11,7 +11,7 @@ import { IConversation } from "../../modules/chatting.module/conversation/conver
 import { ConversationParticipents } from "../../modules/chatting.module/conversationParticipents/conversationParticipents.model";
 //@ts-ignore
 import mongoose from 'mongoose';
-
+import { buildTranslatedField } from "../../utils/buildTranslatedField";
 
 /*-─────────────────────────────────
 |  Notification Queue
@@ -42,8 +42,15 @@ export const startNotificationWorker = () => {
       logger.info(`Processing notification job ${id} ⚡ ${name}`, data);
 
       try {
+
+        // Translate multiple properties dynamically
+        const [titleObj] : [any]  = await Promise.all([
+          buildTranslatedField(data.title as string)
+        ]);
+
         const notif = await Notification.create({
-          title: data.title,
+          // title: data.title,
+          title: titleObj,
           // subTitle: data.subTitle,
           senderId: data.senderId,
           receiverId: data.receiverId,

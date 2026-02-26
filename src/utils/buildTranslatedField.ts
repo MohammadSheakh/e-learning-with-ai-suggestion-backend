@@ -3,7 +3,7 @@ import { translateTextToTargetLang } from "./translateTextToTargetLang";
 
 interface TranslatedField {
   en: string;
-  bn: string;
+  fr: string;
 }
 
 /**-------------------------------
@@ -20,11 +20,15 @@ export const buildTranslatedField = async (
     throw new Error('Text too short to translate');
   }
 
+  /*-----------------------
+
   // 1️⃣ Detect the language
   let detectedLang = await detectLanguage(cleanText);
 
   const originalLang = detectedLang || 'en';
 
+  
+  
   // 3️⃣ Build the translation object
   let result: TranslatedField = { en: '', bn: '' };
 
@@ -32,13 +36,14 @@ export const buildTranslatedField = async (
 
   const otherLang = originalLang === "en" ? 'bn' : 'en';
   result[otherLang] = await translateTextToTargetLang(cleanText, otherLang);
-
+  
+  ------------------------*/
 
   /*---------------------------------
   ---------------------------------*/
 
-  // const result: TranslatedField
-  // result = {  en: 'TEST_EN', bn: 'TEST_BN' }; // 🧪 FOR_TESTING 
+  let result: TranslatedField;
+  result = {  en: cleanText, fr: 'TEST_BN' }; // 🧪 FOR_TESTING 
 
   return result;
 };

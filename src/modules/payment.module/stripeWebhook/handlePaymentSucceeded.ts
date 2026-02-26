@@ -27,6 +27,7 @@ import { AdminModules } from "../../adminCapsule.module/adminModules/adminModule
 import { IAdminModules } from "../../adminCapsule.module/adminModules/adminModules.interface";
 import { IAdminModuleProgress } from "../../adminCapsule.module/adminModuleProgress/adminModuleProgress.interface";
 import { TAdminModuleProgress } from "../../adminCapsule.module/adminModuleProgress/adminModuleProgress.constant";
+import { AdminModuleProgress } from "../../adminCapsule.module/adminModuleProgress/adminModuleProgress.model";
 
 
 const walletService = new WalletService();
@@ -241,7 +242,7 @@ async function updatePurchasedAdminCapsule(
      console.log("adminModules :: ", adminModules)
 
      /*-─────────────────────────────────
-     |  prepare StudentCapsuleTracker for bulk insert
+     |  prepare Admin Module Progress for bulk insert
      └──────────────────────────────────*/
      const adminModuleProgresss : IAdminModuleProgress[] = adminModules.map((adminModule : IAdminModules) => ({
           moduleId : adminModule._id,
@@ -253,27 +254,28 @@ async function updatePurchasedAdminCapsule(
           /*---------
                
           -----------*/
-          
      }))
 
      // console.log("adminModuleProgresss 🆕🆕 : ", adminModuleProgresss)
 
-     const res = await PurchasedAdminCapsule.insertMany(adminModuleProgresss);
+     const res = await AdminModuleProgress.insertMany(adminModuleProgresss);
 
      console.log("res :: ", res);
 
-     
+     /*-─────────────────────────────────
+     | // TODO  notification e click korle kon page e jabe .. chinta korte hobe .. payment txn page e jabe ? naki capsule booking page e jabe ? naki original capsule e jabe ?
+     └──────────────────────────────────*/
      await enqueueWebNotification(
           `A Student ${user.userId} ${user.userName} purchased a capsule, TxnId : ${paymentTransactionId}`,
           user.userId, // senderId
           null, // receiverId 
           TRole.admin, // receiverRole
-          TNotificationType.payment, // type
+          TNotificationType.purchasedAdminCapsule, // type
           //---------------------------------
           // In UI there is a details page for order in admin end 
           //---------------------------------
           '', // linkFor // TODO : MUST add the query params 
-          orderId, // linkId
+          purchasedAdminCapsuleId, // linkId
           // TTransactionFor.TrainingProgramPurchase, // referenceFor
           // purchaseTrainingProgram._id // referenceId
      );
