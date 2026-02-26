@@ -18,6 +18,8 @@ import { IAdminCapsule } from '../adminCapsule/adminCapsule.interface';
 import { AdminCapsule } from '../adminCapsule/adminCapsule.model';
 import { config } from '../../../config';
 import { TPurchasedAdminCapsuleStatus } from './purchasedAdminCapsule.constant';
+import { IAdminCapsuleCategory } from '../adminCapsuleCategory/adminCapsuleCategory.interface';
+import { AdminCapsuleCategory } from '../adminCapsuleCategory/adminCapsuleCategory.model';
 
 
 export class PurchasedAdminCapsuleService extends GenericService<
@@ -204,5 +206,139 @@ export class PurchasedAdminCapsuleService extends GenericService<
     }
     //@ts-ignore
     return  stripeResult; // result ;//session.url;
+  }
+
+  async getAllWithGiftedAndCategories(user : IUser) {
+    
+    // PERF:
+    const pipeline = [
+      {
+        $match: {
+          studentId: new mongoose.Types.ObjectId(user.userId),
+          isDeleted: false,
+          $or: [
+            { isGifted: false, paymentTransactionId: { $ne: null } },
+            { isGifted: true, paymentTransactionId: null },
+          ],
+        },
+      },
+
+      // Join AdminCapsule
+      {
+        $lookup: {
+          from: 'admincapsules',
+          localField: 'capsuleId',
+          foreignField: '_id',
+          as: 'capsule',
+        },
+      },
+      { $unwind: '$capsule' },
+
+      // Attachments lookup
+      {
+        $lookup: {
+          from: 'attachments',
+          localField: 'capsule.attachments',
+          foreignField: '_id',
+          as: 'attachments',
+        },
+      },
+
+      
+      // Review stats lookup
+      {
+        $lookup: {
+          from: 'admincapsulereviews',
+          let: { capsuleId: '$capsule._id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$adminCapsuleId', '$$capsuleId'] },
+                    { $eq: ['$isDeleted', false] },
+                  ],
+                },
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                avgRating: { $avg: '$rating' },
+                totalReviews: { $sum: 1 },
+              },
+            },
+          ],
+          as: 'reviewStats',
+        },
+      },
+
+      {
+        $addFields: {
+          avgRating: {
+            $ifNull: [{ $arrayElemAt: ['$reviewStats.avgRating', 0] }, 0],
+          },
+          totalReviews: {
+            $ifNull: [{ $arrayElemAt: ['$reviewStats.totalReviews', 0] }, 0],
+          },
+        },
+      },
+
+      {
+        $project: {
+          _id: 0,
+          purchasedId: '$_id',
+          isGifted: 1,
+
+          capsuleId: '$capsule._id',
+          title: '$capsule.title',
+          description: '$capsule.description',
+          estimatedTime: '$capsule.estimatedTime',
+
+          attachments: {
+            $map: {
+              input: '$attachments',
+              as: 'att',
+              in: '$$att.attachment',
+            },
+          },
+
+          avgRating: { $round: ['$avgRating', 1] },
+          totalReviews: 1,
+        },
+      },
+
+      // 🔥 Split into two arrays
+      {
+        $facet: {
+          giftedCapsules: [
+            { $match: { isGifted: true } }
+          ],
+          purchasedCapsules: [
+            { $match: { isGifted: false } }
+          ],
+        },
+      },
+    ];
+
+
+    const [capsules, categories] = await Promise.all([
+      PurchasedAdminCapsule.aggregate(pipeline),
+      
+      //---------------
+
+      AdminCapsuleCategory.find({
+        isDeleted: false,
+      }).select('-description -__v -updatedAt -createdAt -isDeleted')
+      .populate({
+        path: 'attachments',
+        select: 'attachment',
+      })
+      .lean()
+
+    ]);
+
+
+     return {capsules, categories};
   }
 }

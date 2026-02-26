@@ -67,7 +67,7 @@ router.route('/').post(
   auth(TRole.student),
   injectUserReference('userId'),
   // validateRequest(validation.createHelpMessageValidationSchema),
-  controller.createOrUpdate
+  controller.create
 );
 
 

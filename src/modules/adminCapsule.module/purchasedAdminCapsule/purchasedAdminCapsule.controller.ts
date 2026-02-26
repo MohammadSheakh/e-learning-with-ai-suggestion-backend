@@ -33,5 +33,20 @@ export class PurchasedAdminCapsuleController extends GenericController<
     });
   });
 
+  
+  getAllWithGiftedAndCategories = catchAsync(async (req: Request, res: Response) => {
+    
+    console.log("hit ttttt");
+
+    const result = await this.purchasedAdminCapsuleService.getAllWithGiftedAndCategories(req.user as IUser);
+
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: result,
+      message: `${this.modelName} created successfully`,
+      success: true,
+    });
+  });
+
   // add more methods here if needed or override the existing ones 
 }

@@ -30,29 +30,37 @@ const paginationOptions: Array<'sortBy' | 'page' | 'limit' | 'populate'> = [
 // const taskService = new TaskService();
 const controller = new PurchasedAdminCapsuleController();
 
-//
-router.route('/paginate').get(
-  //auth('common'),
-  validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
-  controller.getAllWithPagination
+
+// router.route('/paginate').get(
+//   //auth('common'),
+//   validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
+//   controller.getAllWithPagination
+// );
+
+/*-─────────────────────────────────
+|  Student | My Capsules | get all purchased capsule and gifted capsule and capsule categories
+└──────────────────────────────────*/
+router.route('/with-gifted-capsule-nd-categories').get(
+  auth(TRole.student),
+  controller.getAllWithGiftedAndCategories
 );
 
-router.route('/:id').get(
-  // auth('common'),
-  controller.getById
-);
+// router.route('/:id').get(
+//   // auth('common'),
+//   controller.getById
+// );
 
-router.route('/:id').put(
-  //auth('common'),
-  // validateRequest(validation.createHelpMessageValidationSchema),
-  controller.updateById
-);
+// router.route('/:id').put(
+//   //auth('common'),
+//   // validateRequest(validation.createHelpMessageValidationSchema),
+//   controller.updateById
+// );
 
-//[🚧][🧑‍💻✅][🧪] // 🆗
-router.route('/').get(
-  auth(TRole.common),
-  controller.getAll
-);
+
+// router.route('/').get(
+//   auth(TRole.common),
+//   controller.getAll
+// );
 
 /*-─────────────────────────────────
 |  Student | Purchase Admin Capsule
@@ -63,15 +71,15 @@ router.route('/:adminCapsuleId').post(
   controller.create
 );
 
-router.route('/:id/permenent').delete(
-  auth(TRole.common),
-  controller.deleteById
-);
+// router.route('/:id/permenent').delete(
+//   auth(TRole.common),
+//   controller.deleteById
+// );
 
-router.route('/:id').delete(
-  auth(TRole.common),
-  controller.softDeleteById
-);
+// router.route('/:id').delete(
+//   auth(TRole.common),
+//   controller.softDeleteById
+// );
 
 
 export const PurchasedAdminCapsuleRoute = router;
