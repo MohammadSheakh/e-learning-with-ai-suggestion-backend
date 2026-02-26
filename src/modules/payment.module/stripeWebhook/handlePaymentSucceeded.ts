@@ -28,6 +28,11 @@ import { IAdminModules } from "../../adminCapsule.module/adminModules/adminModul
 import { IAdminModuleProgress } from "../../adminCapsule.module/adminModuleProgress/adminModuleProgress.interface";
 import { TAdminModuleProgress } from "../../adminCapsule.module/adminModuleProgress/adminModuleProgress.constant";
 import { AdminModuleProgress } from "../../adminCapsule.module/adminModuleProgress/adminModuleProgress.model";
+import { ILesson } from "../../adminCapsule.module/lesson/lesson.interface";
+import { Lesson } from "../../adminCapsule.module/lesson/lesson.model";
+import { LessonProgress } from "../../adminCapsule.module/lessonProgress/lessonProgress.model";
+import { TLessonProgress } from "../../adminCapsule.module/lessonProgress/lessonProgress.constant";
+import { ILessonProgress } from "../../adminCapsule.module/lessonProgress/lessonProgress.interface";
 
 
 const walletService = new WalletService();
@@ -237,13 +242,48 @@ async function updatePurchasedAdminCapsule(
      const adminModules: IAdminModules[] = await AdminModules.find({
           capsuleId : adminCapsuleId,
           isDeleted : false,
-     })
+     }).sort({ orderNumber: 1 }); // ✅ sorted so we know which is first
      
      console.log("adminModules :: ", adminModules)
+
+     // Get all lessons for all modules in one query
+     const moduleIds = adminModules.map(m => m._id);
+
+     const allLessons: ILesson[] = await Lesson.find({
+          moduleId: { $in: moduleIds },
+          isDeleted: false,
+     }).sort({ orderNumber: 1 });
+
+     // Group lessons by moduleId for easy access
+     const lessonsByModule = allLessons.reduce((acc, lesson) => {
+          const key = lesson.moduleId.toString();
+          if (!acc[key]) acc[key] = [];
+          
+          acc[key].push(lesson);
+          
+          return acc;
+     }, {} as Record<string, ILesson[]>);
+
+     const firstModuleId = adminModules[0]?._id.toString();
+
+
+     /*-─────────────────────────────────
+     |  Prepare ModuleProgress for bulk insert
+     |  First module → unlocked, rest → locked
+     └──────────────────────────────────*/
+     const moduleProgressDocs: IAdminModuleProgress[] = adminModules.map((module, index) => ({
+          moduleId: module._id,
+          capsuleId: adminCapsuleId,
+          studentId: user.userId,
+          totalLessons: module.numberOfLessons,
+          status: index === 0 ? TAdminModuleProgress.unlocked : TAdminModuleProgress.locked,
+          completedLessonsCount: 0,
+     }));
 
      /*-─────────────────────────────────
      |  prepare Admin Module Progress for bulk insert
      └──────────────────────────────────*/
+     /*---------
      const adminModuleProgresss : IAdminModuleProgress[] = adminModules.map((adminModule : IAdminModules) => ({
           moduleId : adminModule._id,
           capsuleId : adminCapsuleId,
@@ -251,16 +291,66 @@ async function updatePurchasedAdminCapsule(
           totalLessons : adminModule.numberOfLessons, // but sure na .. 
           status : TAdminModuleProgress.notStarted, 
           completedLessonsCount : 0,
-          /*---------
-               
-          -----------*/
      }))
+     -----------*/
 
-     // console.log("adminModuleProgresss 🆕🆕 : ", adminModuleProgresss)
 
-     const res = await AdminModuleProgress.insertMany(adminModuleProgresss);
+     /*-─────────────────────────────────
+     |  Prepare LessonProgress for bulk insert
+     |  First lesson of first module → unlocked
+     |  Everything else → locked
+     └──────────────────────────────────*/
+     const lessonProgressDocs: ILessonProgress[] = allLessons.map((lesson, index) => {
+          const isFirstModule = lesson.moduleId.toString() === firstModuleId;
+          const lessonsInFirstModule = lessonsByModule[firstModuleId] ?? [];
+          const isFirstLesson = isFirstModule && lesson._id.toString() === lessonsInFirstModule[0]?._id.toString();
 
-     console.log("res :: ", res);
+          return {
+               lessonId: lesson._id,
+               moduleId: lesson.moduleId,
+               capsuleId: adminCapsuleId,
+               studentId: user.userId,
+               status: isFirstLesson ? TLessonProgress.unlocked : TLessonProgress.locked,
+          };
+     });
+
+
+     
+     // const res = await AdminModuleProgress.insertMany(adminModuleProgresss);
+
+     // Bulk insert both in parallel
+     await Promise.all([
+          AdminModuleProgress.insertMany(moduleProgressDocs),
+          LessonProgress.insertMany(lessonProgressDocs),
+     ]);
+
+
+     /*-─────────────────────────────────
+          ## State at Purchase Time
+          Module 1  → unlocked   ← student can start
+          Lesson 1 → unlocked  ← only this one is accessible
+          Lesson 2 → locked
+          Lesson 3 → locked
+
+          Module 2  → locked
+          Lesson 1 → locked
+          Lesson 2 → locked
+
+          Module 3  → locked
+          ...
+
+
+          ## Unlock Chain (when student completes a lesson)
+
+          Complete Lesson 1 of Module 1
+          → LessonProgress[lesson1] = completed
+          → Unlock LessonProgress[lesson2] of Module 1
+
+          Complete last Lesson of Module 1
+          → ModuleProgress[module1] = completed
+          → Unlock ModuleProgress[module2]
+          → Unlock LessonProgress[first lesson of module2]
+     └──────────────────────────────────*/
 
      /*-─────────────────────────────────
      | // TODO  notification e click korle kon page e jabe .. chinta korte hobe .. payment txn page e jabe ? naki capsule booking page e jabe ? naki original capsule e jabe ?

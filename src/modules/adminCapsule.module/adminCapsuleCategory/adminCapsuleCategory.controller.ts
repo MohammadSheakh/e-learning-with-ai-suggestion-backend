@@ -44,6 +44,22 @@ export class AdminCapsuleCategoryController extends GenericController<
 
     
     // const result = await this.adminCapsuleCategoryService.getAllCapsulesByCategoryId(options, capsuleCategoryId);
+    const result = await this.adminCapsuleCategoryService.getAllCapsulesWithRatingInfoByCategoryIdV2WithCategoryInformation(options, capsuleCategoryId);
+
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: result,
+      message: `all admin capsules retrived successfully by categoryId`,
+      success: true,
+    });
+  });
+
+  getAllCapsulesWithRatingInfoByCategoryIdForStudent = catchAsync(async (req: Request, res: Response) => {
+    const { capsuleCategoryId } = req.params;
+    const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
+
+    
+    // const result = await this.adminCapsuleCategoryService.getAllCapsulesByCategoryId(options, capsuleCategoryId);
     const result = await this.adminCapsuleCategoryService.getAllCapsulesWithRatingInfoByCategoryIdV2(options, capsuleCategoryId);
 
     sendResponse(res, {

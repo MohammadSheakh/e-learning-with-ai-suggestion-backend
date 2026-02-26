@@ -1,6 +1,6 @@
 export enum TLessonProgress {
   locked = 'locked',
   unlocked = 'unlocked',
-  viewed = 'viewed',
+  inProgress = 'inProgress',
   completed = 'completed',
 }

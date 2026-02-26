@@ -66,13 +66,22 @@ router.route('/:capsuleCategoryId/capsules').get(
 /*-───────────────────────────────── 
 | Landing | get all capsule with rating info by category
 |  @figmaIndex 
-|  @desc 
+|  @desc with category information
 └──────────────────────────────────*/
 router.route('/:capsuleCategoryId/capsules-with-rating').get(
   // auth('common'),
   controller.getAllCapsulesWithRatingInfoByCategoryId 
 );
 
+/*-───────────────────────────────── 
+| Landing | get all capsule with rating info by category
+|  @figmaIndex 
+|  @desc  without category information
+└──────────────────────────────────*/
+router.route('/:capsuleCategoryId/capsules-with-rating/student').get(
+  auth(TRole.student),
+  controller.getAllCapsulesWithRatingInfoByCategoryIdForStudent 
+);
 
 
 router.route('/:id').get(

@@ -33,7 +33,7 @@ const LessonProgressSchema = new Schema<ILessonProgress>(
       enum: [
         TLessonProgress.locked,
         TLessonProgress.unlocked,
-        TLessonProgress.viewed,
+        TLessonProgress.inProgress,
         TLessonProgress.completed,
       ],
       required: [

@@ -341,4 +341,6 @@ export class PurchasedAdminCapsuleService extends GenericService<
 
      return {capsules, categories};
   }
+
+  
 }
