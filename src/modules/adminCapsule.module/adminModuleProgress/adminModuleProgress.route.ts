@@ -37,6 +37,15 @@ router.route('/paginate').get(
   controller.getAllWithPagination
 );
 
+/*-─────────────────────────────────
+|  Student | My Capsules | get all modules and lessons by capsuleId with module and lesson's progress information
+└──────────────────────────────────*/
+router.route('/purchased-module-nd-lessons/:capsuleId').get(
+  auth(TRole.student),
+  controller.getModuleProgressByCapsule
+);
+
+
 router.route('/:id').get(
   // auth('common'),
   controller.getById

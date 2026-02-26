@@ -31,6 +31,7 @@ import { MentorReviewRoute } from '../modules/review.module/mentorReview/mentorR
 import { PurchasedJourneyRoute } from '../modules/journey.module/purchasedJourney/purchasedJourney.route';
 import { StudentCapsuleTrackerRoute } from '../modules/journey.module/studentCapsuleTracker/studentCapsuleTracker.route';
 import { PurchasedAdminCapsuleRoute } from '../modules/adminCapsule.module/purchasedAdminCapsule/purchasedAdminCapsule.route';
+import { AdminModuleProgressRoute } from '../modules/adminCapsule.module/adminModuleProgress/adminModuleProgress.route';
 
 // import { ChatRoutes } from '../modules/chat/chat.routes';
 // import { MessageRoutes } from '../modules/message/message.routes';
@@ -131,6 +132,10 @@ const apiRoutes = [
   {
     path : '/admin-lessons',
     route: LessonRoute,
+  },
+  {
+    path : '/admin-module-progress',
+    route: AdminModuleProgressRoute,
   },
   ///////////////////////////////////////// FAQ Category
   {

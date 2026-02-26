@@ -36,6 +36,11 @@ const AdminModulesSchema = new Schema<IAdminModules>(
       required: [false, 'numberOfLessons is not required'],
     },
 
+    orderNumber: {
+      type: Number,
+      required: [false, 'orderNumber is not required'],
+    },
+
     isDeleted: {
       type: Boolean,
       required: [false, 'isDeleted is not required'],

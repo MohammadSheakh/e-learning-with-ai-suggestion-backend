@@ -62,6 +62,21 @@ const PurchasedAdminCapsuleSchema = new Schema<IPurchasedAdminCapsule>(
       required: [true, 'totalModules is required'],
       min: [0, 'totalModules cannot be negative'],
     },
+
+    // ================== 🆕
+    completedLessons: {
+      type: Number,
+      required: [false, 'completedLessons is required'],
+      min: [0, 'completedLessons cannot be negative'],
+    },
+    
+    // ================== 🆕
+    totalLessons: {
+      type: Number,
+      required: [false, 'totalLessons is not required'],
+      min: [0, 'totalLessons cannot be negative'],
+    },
+
     progressPercent: {
       type: Number,
       required: [false, 'progressPercent is required'],

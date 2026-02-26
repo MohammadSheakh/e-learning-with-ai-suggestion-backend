@@ -29,6 +29,11 @@ const LessonSchema = new Schema<ILesson>(
       // match: [/^(\d+[hmd])+/i, 'duration must be in format like "5m", "1h30m", "2d"'],
     },
 
+    orderNumber: {
+      type: Number,
+      required: [false, 'orderNumber is not required'],
+    },
+
     isDeleted: {
       type: Boolean,
       required: [false, 'isDeleted is not required'],

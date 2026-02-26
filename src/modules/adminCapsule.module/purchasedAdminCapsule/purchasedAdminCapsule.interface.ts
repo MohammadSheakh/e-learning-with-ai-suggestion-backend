@@ -17,6 +17,10 @@ export interface IPurchasedAdminCapsule {
   completedModules: number;
   totalModules: number;
   progressPercent: number;
+
+  totalLessons : number; // 🆕
+  completedLessons : number; // 🆕
+
   price : number;
 
   paymentTransactionId: Types.ObjectId | null; //🔗

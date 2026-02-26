@@ -15,6 +15,7 @@ export interface IAdminModules {
 
   numberOfLessons : number;
 
+  orderNumber : number;
   
   isDeleted? : boolean;  
   createdAt?: Date;

@@ -29,6 +29,8 @@ const AdminModuleProgressSchema = new Schema<IAdminModuleProgress>(
         TAdminModuleProgress.notStarted,
         TAdminModuleProgress.inProgress,
         TAdminModuleProgress.completed,
+        TAdminModuleProgress.unlocked,
+        TAdminModuleProgress.locked,
       ],
       required: [
         true,

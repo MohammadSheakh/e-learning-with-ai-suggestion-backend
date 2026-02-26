@@ -226,15 +226,7 @@ async function updatePurchasedAdminCapsule(
      AdminCapsuleModelName : string,
 ){
 
-     // isBookingExists = await Order.findOne({ _id: orderId });
-
-     const updatedPurchasedAdminCapsule : IPurchasedAdminCapsule = await PurchasedAdminCapsule.findByIdAndUpdate(purchasedAdminCapsuleId, { 
-          /* update fields */ 
-          paymentTransactionId : paymentTransactionId,
-          paymentStatus: TPaymentStatus.completed,
-     }, { new: true });
-
-     console.log("updatedPurchasedAdminCapsule :: ", updatedPurchasedAdminCapsule);
+     
 
      // Create all Student Capsule Tracker at purchase time 
      // get all capsules by purchasedJourneyId 
@@ -275,8 +267,8 @@ async function updatePurchasedAdminCapsule(
           moduleId: module._id,
           capsuleId: adminCapsuleId,
           studentId: user.userId,
-          totalLessons: module.numberOfLessons,
-          status: index === 0 ? TAdminModuleProgress.unlocked : TAdminModuleProgress.locked,
+          totalLessons: lessonsByModule[module._id]?.length || 0, // module.numberOfLessons,
+          status: index === 0 ? TAdminModuleProgress.inProgress : TAdminModuleProgress.locked,
           completedLessonsCount: 0,
      }));
 
@@ -313,8 +305,6 @@ async function updatePurchasedAdminCapsule(
                status: isFirstLesson ? TLessonProgress.unlocked : TLessonProgress.locked,
           };
      });
-
-
      
      // const res = await AdminModuleProgress.insertMany(adminModuleProgresss);
 
@@ -323,6 +313,17 @@ async function updatePurchasedAdminCapsule(
           AdminModuleProgress.insertMany(moduleProgressDocs),
           LessonProgress.insertMany(lessonProgressDocs),
      ]);
+
+
+     const updatedPurchasedAdminCapsule : IPurchasedAdminCapsule = await PurchasedAdminCapsule.findByIdAndUpdate(purchasedAdminCapsuleId, { 
+          /* update fields */ 
+          paymentTransactionId : paymentTransactionId,
+          paymentStatus: TPaymentStatus.completed,
+          totalLessons : allLessons.length || 0,
+          totalModule : adminModules.length || 0,
+     }, { new: true });
+
+     console.log("updatedPurchasedAdminCapsule :: ", updatedPurchasedAdminCapsule);
 
 
      /*-─────────────────────────────────

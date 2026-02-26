@@ -5,16 +5,31 @@ import { GenericController } from '../../_generic-module/generic.controller';
 import { AdminModuleProgress } from './adminModuleProgress.model';
 import { IAdminModuleProgress } from './adminModuleProgress.interface';
 import { AdminModuleProgressService } from './adminModuleProgress.service';
+import catchAsync from '../../../shared/catchAsync';
+import sendResponse from '../../../shared/sendResponse';
 
 export class AdminModuleProgressController extends GenericController<
   typeof AdminModuleProgress,
   IAdminModuleProgress
 > {
-  AdminModuleProgressService = new AdminModuleProgressService();
+  adminModuleProgressService = new AdminModuleProgressService();
 
   constructor() {
     super(new AdminModuleProgressService(), 'AdminModuleProgress');
   }
+
+  getModuleProgressByCapsule = catchAsync(async (req: Request, res: Response) => {
+    const { capsuleId } = req.params;
+    const studentId = req.user.userId; // from auth middleware
+
+    const result = await this.adminModuleProgressService.getModuleProgressByCapsule(capsuleId, studentId);
+
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: result,
+      message: 'Module progress fetched successfully',
+    });
+  });
 
   // add more methods here if needed or override the existing ones 
 }

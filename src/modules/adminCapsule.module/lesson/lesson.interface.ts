@@ -1,3 +1,4 @@
+//@ts-ignore
 import { Model, Types } from 'mongoose';
 import { PaginateOptions, PaginateResult } from '../../../types/paginate';
 
@@ -10,6 +11,8 @@ export interface ILesson {
   attachments?: Types.ObjectId[]; //🔗🖼️
   moduleId: Types.ObjectId; //🔗 FK to parent (e.g., Capsule or Roadmap)
   estimatedTime: string; // e.g., "5m", "1h30m", "2d"
+
+  orderNumber : number;
 
   isDeleted? : boolean;
   createdAt?: Date;
