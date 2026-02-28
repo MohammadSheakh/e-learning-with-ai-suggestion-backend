@@ -77,6 +77,12 @@ const PurchasedAdminCapsuleSchema = new Schema<IPurchasedAdminCapsule>(
       min: [0, 'totalLessons cannot be negative'],
     },
 
+    // ================== 🆕
+    completionDate : {
+      type : Date,
+      required: [false, 'completionDate is not required'],
+    },
+
     progressPercent: {
       type: Number,
       required: [false, 'progressPercent is required'],

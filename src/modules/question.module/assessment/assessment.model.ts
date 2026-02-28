@@ -9,29 +9,29 @@ const AssessmentSchema = new Schema<IAssessment>(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
-    is_completed: {
+    isCompleted: {
       type: Boolean,
-      required: [true, 'is_completed is required'],
+      required: [false, 'isCompleted is not required'],
     },
-    current_phaseId: {  //🔗
+    currentPhaseId: {  //🔗
       type: Schema.Types.ObjectId,
       ref: 'Phase',
-      required: [true, 'current_phaseId is required'],
+      required: [false, 'currentPhaseId is not required'],
     },
-    current_questionId: {  //🔗
+    currentQuestionId: {  //🔗
       type: Schema.Types.ObjectId,
       ref: 'Question',
-      required: [true, 'current_questionId is required'],
+      required: [false, 'currentQuestionId is not required'],
     },
     currentPhaseNumber: {
       type: Number,
-      required: [true, 'currentPhaseNumber is required'],
-      min: [1, 'currentPhaseNumber must be at least 1'],
+      required: [false, 'currentPhaseNumber is not required'],
+      // min: [1, 'currentPhaseNumber must be at least 1'],
     },
     currentQuestionNumber: {
       type: Number,
-      required: [true, 'currentQuestionNumber is required'],
-      min: [1, 'currentQuestionNumber must be at least 1'],
+      required: [false, 'currentQuestionNumber is not required'],
+      // min: [1, 'currentQuestionNumber must be at least 1'],
     },
 
     isDeleted: {

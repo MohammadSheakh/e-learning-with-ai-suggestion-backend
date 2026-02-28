@@ -24,6 +24,24 @@ export class AdminModuleProgressController extends GenericController<
 
     const result = await this.adminModuleProgressService.getModuleProgressByCapsule(capsuleId, studentId);
 
+    // console.log("result :: ", result);
+
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: result,
+      message: 'Module progress fetched successfully',
+    });
+  });
+
+  updateLessonStatus = catchAsync(async (req: Request, res: Response) => {
+    const { lessonProgressId, lessonId, capsuleId } = req.params;
+
+    const studentId = req.user.userId; // from auth middleware
+
+    const result = await this.adminModuleProgressService.completeLesson(lessonProgressId, lessonId, studentId, capsuleId);
+
+    // console.log("result :: ", result);
+
     sendResponse(res, {
       code: StatusCodes.OK,
       data: result,

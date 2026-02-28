@@ -90,5 +90,22 @@ export class PhaseController extends GenericController<
     }
   );
 
+  submitAnswerAutoSaveFeature = catchAsync(async (req: Request, res: Response) => {
+  
+    const updatedObject = await this.phaseService.autoSaveAnswer(
+      req.body.assessmentId, 
+      req.body.phase_number,
+      req.body.questionId,
+      req.body.answer_value,
+      req.body.answer_type
+    ); // here we pass studentId
+    
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: updatedObject,
+      message: `Question with student's answer retrived successfully`,
+    });
+  });
+
   // add more methods here if needed or override the existing ones 
 }

@@ -48,6 +48,18 @@ export class AdminCapsuleController extends GenericController<
     });
   });
 
+  getWithModulesAndReviews = catchAsync(async (req: Request, res: Response) => {
+    const { adminCapsuleId } = req.params;
+
+    const result = await this.adminCapsuleService.getWithModulesAndReviews(adminCapsuleId);
+
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: result,
+      message: `${this.modelName} created successfully`,
+      success: true,
+    });
+  });
 
   // add more methods here if needed or override the existing ones 
 }

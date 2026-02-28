@@ -32,6 +32,7 @@ import { PurchasedJourneyRoute } from '../modules/journey.module/purchasedJourne
 import { StudentCapsuleTrackerRoute } from '../modules/journey.module/studentCapsuleTracker/studentCapsuleTracker.route';
 import { PurchasedAdminCapsuleRoute } from '../modules/adminCapsule.module/purchasedAdminCapsule/purchasedAdminCapsule.route';
 import { AdminModuleProgressRoute } from '../modules/adminCapsule.module/adminModuleProgress/adminModuleProgress.route';
+import { AssessmentRoute } from '../modules/question.module/assessment/assessment.route';
 
 // import { ChatRoutes } from '../modules/chat/chat.routes';
 // import { MessageRoutes } from '../modules/message/message.routes';
@@ -61,6 +62,11 @@ const apiRoutes = [
   { // 🟢
     path: '/questions',
     route: QuestionRoute,
+  },
+
+  { // 🟢
+    path: '/assessments',
+    route: AssessmentRoute,
   },
 
   /////////////////////////////////////////  Calendly

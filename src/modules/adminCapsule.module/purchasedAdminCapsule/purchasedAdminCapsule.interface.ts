@@ -20,6 +20,7 @@ export interface IPurchasedAdminCapsule {
 
   totalLessons : number; // 🆕
   completedLessons : number; // 🆕
+  completionDate : Date;  // 🆕
 
   price : number;
 

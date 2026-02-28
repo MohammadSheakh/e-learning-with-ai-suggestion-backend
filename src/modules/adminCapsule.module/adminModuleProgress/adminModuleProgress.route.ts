@@ -38,6 +38,7 @@ router.route('/paginate').get(
 );
 
 /*-─────────────────────────────────
+| ( Landing Page ) |
 |  Student | My Capsules | get all modules and lessons by capsuleId with module and lesson's progress information
 └──────────────────────────────────*/
 router.route('/purchased-module-nd-lessons/:capsuleId').get(
@@ -45,6 +46,15 @@ router.route('/purchased-module-nd-lessons/:capsuleId').get(
   controller.getModuleProgressByCapsule
 );
 
+/*-─────────────────────────────────
+| ( My Capsules ) | ( First Time Starting Capsule )  | 03
+|  Student |  update a lessons status .. if next lesson exist .. then unlock that lesson 
+|  if no lesson exist .. then make next module unlock and first lesson is also unlock
+└──────────────────────────────────*/
+router.route('/update-lesson-status/:lessonProgressId/:lessonId/:capsuleId').put(
+  auth(TRole.student),
+  controller.updateLessonStatus
+);
 
 router.route('/:id').get(
   // auth('common'),

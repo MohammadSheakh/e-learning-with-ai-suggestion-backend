@@ -6,6 +6,8 @@ import PaginationService, { PaginateOptions } from '../../../common/service/pagi
 import mongoose from 'mongoose';
 import { Question } from '../question/question.model';
 import ApiError from '../../../errors/ApiError';
+import { AssessmentAnswer } from '../assessmentAnswer/assessmentAnswer.model';
+import { IAssessmentAnswer } from '../assessmentAnswer/assessmentAnswer.interface';
 
 export class PhaseService extends GenericService<
   typeof Phase,
@@ -206,4 +208,38 @@ export class PhaseService extends GenericService<
     return result;
   }
 
+
+  async autoSaveAnswer(
+    assessmentId: string,
+    phase_number:string,
+    questionId:string, 
+    answer_value : string,
+    answer_type : string,
+  ) {
+      const savedAnswer : IAssessmentAnswer = await AssessmentAnswer.findOneAndUpdate(
+        // 🔍 Find by these fields
+        {
+          assessmentId: new mongoose.Types.ObjectId(assessmentId),
+          questionId: new mongoose.Types.ObjectId(questionId),
+        },
+        // ✏️ Update these fields
+        {
+          $set: {
+            assessmentId,
+            phase_number,
+            questionId,
+            answer_value,
+            answer_type
+          },
+        },
+        // ⚙️ Options
+        {
+          upsert: true,       // create if not found
+          new: true,          // return updated doc
+          // runValidators: true,
+        }
+      );
+  
+      return savedAnswer;
+    }
 }

@@ -53,8 +53,18 @@ router.route('/question-count').get(
 |  @desc 
 └──────────────────────────────────*/
 router.route('/question-ans/:phaseId').get(
-  auth(TRole.admin), // Adjust guards as needed
+  auth(TRole.admin, TRole.student), // Adjust guards as needed
   controller.getQuestionsWithAnswersByPhase
+);
+
+/*-───────────────────────────────── 
+| Student | when student type answer for a question .. for autosave ...  
+|  @figmaIndex Exploration Journey Section | After purchase | 8 no. screen
+|  @desc 
+└──────────────────────────────────*/
+router.route('/submit-answer/:questionId').post(
+  auth(TRole.student),
+  controller.submitAnswerAutoSaveFeature
 );
 
 router.route('/:id').get(

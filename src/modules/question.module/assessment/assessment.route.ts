@@ -54,15 +54,14 @@ router.route('/').get(
   controller.getAll
 );
 
-//[🚧][🧑‍💻✅][🧪] // 🆗
+/*-───────────────────────────────── 
+| Student | First Time Answering Question | Begin Question 
+|  @figmaIndex 06-04
+|  @desc create assessment for a student if not found
+└──────────────────────────────────*/
 router.route('/').post(
-  // [
-  //   upload.fields([
-  //     { name: 'attachments', maxCount: 15 }, // Allow up to 5 cover photos
-  //   ]),
-  // ],
-  auth(TRole.common),
-  validateRequest(validation.createHelpMessageValidationSchema),
+  auth(TRole.student),
+  // validateRequest(validation.createHelpMessageValidationSchema),
   controller.create
 );
 

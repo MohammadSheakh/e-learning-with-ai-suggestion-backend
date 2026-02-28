@@ -7,9 +7,9 @@ export interface IAssessment {
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
   
   userId: Types.ObjectId;
-  is_completed: boolean;
-  current_phaseId: Types.ObjectId;
-  current_questionId: Types.ObjectId;
+  isCompleted: boolean;
+  currentPhaseId: Types.ObjectId;
+  currentQuestionId: Types.ObjectId;
   
   currentPhaseNumber: number;
   currentQuestionNumber: number;

@@ -13,6 +13,7 @@ import { PaginateOptions } from '../../../types/paginate';
 import { AdminModules } from '../adminModules/adminModules.model';
 import PaginationService from '../../../common/service/paginationService';
 import ApiError from '../../../errors/ApiError';
+import { AdminCapsuleReview } from '../../review.module/adminCapsuleReview/adminCapsuleReview.model';
 
 export class AdminCapsuleService extends GenericService<
   typeof AdminCapsule,
@@ -161,6 +162,232 @@ export class AdminCapsuleService extends GenericService<
       modules, // paginated result
     };
     
+  }
+
+  //🧱
+  async getWithModulesAndReviews(capsuleId: string) {
+    const capsuleObjectId = new mongoose.Types.ObjectId(capsuleId);
+
+    /* -----------------------------------------
+      1️⃣ Get Capsule + Populate Attachments
+    ------------------------------------------ */
+    const capsule = await AdminCapsule.aggregate([
+      {
+        $match: { 
+          _id: capsuleObjectId, 
+          isDeleted: false 
+        }
+      },
+      // Populate capsule attachments
+      {
+        $lookup: {
+          from: 'attachments',
+          localField: 'attachments',
+          foreignField: '_id',
+          as: 'attachments',
+        },
+      },
+      // Populate introduction video
+      {
+        $lookup: {
+          from: 'attachments',
+          localField: 'introductionVideo',
+          foreignField: '_id',
+          as: 'introductionVideo',
+        },
+      },
+      // Project capsule fields + flatten attachments
+      {
+        $project: {
+          title: 1,
+          subTitle: 1,
+          description: 1,
+          price: 1,
+          level: 1,
+          estimatedTime: 1,
+          totalModule: 1,
+          status: 1,
+          thumbnail: 1,
+          attachments: {
+            $map: {
+              input: '$attachments',
+              as: 'att',
+              in: '$$att.attachment',
+            },
+          },
+          introductionVideo: {
+            $map: {
+              input: '$introductionVideo',
+              as: 'vid',
+              in: '$$vid.attachment',
+            },
+          },
+        },
+      },
+    ]);
+
+    if (!capsule.length) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Capsule not found');
+    }
+
+    const capsuleData = capsule[0];
+
+    /* -----------------------------------------
+      2️⃣ Get Modules + Lessons + Attachments (Nested Aggregation)
+    ------------------------------------------ */
+    const modules = await AdminModules.aggregate([
+      {
+        $match: {
+          capsuleId: capsuleObjectId,
+          isDeleted: false,
+        },
+      },
+      // Populate module attachments
+      {
+        $lookup: {
+          from: 'attachments',
+          localField: 'attachments',
+          foreignField: '_id',
+          as: 'attachments',
+        },
+      },
+      // Lookup lessons for this module
+      {
+        $lookup: {
+          from: 'lessons',
+          let: { moduleId: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$moduleId', '$$moduleId'] },
+                    { $eq: ['$isDeleted', false] }
+                  ]
+                }
+              }
+            },
+            // Populate lesson attachments
+            {
+              $lookup: {
+                from: 'attachments',
+                localField: 'attachments',
+                foreignField: '_id',
+                as: 'attachments',
+              },
+            },
+            // Project lesson fields + flatten attachments
+            {
+              $project: {
+                title: 1,
+                description: 1,
+                duration: 1,
+                orderNumber: 1,
+                videoUrl: 1,
+                attachments: {
+                  $map: {
+                    input: '$attachments',
+                    as: 'att',
+                    in: '$$att.attachment',
+                  },
+                },
+              },
+            },
+            { $sort: { orderNumber: 1 } }
+          ],
+          as: 'lessons',
+        },
+      },
+      // Project module fields + flatten attachments
+      {
+        $project: {
+          title: 1,
+          description: 1,
+          estimatedTime: 1,
+          orderNumber: 1,
+          numberOfLessons: 1,
+          attachments: {
+            $map: {
+              input: '$attachments',
+              as: 'att',
+              in: '$$att.attachment',
+            },
+          },
+          lessons: 1,
+        },
+      },
+      { $sort: { orderNumber: 1 } }
+    ]);
+
+    /* -----------------------------------------
+      3️⃣ Get Topics + Reviews (Parallel Queries)
+    ------------------------------------------ */
+    const [topics , reviews ] = await Promise.all([
+      // Topics
+      AdminCapsuleTopic.find(
+        { adminCapsuleId: capsuleObjectId, isDeleted: false },
+        { title: 1, description: 1, orderNumber: 1 }
+      )
+        .sort({ orderNumber: 1 })
+        .lean(),
+        
+        // Reviews with user info
+        AdminCapsuleReview.aggregate([
+          {
+            $match: {
+              adminCapsuleId: capsuleObjectId,
+              isDeleted: false,
+            }
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'userId',
+              foreignField: '_id',
+              as: 'user',
+            }
+          },
+          { $unwind: '$user' },
+          {
+            $project: {
+              rating: 1,
+              review: 1,
+              createdAt: 1,
+              user: {
+                _id: '$user._id',
+                name: '$user.name',
+                profileImage : '$user.profileImage',
+              }
+            }
+          },
+          { $sort: { createdAt: -1 } }
+        ])
+        
+    ]);
+
+    /* -----------------------------------------
+      4️⃣ Assemble Final Response
+    ------------------------------------------ */
+    return {
+      success: true,
+      data: {
+        capsule: capsuleData,
+        modules,
+        topics,
+        
+        reviews,
+        
+        stats: {
+          totalModules: modules.length,
+          totalLessons: modules.reduce((sum, m) => sum + (m.lessons?.length || 0), 0),
+          totalTopics: topics.length,
+          averageRating: reviews.length > 0 
+            ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)
+            : null,
+        }
+        
+      }
+    };
   }
 
 }

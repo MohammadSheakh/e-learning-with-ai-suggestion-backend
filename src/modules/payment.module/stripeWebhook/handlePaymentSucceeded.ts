@@ -321,6 +321,8 @@ async function updatePurchasedAdminCapsule(
           paymentStatus: TPaymentStatus.completed,
           totalLessons : allLessons.length || 0,
           totalModule : adminModules.length || 0,
+          completedLessons : 0,
+          completedModules : 0,
      }, { new: true });
 
      console.log("updatedPurchasedAdminCapsule :: ", updatedPurchasedAdminCapsule);

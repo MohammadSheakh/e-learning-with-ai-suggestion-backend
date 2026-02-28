@@ -48,6 +48,15 @@ router.route('/:capsuleId/modules').get(
   controller.getAllModulesByCapsuleId 
 );
 
+/*-───────────────────────────────── 
+| Student | First Time Starting Capsule | 06 | get all modules with lessons and reviews by capsuleId
+|  @figmaIndex 00-00 
+|  @desc 
+└──────────────────────────────────*/
+router.route('/with-modules-nd-lessons-nd-reviews/:adminCapsuleId').get(
+  auth(TRole.student),
+  controller.getWithModulesAndReviews
+);
 
 router.route('/:id').get(
   // auth('common'),
