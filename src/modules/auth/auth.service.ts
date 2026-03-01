@@ -27,6 +27,8 @@ import { IUserDevices } from '../user.module/userDevices/userDevices.interface';
 import { UserRoleDataService } from '../user.module/userRoleData/userRoleData.service';
 import { IUser } from '../user.module/user/user.interface';
 import { ICreateUser } from './auth.interface';
+import { IMentorProfile } from '../mentor.module/mentorProfile/mentorProfile.interface';
+import { MentorProfile } from '../mentor.module/mentorProfile/mentorProfile.model';
 const eventEmitterForUpdateUserProfile = new EventEmitter(); // functional way
 const eventEmitterForCreateWallet = new EventEmitter();
 
@@ -222,6 +224,10 @@ const createUserV2 = async (userData: ICreateUser, userProfileId:string) => {
   
     // 📈⚙️ OPTIMIZATION: with event emmiter 
     eventEmitterForCreateWallet.emit('eventEmitterForCreateWallet', { 
+      userId : user._id
+    });
+
+    const createMentorProfile : IMentorProfile = await MentorProfile.create({
       userId : user._id
     });
 

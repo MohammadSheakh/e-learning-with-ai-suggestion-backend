@@ -2,38 +2,35 @@
 import { model, Schema } from 'mongoose';
 import { IMentorProfile, IMentorProfileModel } from './mentorProfile.interface';
 import paginate from '../../../common/plugins/paginate';
-import { TMentorClass } from './mentorProfile.constant';
+import { THaveAdminApproval, TMentorClass } from './mentorProfile.constant';
 
 const MentorProfileSchema = new Schema<IMentorProfile>(
   {
-    // attachments: [//🔗🖼️
-    //   {
-    //     type: Schema.Types.ObjectId,
-    //     ref: 'Attachment',
-    //     required: [false, 'attachments is not required'],
-    //   }
-    // ],
+    
     title: {
       type: String,
-      required: [true, 'title is required'],
+      required: [false, 'title is not required'],
     },
     topics: {
       type: [String],
-      required: [true, 'topics is required'],
+      required: [false, 'topics is not required'],
     },
     userId: { //🔗
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: [true, 'userId is required'],
     },
-    mentorCategoryId: { //🔗
-      type: Schema.Types.ObjectId,
-      ref: 'MentorCategory',
-      required: [true, 'mentorCategoryId is required'],
-    },
+
+    //❌ tasmia apu remove the category
+    // mentorCategoryId: { //🔗
+    //   type: Schema.Types.ObjectId,
+    //   ref: 'MentorCategory',
+    //   required: [true, 'mentorCategoryId is required'],
+    // },
+    
     language: {
       type: [String],
-      required: [true, 'language is required'],
+      required: [false, 'language is not required'],
     },
     classType: {
       type: String,
@@ -42,70 +39,135 @@ const MentorProfileSchema = new Schema<IMentorProfile>(
         TMentorClass.inPerson,
       ],
       required: [
-        true,
-        `classType is required it can be ${Object.values(TMentorClass).join(', ')}`,
+        false,
+        `classType is not required it can be ${Object.values(TMentorClass).join(', ')}`,
       ],
     },
-    bio: {
-      type: String,
-      required: [true, 'bio is required'],
-    },
+    
+    //-------------------
     sessionPrice: {
       type: Number,
-      required: [true, 'sessionPrice is required'],
-      min: [0, 'sessionPrice cannot be negative'],
+      required: [false, 'sessionPrice is not required'],
+      // min: [0, 'sessionPrice cannot be negative'],
     },
     currentJobTitle: {
       type: String,
-      required: [true, 'currentJobTitle is required'],
+      required: [false, 'currentJobTitle is not required'],
     },
     companyName: {
       type: String,
-      required: [true, 'companyName is required'],
+      required: [false, 'companyName is not required'],
     },
     yearsOfExperience: {
       type: Number,
-      required: [true, 'yearsOfExperience is required'],
+      required: [false, 'yearsOfExperience is not required'],
       min: [0, 'yearsOfExperience cannot be negative'],
     },
+
+    bio: {
+      type: String,
+      required: [false, 'bio is not required'],
+    },
+
+    //----------------- 1 END
+
+    //----------------- 2 Start
+
     careerStage: {
       type: [String],
-      required: [true, 'careerStage is required'],
+      required: [false, 'careerStage is not required'],
     },
     focusArea: {
       type: [String],
-      required: [true, 'focusArea is required'],
+      required: [false, 'focusArea is not required'],
     },
     industry: {
       type: String,
-      required: [true, 'industry is required'],
+      required: [false, 'industry is not required'],
     },
+
+    //----------------- 2 End
+
+    //----------------- 3 Start
+
+
     coreValues: {
       type: [String],
-      required: [true, 'coreValues is required'],
+      required: [false, 'coreValues is not required'],
     },
     specialties: {
       type: [String],
-      required: [true, 'specialties is required'],
+      required: [false, 'specialties is not required'],
     },
+
+     //----------------- 3 End
+
+     //----------------- 4 Start
+
     coachingMethodologies: {
       type: [String],
-      required: [true, 'coachingMethodologies is required'],
+      required: [false, 'coachingMethodologies is not required'],
     },
     calendlyProfileLink: {
       type: String,
-      required: [true, 'calendlyProfileLink is required'],
+      required: [false, 'calendlyProfileLink is not required'],
     },
+
+    //----------------- 4 End
+
+    /**
+     * 
+     * backend e data save korar shomoy
+     * dekhte hobe ..
+     * ei ei question er answer 
+     * send korle ..
+     * 
+     * profileInfoFillUpCount
+     * 
+     * ei ta hobe .. 
+     * 
+     * every time profileInfoFillUpCount
+     * set korar shomoy ..
+     * 
+     * new value >= previous value hoite
+     * hobe 
+     * 
+     */
     profileInfoFillUpCount: {
       type: Number,
-      required: [true, 'profileInfoFillUpCount is required'],
+      required: [false, 'profileInfoFillUpCount is not required'],
       min: [0, 'profileInfoFillUpCount cannot be negative'],
     },
+
+    // may be we dont need this 
     rating: {
       type: Number,
-      required: [true, 'rating is required'],
+      required: [false, 'rating is not required'],
       min: [0, 'rating cannot be less than 0'],
       max: [5, 'rating cannot exceed 5'],
+    },
+
+    // 🆕 new logic .. 
+    haveAdminApproval: {
+      type: String,
+      enum: [
+        THaveAdminApproval.none,
+        THaveAdminApproval.inRequest,
+        THaveAdminApproval.approved,
+        THaveAdminApproval.rejected,
+      ],
+      required: [
+        false,
+        `haveAdminApproval is not required it can be ${Object.values(THaveAdminApproval).join(', ')}`,
+      ],
+      default : THaveAdminApproval.none
+    },
+
+    // 🆕 
+    isLive: {
+      type: Boolean,
+      required: [false, 'isLive is not required'],
+      default: false,
     },
 
     isDeleted: {

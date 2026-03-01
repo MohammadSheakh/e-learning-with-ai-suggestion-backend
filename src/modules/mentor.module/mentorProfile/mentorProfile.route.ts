@@ -51,6 +51,15 @@ router.route('/update-mentor-profile').put(
   controller.updateMentorProfile
 );
 
+/*-─────────────────────────────────
+|  request to admin for admin approval
+└──────────────────────────────────*/
+router.route('/request-for-admin-approval').put(
+  auth(TRole.mentor),
+  // validateRequest(validation.createHelpMessageValidationSchema),
+  controller.requestForAdminApproval
+);
+
 router.route('/:id').put(
   //auth('common'),
   // validateRequest(validation.createHelpMessageValidationSchema),

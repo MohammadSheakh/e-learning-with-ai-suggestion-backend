@@ -12,7 +12,7 @@ export class MentorProfileController extends GenericController<
   typeof MentorProfile,
   IMentorProfile
 > {
-  MentorProfileService = new MentorProfileService();
+  mentorProfileService = new MentorProfileService();
 
   constructor() {
     super(new MentorProfileService(), 'MentorProfile');
@@ -34,7 +34,19 @@ export class MentorProfileController extends GenericController<
     });
   });
 
+  requestForAdminApproval = catchAsync(async (req: Request, res: Response) => {
+    
+    const mentorId = req.user.userId;
 
+    const result = await this.service.create(data, mentorId);
+
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: result,
+      message: `${this.modelName} updated successfully`,
+      success: true,
+    });
+  });
 
   // add more methods here if needed or override the existing ones 
 }
