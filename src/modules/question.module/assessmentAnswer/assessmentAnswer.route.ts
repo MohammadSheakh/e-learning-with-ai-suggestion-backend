@@ -9,6 +9,7 @@ import auth from '../../../middlewares/auth';
 //@ts-ignore
 import multer from "multer";
 import { TRole } from '../../../middlewares/roles';
+import { setQueryOptions } from '../../../middlewares/setQueryOptions';
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -30,11 +31,19 @@ const paginationOptions: Array<'sortBy' | 'page' | 'limit' | 'populate'> = [
 // const taskService = new TaskService();
 const controller = new AssessmentAnswerController();
 
-//
+/*-─────────────────────────────────
+|  Student | get all questions and answers by assessmentId and phase_number 
+└──────────────────────────────────*/
 router.route('/paginate').get(
   //auth('common'),
-  validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
-  controller.getAllWithPagination
+  validateFiltersForQuery(optionValidationChecking(['_id', 'assessmentId', 'phase_number', ...paginationOptions])),
+  setQueryOptions({
+    populate: [
+      { path: 'questionId', select: 'questionText answerType isRequired', /* populate: { path : ""} */ },
+    ],
+    select: '-isDeleted  -updatedAt -__v' //-createdAt
+  }),
+  controller.getAllWithPaginationV2
 );
 
 router.route('/:id').get(

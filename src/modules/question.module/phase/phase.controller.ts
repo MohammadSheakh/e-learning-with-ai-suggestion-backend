@@ -103,7 +103,21 @@ export class PhaseController extends GenericController<
     sendResponse(res, {
       code: StatusCodes.OK,
       data: updatedObject,
-      message: `Question with student's answer retrived successfully`,
+      message: `Answer submitted successfully.`,
+    });
+  });
+
+  getPhaseQuestionsWithOptionsAndAnswers = catchAsync(async (req: Request, res: Response) => {
+  
+    const object = await this.phaseService.getPhaseQuestionsWithOptionsAndAnswers(
+      req.query.assessmentId,
+      req.query.phaseId
+    ); // here we pass studentId
+    
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: object,
+      message: `questions with options and student answer fetched successfully.`,
     });
   });
 

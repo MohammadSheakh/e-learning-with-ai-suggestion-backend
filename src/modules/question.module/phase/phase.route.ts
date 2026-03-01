@@ -58,11 +58,22 @@ router.route('/question-ans/:phaseId').get(
 );
 
 /*-───────────────────────────────── 
+| Student | get all question and possible answers  and student's answer by phaseNumber and assessmentId 
+|  @figmaIndex 
+|  @desc 
+└──────────────────────────────────*/
+router.route('/question-with-students-ans').get(
+  auth(TRole.student),
+  controller.getPhaseQuestionsWithOptionsAndAnswers
+);
+
+
+/*-───────────────────────────────── 
 | Student | when student type answer for a question .. for autosave ...  
 |  @figmaIndex Exploration Journey Section | After purchase | 8 no. screen
 |  @desc 
 └──────────────────────────────────*/
-router.route('/submit-answer/:questionId').post(
+router.route('/submit-answer').post(
   auth(TRole.student),
   controller.submitAnswerAutoSaveFeature
 );

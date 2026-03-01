@@ -95,7 +95,7 @@ export class PhaseService extends GenericService<
 
 
   /**
-   * Get all questions with their answers for a specific phase
+   * Get all questions with their possible answers for a specific phase
    * @param phaseId - Phase ID to filter questions
    * @param options - Pagination options
    */
@@ -206,6 +206,115 @@ export class PhaseService extends GenericService<
     );
 
     return result;
+  }
+
+  /*-─────────────────────────────────
+  |  It will return all questions and possible answer with students actual answer .. 
+  |  by phaseNumber and assessmentId 
+  └──────────────────────────────────*/
+  async getPhaseQuestionsWithOptionsAndAnswers(
+    // phaseNumber: number,
+    assessmentId: string,
+    phaseId: string,
+  ) {
+    const assessmentObjectId = new mongoose.Types.ObjectId(assessmentId);
+    const phaseObjectId = new mongoose.Types.ObjectId(phaseId);
+
+    return await Question.aggregate([
+      /* 1️⃣ Get questions of phase */
+      {
+        $match: { 
+          // phaseNumber,
+          phaseId: phaseObjectId,
+        },
+      },
+
+      { $sort: { questionNumber: 1 } },
+
+      /* 2️⃣ Get possible options (QuestionnaireAnswers) */
+      {
+        $lookup: {
+          from: 'questionanswers',
+          localField: '_id',
+          foreignField: 'questionId',
+          as: 'options',
+        },
+      },
+
+      /* 3️⃣ Sort options by displayOrder */
+      {
+        $addFields: {
+          options: {
+            $sortArray: {
+              input: '$options',
+              sortBy: { displayOrder: 1 },
+            },
+          },
+        },
+      },
+
+      /* 4️⃣ Get student answer */
+      {
+        $lookup: {
+          from: 'assessmentanswers',
+          let: { questionId: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$questionId', '$$questionId'] },
+                    { $eq: ['$assessmentId', assessmentObjectId] },
+                  ],
+                },
+              },
+            },
+          ],
+          as: 'studentAnswer',
+        },
+      },
+
+      {
+        $unwind: {
+          path: '$studentAnswer',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+
+      /* 5️⃣ Final shape */
+      {
+        $project: {
+          _id: 1,
+          questionNumber: 1,
+          questionText: 1,
+          answerType: 1,
+
+          options: {
+            $map: {
+              input: '$options',
+              as: 'opt',
+              in: {
+                optionId: '$$opt._id',
+                answerTitle: '$$opt.answerTitle',
+                answerSubTitle: '$$opt.answerSubTitle',
+                displayOrder: '$$opt.displayOrder',
+              },
+            },
+          },
+
+          studentAnswer: {
+            $cond: [
+              { $ifNull: ['$studentAnswer', false] },
+              {
+                answer_value: '$studentAnswer.answer_value',
+                answer_type: '$studentAnswer.answer_type',
+              },
+              null,
+            ],
+          },
+        },
+      },
+    ]);
   }
 
 
