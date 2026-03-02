@@ -82,7 +82,7 @@ const registerV2 = catchAsync(async (req :Request, res:Response) => {
   const data : IRegisterData = req.body;
 
   if(!data.acceptTOC){
-    sendResponse(res, {
+    return sendResponse(res, {
       code: StatusCodes.CREATED,
       message: `Please Read Terms and Conditions and Accept it.`,
       data: null,
@@ -311,6 +311,7 @@ const googleLogin = async (idToken: string,
   }
 };
 
+// 💎✨🔍 -> V3 Found
 const googleLoginV2 = async (idToken: string,
   role : string,
   fcmToken?: string,  
@@ -448,6 +449,21 @@ const googleLoginV2 = async (idToken: string,
     throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, 'Something went wrong during Google login');
   }
 };
+
+
+const googleAuthCallback = catchAsync(async (req: Request, res: Response) => {
+  const { idToken, role, acceptTOC } = req.body;
+  // idToken = token from Google Sign-In on client
+
+  const result = await AuthService.googleLogin({ idToken, role, acceptTOC });
+
+  return sendResponse(res, {
+    code: StatusCodes.OK,
+    message: 'Google login successful',
+    data: result,
+    success: true,
+  });
+});
 
 // TODO : 🧹 Clean devices older than 30 days
 // await UserDevices.deleteMany({

@@ -14,6 +14,8 @@ import { TokenType } from '../token/token.interface';
 import { OtpType } from '../otp/otp.interface';
 import { WalletService } from '../wallet.module/wallet/wallet.service';
 import { TCurrency } from '../../enums/payment';
+import { OAuth2Client } from 'google-auth-library';
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 //@ts-ignore
 import EventEmitter from 'events';
@@ -26,7 +28,7 @@ import { UserDevices } from '../user.module/userDevices/userDevices.model';
 import { IUserDevices } from '../user.module/userDevices/userDevices.interface';
 import { UserRoleDataService } from '../user.module/userRoleData/userRoleData.service';
 import { IUser } from '../user.module/user/user.interface';
-import { ICreateUser } from './auth.interface';
+import { ICreateUser, IGoogleLoginPayload } from './auth.interface';
 import { IMentorProfile } from '../mentor.module/mentorProfile/mentorProfile.interface';
 import { MentorProfile } from '../mentor.module/mentorProfile/mentorProfile.model';
 const eventEmitterForUpdateUserProfile = new EventEmitter(); // functional way
@@ -591,9 +593,121 @@ const logout = async (refreshToken: string) => {};
 const refreshAuth = async (refreshToken: string) => {};
 
 
-const googleLoginV2 = async () => {
 
-}
+const googleLogin = async ({ idToken, role, acceptTOC }: IGoogleLoginPayload) => {
+  
+  // Step 1: Verify Google token
+  const ticket = await googleClient.verifyIdToken({
+    idToken,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+
+  const payload = ticket.getPayload();
+  if (!payload) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid Google token');
+
+  const { sub: providerId, email, name, picture } = payload;
+  if (!email) throw new ApiError(StatusCodes.BAD_REQUEST, 'Email not provided by Google');
+
+  // Step 2: Check if OAuth account already exists
+  let oAuthAccount = await OAuthAccount.findOne({
+    authProvider: TAuthProvider.google,
+    providerId,
+    isDeleted: false,
+  });
+
+  if (oAuthAccount) {
+    // ─── Returning OAuth user ───
+    const user = await User.findById(oAuthAccount.userId);
+    if (!user || user.isDeleted) {
+      throw new ApiError(StatusCodes.UNAUTHORIZED, 'Account not found or deleted');
+    }
+
+    // Update token (store encrypted in production)
+    await OAuthAccount.findByIdAndUpdate(oAuthAccount._id, {
+      accessToken: idToken,
+      lastUsedAt: new Date(),
+    });
+
+    const tokens = TokenService.generateAuthTokens(user);
+    return { user, ...tokens };
+  }
+
+  // Step 3: No OAuth account — check if user exists by email
+  let user = await User.findOne({ email, isDeleted: false });
+
+  if (user) {
+    // ─── Existing local user — LINK OAuth account ───
+    if (!user.isEmailVerified) {
+      // Auto-verify since Google confirmed the email
+      await User.findByIdAndUpdate(user._id, { isEmailVerified: true });
+      user.isEmailVerified = true;
+    }
+
+    await OAuthAccount.create({
+      userId: user._id,
+      authProvider: TAuthProvider.google,
+      providerId,
+      email,
+      accessToken: idToken, // encrypt this!
+      isVerified: true,
+    });
+
+    const tokens = TokenService.generateAuthTokens(user);
+    return { user, ...tokens, isLinked: true };
+  }
+
+  // Step 4: Brand new user — register via Google
+  if (!role) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Role is required for new Google signup');
+  }
+  if (!acceptTOC) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'You must accept Terms and Conditions');
+  }
+
+  // Create profile
+  const userProfile = await UserProfile.create({ acceptTOC: true });
+
+  // Create user (no password needed)
+  const newUser = await User.create({
+    name: name || email.split('@')[0],
+    email,
+    role,
+    profileId: userProfile._id,
+    isEmailVerified: true, // Google already verified
+    authProvider: TAuthProvider.google,
+    profileImage: picture ? { imageUrl: picture } : undefined,
+  });
+
+  // Link profile back
+  eventEmitterForUpdateUserProfile.emit('eventEmitterForUpdateUserProfile', {
+    userProfileId: userProfile._id,
+    userId: newUser._id,
+  });
+
+  // Create OAuth account
+  await OAuthAccount.create({
+    userId: newUser._id,
+    authProvider: TAuthProvider.google,
+    providerId,
+    email,
+    accessToken: idToken, // encrypt this!
+    isVerified: true,
+  });
+
+  // Handle mentor-specific logic (same as createUserV2)
+  if (role === TRole.mentor) {
+    eventEmitterForCreateWallet.emit('eventEmitterForCreateWallet', { userId: newUser._id });
+    await MentorProfile.create({ userId: newUser._id });
+    await userRoleDataService.create({ userId: newUser._id });
+    await enqueueWebNotification(
+      `A ${role} registered via Google`,
+      null, null, TRole.admin, TNotificationType.newUser
+    );
+  }
+
+  const tokens = TokenService.generateAuthTokens(newUser);
+  return { user: newUser, ...tokens, isNewUser: true };
+};
 
 export const AuthService = {
   createUser,

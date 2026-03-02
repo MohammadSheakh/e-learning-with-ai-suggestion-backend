@@ -22,3 +22,9 @@ export interface ICreateUser{
     role: TRole.student | TRole.mentor
     profileId: Types.ObjectId 
 }
+
+export interface IGoogleLoginPayload {
+  idToken: string;
+  role?: TRole;
+  acceptTOC?: boolean;
+}
