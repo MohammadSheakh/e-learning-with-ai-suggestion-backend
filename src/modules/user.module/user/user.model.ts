@@ -118,7 +118,6 @@ const userSchema = new Schema<IUser, UserModal>(
       default: null,
     },
 
-    
     isDeleted: {
       type: Boolean,
       default: false,

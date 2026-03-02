@@ -3,7 +3,9 @@ import { StatusCodes } from 'http-status-codes';
 import { OAuthAccount } from './oauthAccount.model';
 import { IOAuthAccount, OAuthPayload } from './oauthAccount.interface';
 import { GenericService } from '../../_generic-module/generic.services';
+//@ts-ignore
 import { OAuth2Client } from 'google-auth-library';
+//@ts-ignore
 import appleSignin from 'apple-signin-auth';
 
 export class OAuthAccountService extends GenericService<
@@ -14,11 +16,13 @@ export class OAuthAccountService extends GenericService<
     super(OAuthAccount);
   }
 
+  //@ts-ignore
   private static googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
   async verifyGoogleToken(idToken: string): Promise<OAuthPayload> {
     const ticket = await OAuthAccountService.googleClient.verifyIdToken({
       idToken,
+      //@ts-ignore
       audience: process.env.GOOGLE_CLIENT_ID,
     });
     const p = ticket.getPayload()!;
@@ -31,6 +35,7 @@ export class OAuthAccountService extends GenericService<
 
   async verifyAppleToken (identityToken: string): Promise<OAuthPayload> {
     const p = await appleSignin.verifyIdToken(identityToken, {
+      //@ts-ignore
       audience: process.env.APPLE_CLIENT_ID,
       ignoreExpiration: false,
     });
