@@ -34,7 +34,7 @@ export class QuestionController extends GenericController<
 
       const questionCount = await Question.countDocuments({
         isDeleted: false,
-        phaseId: data.phaseId
+        // phaseId: data.phaseId  // we cant find question count by phaseId
       }).session(session);;
 
       console.log("questionCount", questionCount);

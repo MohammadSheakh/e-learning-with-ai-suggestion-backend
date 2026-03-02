@@ -1,6 +1,6 @@
 import { Model, Types } from 'mongoose';
 import { PaginateOptions, PaginateResult } from '../../../types/paginate';
-import { TMentorClass } from './mentorProfile.constant';
+import { THaveAdminApproval, TMentorClass } from './mentorProfile.constant';
 
 
 export interface IMentorProfile {
@@ -11,23 +11,45 @@ export interface IMentorProfile {
   title: string;
   topics: string[];
   userId: Types.ObjectId;
-  mentorCategoryId: Types.ObjectId;
+  //mentorCategoryId: Types.ObjectId;   //❌ tasmia apu remove the category
   language: string[];
-  classType: TMentorClass; //
-  bio: string;
+
+
+  // -----------------
+  location : string;
+  classType: TMentorClass; // 🔗 
+  
+  
   sessionPrice: number;
   currentJobTitle: string;
   companyName: string;
   yearsOfExperience: number;
+  bio: string;
+
+  //------------------
+  
   careerStage: string[];
   focusArea: string[];
   industry: string;
+
+  // -----------------
+
   coreValues: string[];
   specialties: string[];
+
+  // ----------------
+
   coachingMethodologies: string[];
   calendlyProfileLink: string;
+
+  // ---------------
+
   profileInfoFillUpCount: number;
   rating: number;
+
+  //🆕
+  haveAdminApproval : THaveAdminApproval;
+  isLive : boolean;
 
   isDeleted? : boolean;  
   createdAt?: Date;

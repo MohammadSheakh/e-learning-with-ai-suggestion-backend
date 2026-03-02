@@ -1,6 +1,7 @@
 export enum TMentorClass {
   online = 'online',
   inPerson = 'inPerson',
+  both = 'both',
 }
 
 export enum THaveAdminApproval{

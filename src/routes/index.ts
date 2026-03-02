@@ -33,6 +33,7 @@ import { StudentCapsuleTrackerRoute } from '../modules/journey.module/studentCap
 import { PurchasedAdminCapsuleRoute } from '../modules/adminCapsule.module/purchasedAdminCapsule/purchasedAdminCapsule.route';
 import { AdminModuleProgressRoute } from '../modules/adminCapsule.module/adminModuleProgress/adminModuleProgress.route';
 import { AssessmentRoute } from '../modules/question.module/assessment/assessment.route';
+import { MentorProfileRoute } from '../modules/mentor.module/mentorProfile/mentorProfile.route';
 
 // import { ChatRoutes } from '../modules/chat/chat.routes';
 // import { MessageRoutes } from '../modules/message/message.routes';
@@ -110,6 +111,11 @@ const apiRoutes = [
   { // 🟢
     path: '/mentor-review',
     route: MentorReviewRoute,
+  },
+
+  { // 🟢
+    path: '/mentor-profiles',
+    route: MentorProfileRoute,
   },
 
   /////////////////////////////////////////  Admin Capsule

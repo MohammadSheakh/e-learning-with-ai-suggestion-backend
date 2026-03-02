@@ -68,6 +68,28 @@ router.route('/question-with-students-ans').get(
 );
 
 
+
+/*-───────────────────────────────── 
+| Student | get all question and student's answer by assessmentId 
+|  @figmaIndex 
+|  @desc 
+└──────────────────────────────────*/
+router.route('/question-with-students-ans-only').get(
+  auth(TRole.student),
+  controller.getPhaseQuestionsWithOnlyStudentAnswers
+);
+
+
+/*-───────────────────────────────── 
+| Student | generate ai summary by students question answer ..  
+|  @figmaIndex 
+|  @desc 
+└──────────────────────────────────*/
+router.route('/generate-ai-summary').get(
+  auth(TRole.student),
+  controller.generateAiSummary
+);
+
 /*-───────────────────────────────── 
 | Student | when student type answer for a question .. for autosave ...  
 |  @figmaIndex Exploration Journey Section | After purchase | 8 no. screen

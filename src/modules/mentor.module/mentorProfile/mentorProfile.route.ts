@@ -9,6 +9,7 @@ import auth from '../../../middlewares/auth';
 //@ts-ignore
 import multer from "multer";
 import { TRole } from '../../../middlewares/roles';
+import { setQueryOptions } from '../../../middlewares/setQueryOptions';
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -30,17 +31,35 @@ const paginationOptions: Array<'sortBy' | 'page' | 'limit' | 'populate'> = [
 // const taskService = new TaskService();
 const controller = new MentorProfileController();
 
-//
+/*-─────────────────────────────────
+|  Admin | get all mentor profile whose haveAdminApproval is "inRequest"
+└──────────────────────────────────*/
 router.route('/paginate').get(
   //auth('common'),
-  validateFiltersForQuery(optionValidationChecking(['_id', ...paginationOptions])),
-  controller.getAllWithPagination
+  validateFiltersForQuery(optionValidationChecking(['_id', 'haveAdminApproval', ...paginationOptions])),
+  setQueryOptions({
+      populate: [
+        { path: 'userId', select: 'id email role', /* populate: { path : ""} */ },
+      ],
+      select: 'requestDate isLive haveAdminApproval' //-isDeleted  -updatedAt -__v 
+    }),
+  controller.getAllWithPaginationV2
+);
+
+/*-─────────────────────────────────
+|  check status of have admin approval
+└──────────────────────────────────*/
+router.route('/check-status-of-have-admin-approval').get(
+  auth(TRole.mentor),
+  // validateRequest(validation.createHelpMessageValidationSchema),
+  controller.checkStatusOfHaveAdminApproval
 );
 
 router.route('/:id').get(
   // auth('common'),
   controller.getById
 );
+
 
 /*-─────────────────────────────────
 |  Update Profile Info With Phase Id 
@@ -59,6 +78,8 @@ router.route('/request-for-admin-approval').put(
   // validateRequest(validation.createHelpMessageValidationSchema),
   controller.requestForAdminApproval
 );
+
+
 
 router.route('/:id').put(
   //auth('common'),

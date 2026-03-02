@@ -7,14 +7,16 @@ import { THaveAdminApproval, TMentorClass } from './mentorProfile.constant';
 const MentorProfileSchema = new Schema<IMentorProfile>(
   {
     
-    title: {
+    title: { // --------------------------- dont find this title
       type: String,
       required: [false, 'title is not required'],
     },
-    topics: {
+
+    topics: { // --------------------------- dont find this topics
       type: [String],
       required: [false, 'topics is not required'],
     },
+
     userId: { //🔗
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -32,11 +34,20 @@ const MentorProfileSchema = new Schema<IMentorProfile>(
       type: [String],
       required: [false, 'language is not required'],
     },
+
+    //-------------------  1 Start
+
+    location: {
+      type: String,
+      required: [false, 'location is not required'],
+    },
+
     classType: {
       type: String,
       enum: [
         TMentorClass.online,
         TMentorClass.inPerson,
+        TMentorClass.both,
       ],
       required: [
         false,
@@ -44,7 +55,7 @@ const MentorProfileSchema = new Schema<IMentorProfile>(
       ],
     },
     
-    //-------------------
+    
     sessionPrice: {
       type: Number,
       required: [false, 'sessionPrice is not required'],
@@ -108,6 +119,8 @@ const MentorProfileSchema = new Schema<IMentorProfile>(
       type: [String],
       required: [false, 'coachingMethodologies is not required'],
     },
+
+    
     calendlyProfileLink: {
       type: String,
       required: [false, 'calendlyProfileLink is not required'],
@@ -161,6 +174,11 @@ const MentorProfileSchema = new Schema<IMentorProfile>(
         `haveAdminApproval is not required it can be ${Object.values(THaveAdminApproval).join(', ')}`,
       ],
       default : THaveAdminApproval.none
+    },
+
+    requestDate : { //🆕
+      type : Date,
+      required : [false, "requestDate is not required."],
     },
 
     // 🆕 

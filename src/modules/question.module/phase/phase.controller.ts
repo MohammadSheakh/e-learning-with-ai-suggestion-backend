@@ -121,5 +121,39 @@ export class PhaseController extends GenericController<
     });
   });
 
+  /*-─────────────────────────────────
+  |  It will return all questions with students actual answer .. not possible answers 
+  |  by phaseNumber and assessmentId 
+  └──────────────────────────────────*/
+  getPhaseQuestionsWithOnlyStudentAnswers = catchAsync(async (req: Request, res: Response) => {
+  
+    const object = await this.phaseService.getPhaseQuestionsWithOnlyStudentAnswers(
+      req.query.assessmentId,
+    ); // here we pass studentId
+    
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: object,
+      message: `questions with options and student answer fetched successfully.`,
+    });
+  });
+
+
+  generateAiSummary = catchAsync(async (req: Request, res: Response) => {
+  
+    const object = await this.phaseService.generateAiSummaryV2(
+      req.query.assessmentId,
+      req.user.userId
+    );
+
+    console.log("object :: ", object);
+    
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: object,
+      message: `AI summary generated successfully.`,
+    });
+  });
+
   // add more methods here if needed or override the existing ones 
 }

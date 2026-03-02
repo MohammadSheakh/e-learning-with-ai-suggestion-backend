@@ -24,7 +24,7 @@ export class MentorProfileController extends GenericController<
 
     const mentorId = req.user.userId;
 
-    const result = await this.service.create(data, mentorId);
+    const result = await this.mentorProfileService.updateMentorProfileV2(data, mentorId);
 
     sendResponse(res, {
       code: StatusCodes.OK,
@@ -38,7 +38,7 @@ export class MentorProfileController extends GenericController<
     
     const mentorId = req.user.userId;
 
-    const result = await this.service.create(data, mentorId);
+    const result = await this.mentorProfileService.changeStatusOfHaveAdminApproval( mentorId);
 
     sendResponse(res, {
       code: StatusCodes.OK,
@@ -47,6 +47,23 @@ export class MentorProfileController extends GenericController<
       success: true,
     });
   });
+
+
+  checkStatusOfHaveAdminApproval = catchAsync(async (req: Request, res: Response) => {
+    
+    const mentorId = req.user.userId;
+
+    const result = await this.mentorProfileService.checkStatusOfHaveAdminApproval( mentorId);
+
+    sendResponse(res, {
+      code: StatusCodes.OK,
+      data: result,
+      message: `haveAdminApproval and isLive status retrived successfully.`,
+      success: true,
+    });
+  });
+
+  
 
   // add more methods here if needed or override the existing ones 
 }
