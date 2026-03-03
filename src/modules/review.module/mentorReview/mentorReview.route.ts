@@ -8,6 +8,8 @@ import validateRequest from '../../../shared/validateRequest';
 import auth from '../../../middlewares/auth';
 //@ts-ignore
 import multer from "multer";
+import { TRole } from '../../../middlewares/roles';
+import { injectUserReference } from '../../../middlewares/injectUserReference';
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -57,16 +59,16 @@ const controller = new MentorReviewController();
 
 
 /*-───────────────────────────────── 
-|  | create  
-|  @figmaIndex 06-04
+|  | student can give rating for mentor 
+|  @figmaIndex 00-00
 |  @desc 
 └──────────────────────────────────*/
-// router.route('/').post(
-//   ...imageUploadPipelineForCreateMentorReview,
-//   auth(TRole.common),
-//   validateRequest(validation.createHelpMessageValidationSchema),
-//   controller.create
-// );
+router.route('/').post(
+  auth(TRole.student),
+  injectUserReference('userId'), // as student create this review
+  // validateRequest(validation.createHelpMessageValidationSchema),
+  controller.createOrUpdate
+ );
 
 
 // router.route('/:id/permenent').delete(

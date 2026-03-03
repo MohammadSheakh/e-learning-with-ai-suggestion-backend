@@ -55,10 +55,6 @@ router.route('/check-status-of-have-admin-approval').get(
   controller.checkStatusOfHaveAdminApproval
 );
 
-router.route('/:id').get(
-  // auth('common'),
-  controller.getById
-);
 
 
 /*-─────────────────────────────────
@@ -78,6 +74,21 @@ router.route('/request-for-admin-approval').put(
   // validateRequest(validation.createHelpMessageValidationSchema),
   controller.requestForAdminApproval
 );
+
+/*-─────────────────────────────────
+|  Student | Mentors | 02 | Get a Mentor Information By Id and His all reviews
+└──────────────────────────────────*/
+router.route('/with-reviews/:mentorId').get(
+  auth(TRole.student),
+  // validateRequest(validation.createHelpMessageValidationSchema),
+  controller.mentorProfileInfoWithReviews
+);
+
+router.route('/:id').get(
+  // auth('common'),
+  controller.getById
+);
+
 
 
 
