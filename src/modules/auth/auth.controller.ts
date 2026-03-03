@@ -465,6 +465,20 @@ const googleAuthCallback = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const appleAuthCallback = catchAsync(async (req: Request, res: Response) => {
+  const { idToken, role, acceptTOC } = req.body;
+  // idToken = token from Google Sign-In on client
+
+  const result = await AuthService.appleLogin({ idToken, role, acceptTOC });
+
+  return sendResponse(res, {
+    code: StatusCodes.OK,
+    message: 'Google login successful',
+    data: result,
+    success: true,
+  });
+});
+
 // TODO : 🧹 Clean devices older than 30 days
 // await UserDevices.deleteMany({
 //   lastActive: { $lt: moment().subtract(30, 'days').toDate() },
@@ -690,6 +704,8 @@ export const AuthController = {
   loginV2, // 🆕
   googleLogin,
   googleLoginV2,
+  googleAuthCallback, // this is updated code
+  appleAuthCallback,
   verifyEmail,
   resendOtp,
   logout,

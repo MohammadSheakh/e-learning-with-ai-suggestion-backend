@@ -14,8 +14,12 @@ import { TokenType } from '../token/token.interface';
 import { OtpType } from '../otp/otp.interface';
 import { WalletService } from '../wallet.module/wallet/wallet.service';
 import { TCurrency } from '../../enums/payment';
+//@ts-ignore
 import { OAuth2Client } from 'google-auth-library';
+//@ts-ignore
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+//@ts-ignore
+import appleSignin from 'apple-signin-auth';
 
 //@ts-ignore
 import EventEmitter from 'events';
@@ -31,6 +35,8 @@ import { IUser } from '../user.module/user/user.interface';
 import { ICreateUser, IGoogleLoginPayload } from './auth.interface';
 import { IMentorProfile } from '../mentor.module/mentorProfile/mentorProfile.interface';
 import { MentorProfile } from '../mentor.module/mentorProfile/mentorProfile.model';
+import { OAuthAccount } from '../user.module/oauthAccount/oauthAccount.model';
+import { TAuthProvider } from './auth.constants';
 const eventEmitterForUpdateUserProfile = new EventEmitter(); // functional way
 const eventEmitterForCreateWallet = new EventEmitter();
 
@@ -593,12 +599,13 @@ const logout = async (refreshToken: string) => {};
 const refreshAuth = async (refreshToken: string) => {};
 
 
-
+// -- we need to move these to OAuth modules
 const googleLogin = async ({ idToken, role, acceptTOC }: IGoogleLoginPayload) => {
   
   // Step 1: Verify Google token
   const ticket = await googleClient.verifyIdToken({
     idToken,
+    //@ts-ignore
     audience: process.env.GOOGLE_CLIENT_ID,
   });
 
@@ -628,7 +635,7 @@ const googleLogin = async ({ idToken, role, acceptTOC }: IGoogleLoginPayload) =>
       lastUsedAt: new Date(),
     });
 
-    const tokens = TokenService.generateAuthTokens(user);
+    const tokens = TokenService.accessAndRefreshToken(user);
     return { user, ...tokens };
   }
 
@@ -652,7 +659,7 @@ const googleLogin = async ({ idToken, role, acceptTOC }: IGoogleLoginPayload) =>
       isVerified: true,
     });
 
-    const tokens = TokenService.generateAuthTokens(user);
+    const tokens = TokenService.accessAndRefreshToken(user);
     return { user, ...tokens, isLinked: true };
   }
 
@@ -699,17 +706,164 @@ const googleLogin = async ({ idToken, role, acceptTOC }: IGoogleLoginPayload) =>
     eventEmitterForCreateWallet.emit('eventEmitterForCreateWallet', { userId: newUser._id });
     await MentorProfile.create({ userId: newUser._id });
     await userRoleDataService.create({ userId: newUser._id });
+    
+    /*-─────────────────────────────────
+    |  TODO : MUST
+    | Lets send notification to admin that new Provider registered
+    └──────────────────────────────────*/
     await enqueueWebNotification(
       `A ${role} registered via Google`,
-      null, null, TRole.admin, TNotificationType.newUser
+      null, // senderId
+      null, // receiverId 
+      TRole.admin, // receiverRole
+      TNotificationType.newUser, // type
+      /**********
+       * In UI there is no details page for specialist's schedule
+       * **** */
+      // '', // linkFor
+      // existingWorkoutClass._id // linkId
     );
   }
 
-  const tokens = TokenService.generateAuthTokens(newUser);
+  const tokens = TokenService.accessAndRefreshToken(newUser);
   return { user: newUser, ...tokens, isNewUser: true };
 };
 
+
+const appleLogin = async ({ idToken, role, acceptTOC }: IGoogleLoginPayload) => {
+  
+  // Apple-specific token verification
+  const applePayload = await appleSignin.verifyIdToken(idToken, {
+    audience: process.env.APPLE_CLIENT_ID,
+    ignoreExpiration: false,
+  });
+
+  const { sub: providerId, email } = applePayload;
+  // ⚠️ Apple only sends email on FIRST login — after that it's null
+  // So you MUST store it in OAuthAccount on first login
+
+  // ... rest is identical to googleLogin, just swap TAuthProvider.apple
+
+  if (!email) throw new ApiError(StatusCodes.BAD_REQUEST, 'Email not provided by Google');
+
+  // Step 2: Check if OAuth account already exists
+  let oAuthAccount = await OAuthAccount.findOne({
+    authProvider: TAuthProvider.google,
+    providerId,
+    isDeleted: false,
+  });
+
+  if (oAuthAccount) {
+    // ─── Returning OAuth user ───
+    const user = await User.findById(oAuthAccount.userId);
+    if (!user || user.isDeleted) {
+      throw new ApiError(StatusCodes.UNAUTHORIZED, 'Account not found or deleted');
+    }
+
+    // Update token (store encrypted in production)
+    await OAuthAccount.findByIdAndUpdate(oAuthAccount._id, {
+      accessToken: idToken,
+      lastUsedAt: new Date(),
+    });
+
+    const tokens = TokenService.accessAndRefreshToken(user);
+    return { user, ...tokens };
+  }
+
+  // Step 3: No OAuth account — check if user exists by email
+  let user = await User.findOne({ email, isDeleted: false });
+
+  if (user) {
+    // ─── Existing local user — LINK OAuth account ───
+    if (!user.isEmailVerified) {
+      // Auto-verify since Google confirmed the email
+      await User.findByIdAndUpdate(user._id, { isEmailVerified: true });
+      user.isEmailVerified = true;
+    }
+
+    await OAuthAccount.create({
+      userId: user._id,
+      authProvider: TAuthProvider.google,
+      providerId,
+      email,
+      accessToken: idToken, // encrypt this!
+      isVerified: true,
+    });
+
+    const tokens = TokenService.accessAndRefreshToken(user);
+    return { user, ...tokens, isLinked: true };
+  }
+
+  // Step 4: Brand new user — register via Google
+  if (!role) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Role is required for new Google signup');
+  }
+  if (!acceptTOC) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'You must accept Terms and Conditions');
+  }
+
+  // Create profile
+  const userProfile = await UserProfile.create({ acceptTOC: true });
+
+  // Create user (no password needed)
+  const newUser = await User.create({
+    name: name || email.split('@')[0],
+    email,
+    role,
+    profileId: userProfile._id,
+    isEmailVerified: true, // Google already verified
+    authProvider: TAuthProvider.google,
+    profileImage: picture ? { imageUrl: picture } : undefined,
+  });
+
+  // Link profile back
+  eventEmitterForUpdateUserProfile.emit('eventEmitterForUpdateUserProfile', {
+    userProfileId: userProfile._id,
+    userId: newUser._id,
+  });
+
+  // Create OAuth account
+  await OAuthAccount.create({
+    userId: newUser._id,
+    authProvider: TAuthProvider.google,
+    providerId,
+    email,
+    accessToken: idToken, // encrypt this!
+    isVerified: true,
+  });
+
+  // Handle mentor-specific logic (same as createUserV2)
+  if (role === TRole.mentor) {
+    eventEmitterForCreateWallet.emit('eventEmitterForCreateWallet', { userId: newUser._id });
+    await MentorProfile.create({ userId: newUser._id });
+    await userRoleDataService.create({ userId: newUser._id });
+    /*-─────────────────────────────────
+    |  TODO : MUST
+    | Lets send notification to admin that new Provider registered
+    └──────────────────────────────────*/
+    await enqueueWebNotification(
+      `A ${role} registered via Google`,
+      null, // senderId
+      null, // receiverId 
+      TRole.admin, // receiverRole
+      TNotificationType.newUser, // type
+      /**********
+       * In UI there is no details page for specialist's schedule
+       * **** */
+      // '', // linkFor
+      // existingWorkoutClass._id // linkId
+    );
+  }
+
+  const tokens = TokenService.accessAndRefreshToken(newUser);
+  return { user: newUser, ...tokens, isNewUser: true };
+
+
+};
+
 export const AuthService = {
+  googleLogin,
+  appleLogin,
   createUser,
   createUserV2,
   login,

@@ -55,6 +55,10 @@ router.post(
 );
 
 
+router.post('/google', AuthController.googleAuthCallback);   // 🆕🆕🆕🆕🆕 client sends idToken
+router.post('/apple', AuthController.appleAuthCallback); // 🆕🆕🆕🆕🆕🆕
+
+
 //[🚧][🧑‍💻✅][🧪] // 🆗 
 router.post(
   '/forgot-password',

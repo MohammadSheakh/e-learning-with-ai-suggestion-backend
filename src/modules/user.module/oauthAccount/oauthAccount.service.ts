@@ -7,6 +7,7 @@ import { GenericService } from '../../_generic-module/generic.services';
 import { OAuth2Client } from 'google-auth-library';
 //@ts-ignore
 import appleSignin from 'apple-signin-auth';
+import { TAuthProvider } from '../../auth/auth.constants';
 
 export class OAuthAccountService extends GenericService<
   typeof OAuthAccount,
@@ -30,7 +31,7 @@ export class OAuthAccountService extends GenericService<
     console.log("p ======> 🆕🆕", p)
     // { sub: providerId, email, email_verified: isEmailVerified }
 
-    return { provider: 'google', providerId: p.sub, email: p.email!, name: p.name, picture: p.picture };
+    return { provider: TAuthProvider.google, providerId: p.sub, email: p.email!, name: p.name, picture: p.picture };
   };
 
   async verifyAppleToken (identityToken: string): Promise<OAuthPayload> {
@@ -39,6 +40,9 @@ export class OAuthAccountService extends GenericService<
       audience: process.env.APPLE_CLIENT_ID,
       ignoreExpiration: false,
     });
-    return { provider: 'apple', providerId: p.sub, email: p.email!, name: p.name };
+    return { provider: TAuthProvider.apple, providerId: p.sub, email: p.email!, name: p.name };
   };
+
+
+  
 }

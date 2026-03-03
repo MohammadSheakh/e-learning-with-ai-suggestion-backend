@@ -2,11 +2,22 @@
 import { model, Schema } from 'mongoose';
 import { IOAuthAccount, IOAuthAccountModel } from './oauthAccount.interface';
 import paginate from '../../../common/plugins/paginate';
-import { TAuthProvider } from './oauthAccount.constant';
+import { TAuthProvider } from '../../auth/auth.constants';
 
 
 const OAuthAccountSchema = new Schema<IOAuthAccount>(
   {
+
+    // Your current schema is mostly solid. Add these:
+    scopes: {  // Why we need this 
+      type: [String],
+      default: [],
+    },
+    lastUsedAt: {
+      type: Date,
+      default: Date.now,
+    },
+
     userId: { //🔗 back reference
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -20,11 +31,14 @@ const OAuthAccountSchema = new Schema<IOAuthAccount>(
       ],
       required: true,
     },
+
+    // Fix: compound index instead of just unique on providerId
+// Remove `unique: true` from providerId field, add compound index instead:
     providerId: {  // e.g., Google's 'sub' or Apple's 'sub'
       type: String,
       required: true,
       // Ensure uniqueness per provider to prevent duplicate links
-      unique: true, // or use compound index with authProvider
+      // unique: true, // or use compound index with authProvider
     },
     accessToken: {
       type: String,
@@ -54,6 +68,9 @@ const OAuthAccountSchema = new Schema<IOAuthAccount>(
   },
   { timestamps: true }
 );
+
+OAuthAccountSchema.index({ authProvider: 1, providerId: 1 }, { unique: true });
+// (because same Google sub could theoretically collide with Apple sub)
 
 OAuthAccountSchema.plugin(paginate);
 

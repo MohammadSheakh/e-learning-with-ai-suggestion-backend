@@ -1,13 +1,14 @@
 //@ts-ignore
 import { Model, Types } from 'mongoose';
 import { PaginateOptions, PaginateResult } from '../../../types/paginate';
+import { TAuthProvider } from '../../auth/auth.constants';
 
 
 export interface IOAuthAccount {
   // _taskId: undefined | Types.ObjectId;
   _id?: Types.ObjectId; // undefined |  Types.ObjectId |
   userId: Types.ObjectId;
-  authProvider: 'google' | 'apple';
+  authProvider: TAuthProvider; // 
   providerId: string; // e.g., Google's 'sub' or Apple's 'sub'
   email?: string; // optional, may be null
   isVerified: boolean;
@@ -21,7 +22,7 @@ export interface IOAuthAccount {
 }
 
 export interface OAuthPayload {
-  provider:   'google' | 'apple';
+  provider:   TAuthProvider;
   providerId: string;
   email:      string;
   name?:      string;

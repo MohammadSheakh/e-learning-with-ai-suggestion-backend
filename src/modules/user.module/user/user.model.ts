@@ -8,6 +8,7 @@ import { config } from '../../../config';
 import { TpreferredLanguage, TStatusType } from './user.constant';
 import { Roles } from '../../../middlewares/roles';
 import { TSubscription } from '../../../enums/subscription';
+import { TAuthProvider } from '../../auth/auth.constants';
 
 // Profile Image Schema
 const profileImageSchema = new Schema<TProfileImage>({
@@ -96,6 +97,16 @@ const userSchema = new Schema<IUser, UserModal>(
       disconnectedAt: Date
     },
     
+    //---------------------------------
+    // Auth related
+    //---------------------------------
+
+    authProvider: {
+      type: String,
+      enum: [ TAuthProvider.local, TAuthProvider.google, TAuthProvider.apple],
+      default: 'local',
+    },
+
     lastPasswordChange: { type: Date },
     isResetPassword: {
       type: Boolean,
