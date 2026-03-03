@@ -39,9 +39,12 @@ export const processFilesV2 = async (
   // Example: upload each file (can be Cloudinary, S3, or local storage)
   const uploadedUrls = await Promise.all(
     files.map(async (file) => {
+      
       const uploadedUrl = await new AttachmentService().uploadSingleAttachment(file, folderName as TFolderName)
       //uploadToCloudOrLocal(file, folderName);
       return uploadedUrl;
+
+      //return "https://res.cloudinary.com/deg4frre7/image/upload/v1772530901/e-learning/user/e-learning/user/test-img-one-1772530898739.png";
     })
   );
 

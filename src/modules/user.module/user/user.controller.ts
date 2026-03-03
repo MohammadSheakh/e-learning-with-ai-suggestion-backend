@@ -508,11 +508,7 @@ export class UserController extends GenericController<
   updateProfileImageSeparately = catchAsync(async (req: Request, res: Response) => {
     const id = req.user.userId;
     req.body.profileImage = req.uploadedFiles.profileImage; // it actually returns array of string
-
-    console.log("req.uploadedFiles.profileImage -> ", req.uploadedFiles.profileImage);
-    console.log("req.body from controller -> ", req.body);
-    console.log("req.body.profileImage from controller -> ", req.body.profileImage);
-
+    
     const data = req.body;
 
     const result = await this.userService.updateProfileImageSeperately(id, data);
