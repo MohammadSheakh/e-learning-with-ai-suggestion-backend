@@ -19,7 +19,9 @@ export class GenericController<ModelType, InterfaceType> {
     this.service = service;
     this.modelName = modelName; // Assign model name
   }
-
+  /*-─────────────────────────────────
+  |  
+  └──────────────────────────────────*/
   create = catchAsync(async (req: Request, res: Response) => {
     const data:InterfaceType = req.body;
     const result = await this.service.create(data);

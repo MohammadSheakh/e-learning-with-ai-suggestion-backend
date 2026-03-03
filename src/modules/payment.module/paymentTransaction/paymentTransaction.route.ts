@@ -35,9 +35,9 @@ router.route('/').get((req, res) => {
   console.log("🟢 test page");
 });
 
-//---------------------------------  suplify - kaj bd 
-// Admin | get all payment transaction with pagination
-//---------------------------------
+/*-─────────────────────────────────  suplify - kaj bd 
+|  Admin | get all payment transaction with pagination
+└──────────────────────────────────*/
 router.route('/paginate').get(
   //auth('common'),
   validateFiltersForQuery(optionValidationChecking([
@@ -74,17 +74,17 @@ router.route('/paginate/dev').get(
   controller.getAllWithPaginationForDev
 );
 
-//-------------------------------- suplify - kaj bd 
-// Admin | Get Overview of Earnings
-//---------------------------------
+/*-───────────────────────────────── suplify - kaj bd 
+|  Admin | Get Overview of Earnings
+└──────────────────────────────────*/
 router.route('/overview/admin').get(
   auth(TRole.admin),
   controller.getEarningsOverview
 );
 
-//---------------------------------
-// From kappes Backend For Stripe
-//---------------------------------
+/*-─────────────────────────────────
+|  From kappes Backend For Stripe
+└──────────────────────────────────*/
 router.route('/success').get(controller.successPage)
 router.route('/cancel').get(controller.cancelPage);
 

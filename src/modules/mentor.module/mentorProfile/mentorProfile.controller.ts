@@ -65,9 +65,14 @@ export class MentorProfileController extends GenericController<
 
   mentorProfileInfoWithReviews = catchAsync(async (req: Request, res: Response) => {
     
-    const mentorId = req.user.userId;
+    const mentorId = req.params.mentorId;
 
-    const result = await this.mentorProfileService.mentorProfileInfoWithReviews(mentorId);
+    // const result = await this.mentorProfileService.mentorProfileInfoWithReviews(mentorId);
+
+    const result = await this.mentorProfileService.mentorProfileInfoWithReviewsV2(mentorId);
+
+    
+
 
     sendResponse(res, {
       code: StatusCodes.OK,

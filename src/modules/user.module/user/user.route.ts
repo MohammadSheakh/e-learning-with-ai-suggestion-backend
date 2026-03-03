@@ -43,7 +43,6 @@ router.route('/paginate').get(
   controller.getAllWithPaginationV2WithStatistics
 );
 
-
 /*-───────────────────────────────── e-learning
 |  Admin | 04-02 | Get All students from Users Table
 └──────────────────────────────────*/
@@ -64,9 +63,9 @@ router.route('/paginate/for-mentor').get(
   controller.getAllWithPaginationV2
 );
 
-//--------------------------------- kaj-bd
-// Admin | 00-01 | Get All SubAdmin from Users Table
-//---------------------------------
+/*-───────────────────────────────── kaj-bd
+|  Admin | 00-01 | Get All SubAdmin from Users Table
+└──────────────────────────────────*/
 router.route('/paginate/for-sub-admin').get(
   auth(TRole.admin),
   validateFiltersForQuery(optionValidationChecking(['_id', 'name', 'createdAt', 'from', 'to', ...paginationOptions])),
@@ -82,9 +81,9 @@ router.route('/paginate/for-sub-admin').get(
   controller.getAllWithPaginationV2
 );
 
-//--------------------------------- fertie | kaj-bd
-// Admin | 00-02 | Create Sub Admin and send invitation email 
-//---------------------------------
+/*-───────────────────────────────── fertie | kaj-bd
+|  Admin | 00-02 | Create Sub Admin and send invitation email 
+└──────────────────────────────────*/
 router.post(
   "/send-invitation-link-to-admin-email",
   auth(TRole.admin),
@@ -92,10 +91,10 @@ router.post(
   controller.sendInvitationLinkToAdminEmail
 );
 
-//---------------------------------  kaj-bd
-// Admin | 00-02 | Remove Sub Admin
-// :id -> here id is subAdminId 
-//---------------------------------
+/*-─────────────────────────────────  kaj-bd
+|  Admin | 00-02 | Remove Sub Admin
+|  :id -> here id is subAdminId 
+└──────────────────────────────────*/
 router.put(
   "/remove-sub-admin/:id",
   auth(TRole.admin),
@@ -106,9 +105,9 @@ router.put(
 
 // TODO : MUST : Get all providers who are not approved .. 
 
-//--------------------------------- kaj-bd
-// Admin | 04-01 | Get All Providers from Users Table 
-//---------------------------------
+/*-───────────────────────────────── kaj-bd
+|  Admin | 04-01 | Get All Providers from Users Table 
+└──────────────────────────────────*/
 router.route('/paginate/for-provider').get(
   auth(TRole.admin),
   // providerApprovalStatus must pass kora lagbe .. 
@@ -120,9 +119,9 @@ router.route('/paginate/for-provider').get(
 
 
 
-//--------------------------------- suplify
-// Specialist | Get Profile Information as logged in user 
-//---------------------------------
+/*-───────────────────────────────── suplify
+|  Specialist | Get Profile Information as logged in user 
+└──────────────────────────────────*/
 router.route('/profile').get(
   auth(TRole.common), // any logged in user can see any user profile ..
   controller.getById
@@ -135,9 +134,9 @@ router.route('/notification-test').get(
 );
 
 
-//--------------------------------- suplify
-// Admin | Get Profile Information by Id  to approve doctor / specialist 
-//---------------------------------
+/*-───────────────────────────────── suplify
+|  Admin | Get Profile Information by Id  to approve doctor / specialist 
+└──────────────────────────────────*/
 router.route('/profile/for-admin').get(
  auth(TRole.admin),
   validateFiltersForQuery(optionValidationChecking(['_id',
@@ -145,26 +144,26 @@ router.route('/profile/for-admin').get(
   controller.getAllWithPagination
 );
 
-//--------------------------------- suplify
-// Admin | change approvalStatus of a doctor / specialist profile
-//---------------------------------
+/*-───────────────────────────────── suplify
+|  Admin | change approvalStatus of a doctor / specialist profile
+└──────────────────────────────────*/
 router.route('/change-approval-status').put(
   auth(TRole.admin),
   // validateRequest(validation.changeApprovalStatusValidationSchema),
   controller.changeApprovalStatusByUserId
 )
 
-//--------------------------------- kaj bd
-// User | Home Page | 03-01 | get category and popular providers also banners 
-//---------------------------------
+/*-───────────────────────────────── kaj bd
+|  User | Home Page | 03-01 | get category and popular providers also banners 
+└──────────────────────────────────*/
 router.route('/home-page').get(
   // auth(TRole.user),
   controller.getCategoriesAndPopularProvidersForUser
 )
 
-//--------------------------------- kaj bd
-// User | Home Page |   get only popular providers  
-//---------------------------------
+/*-───────────────────────────────── kaj bd
+|  User | Home Page |   get only popular providers  
+└──────────────────────────────────*/
 // TODO : MUST : Need to implement pagination .. 
 router.route('/home-page/popular').get(
   // auth(TRole.user),
@@ -185,9 +184,9 @@ router.route('/home-page/for-provider').get(
 )
 
 
-//--------------------------------- kaj bd
-// User | Profile | 06-01 | get profile information of a user 
-//---------------------------------
+/*-───────────────────────────────── kaj bd
+|  User | Profile | 06-01 | get profile information of a user 
+└──────────────────────────────────*/
 router.route('/profile-info').get(
   auth(TRole.common),
   controller.getProfileInformationOfAUser
@@ -253,9 +252,9 @@ router.route('/delete/:id').delete(
   controller.deleteById
 ); // FIXME : change to admin
 
-/*---------------------
-  As per toky vai's requirement.. 
------------------------*/
+/*-─────────────────────────────────
+|  As per toky vai's requirement.. 
+└──────────────────────────────────*/
 router.route('/softDelete/:id').put(
   auth(TRole.commonUser),
   controller.softDeleteById

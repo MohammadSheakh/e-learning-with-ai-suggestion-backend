@@ -11,7 +11,7 @@ import { UserRoutes } from '../modules/user.module/user/user.route';
 import { WalletTransactionHistoryRoute } from '../modules/wallet.module/walletTransactionHistory/walletTransactionHistory.route';
 import { BankInfoRoute } from '../modules/wallet.module/bankInfo/bankInfo.route';
 import { WithdrawalRequstRoute } from '../modules/wallet.module/withdrawalRequst/withdrawalRequst.route';
-import { ContactUsRoute } from '../modules/settings.module/contactUs/contactUs.route';
+
 import { SettingsRoutes } from '../modules/settings.module/settings/settings.routes';
 import { PhaseRoute } from '../modules/question.module/phase/phase.route';
 import { QuestionRoute } from '../modules/question.module/question/question.route';
@@ -211,10 +211,6 @@ const apiRoutes = [
   {
     path: '/settings',
     route: SettingsRoutes,
-  },
-  {
-    path: '/contact-us',
-    route: ContactUsRoute,
   },
   ///////////////////////////////////////////// Reviews
 

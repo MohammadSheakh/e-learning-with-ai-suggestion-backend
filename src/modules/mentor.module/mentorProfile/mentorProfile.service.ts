@@ -250,34 +250,29 @@ export class MentorProfileService extends GenericService<
 
 
   /*-─────────────────────────────────
-  |  Student | 
+  |  🎲📊📈 // 💎✨🔍 -> V2 Found
   └──────────────────────────────────*/
   async mentorProfileInfoWithReviews(mentorUserId: string) {
 
-    const mentorObjectId = new mongoose.Types.ObjectId(mentorUserId);
+    const user = await User.findById(mentorUserId).select('name profileImage');
 
-    console.log("mentorObjectId", mentorObjectId);
-    console.log("mentorUserId :: ", mentorUserId);
-
+  
     // 1️⃣ Get Mentor Profile + User Info
-    const mentorProfile = await MentorProfile.find({
-      userId: new mongoose.Types.ObjectId(mentorUserId)
-    })
-    .populate({
-      path: "userId",
-      select: "name email",
-    })
-    .lean();
-
-    console.log("mentorProfile :: ", mentorProfile);
+    const mentorProfile = await MentorProfile.find(
+      {
+      userId: user._id,
+    }
+  ).lean();
 
     if (!mentorProfile) {
       throw new Error("Mentor profile not found");
     }
 
+    /*---------------------- --------------------*/
+
     // 2️⃣ Get Reviews + Reviewer Name
     const reviews = await MentorReview.find({
-      mentorId: mentorObjectId,
+      mentorId: new mongoose.Types.ObjectId(mentorUserId),
       isDeleted: false,
     })
       .populate({
@@ -291,7 +286,7 @@ export class MentorProfileService extends GenericService<
     const ratingStats = await MentorReview.aggregate([
       {
         $match: {
-          mentorId: mentorObjectId,
+          mentorId: new mongoose.Types.ObjectId(mentorUserId),
           isDeleted: false,
         },
       },
@@ -320,7 +315,7 @@ export class MentorProfileService extends GenericService<
     const reviewCountPerRating = await MentorReview.aggregate([
       {
         $match: {
-          mentorId: mentorObjectId,
+          mentorId: new mongoose.Types.ObjectId(mentorUserId),
           isDeleted: false
         }
       },
@@ -337,7 +332,8 @@ export class MentorProfileService extends GenericService<
       const found = reviewCountPerRating.find(r => r._id === rating);
       return {
         rating,
-        count: found ? found.count : 0
+        count: found ? found.count : 0,
+        
       };
     });
 
@@ -346,6 +342,7 @@ export class MentorProfileService extends GenericService<
     return {
       mentor: mentorProfile.userId,
       profile: mentorProfile,
+      user : user,
       reviews: reviews.map((r) => ({
         reviewId: r._id,
         reviewerId: r.userId?._id,
@@ -357,7 +354,109 @@ export class MentorProfileService extends GenericService<
       reviewStats,
       fullResult,
     };
+
   }
 
+  /*-─────────────────────────────────
+  |  🎲📊📈 
+  └──────────────────────────────────*/
+  async mentorProfileInfoWithReviewsV2(mentorUserId: string) {
 
+    const mentorObjectId = new mongoose.Types.ObjectId(mentorUserId);
+
+    // 1️⃣ User
+    const user = await User.findById(mentorUserId)
+      .select("name profileImage")
+      .lean();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // 2️⃣ Mentor Profile
+    const mentorProfile = await MentorProfile.findOne({
+      userId: mentorUserId,
+      isDeleted: false,
+    }).lean();
+
+    if (!mentorProfile) {
+      throw new Error("Mentor profile not found");
+    }
+
+    // 3️⃣ Reviews
+    const reviews = await MentorReview.find({
+      mentorId: mentorObjectId,
+      isDeleted: false,
+    })
+      .populate("userId", "name")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // 4️⃣ Single Aggregate for ALL rating stats
+    const ratingAggregation = await MentorReview.aggregate([
+      {
+        $match: {
+          mentorId: mentorObjectId,
+          isDeleted: false,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          averageRating: { $avg: "$rating" },
+          totalReviews: { $sum: 1 },
+          ratings: { $push: "$rating" }
+        }
+      }
+    ]);
+
+    let averageRating = 0;
+    let totalReviews = 0;
+    let ratingBreakdown = [];
+
+    if (ratingAggregation.length) {
+      averageRating = Number(ratingAggregation[0].averageRating.toFixed(1));
+      totalReviews = ratingAggregation[0].totalReviews;
+
+      const ratingArray = ratingAggregation[0].ratings;
+
+      const countMap = {1:0,2:0,3:0,4:0,5:0};
+
+      ratingArray.forEach((r: number) => {
+        countMap[r]++;
+      });
+
+      ratingBreakdown = [5,4,3,2,1].map(rating => ({
+        rating,
+        count: countMap[rating],
+        percentage: totalReviews
+          ? Number(((countMap[rating] / totalReviews) * 100).toFixed(0))
+          : 0
+      }));
+    } else {
+      ratingBreakdown = [5,4,3,2,1].map(rating => ({
+        rating,
+        count: 0,
+        percentage: 0
+      }));
+    }
+
+    return {
+      user,
+      profile: mentorProfile,
+      reviews: reviews.map(r => ({
+        reviewId: r._id,
+        reviewerId: r.userId?._id,
+        reviewerName: r.userId?.name,
+        review: r.review,
+        rating: r.rating,
+        createdAt: r.createdAt,
+      })),
+      reviewStats: {
+        averageRating,
+        totalReviews,
+        ratingBreakdown
+      }
+    };
+  }
 }
