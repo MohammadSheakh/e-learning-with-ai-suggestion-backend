@@ -1,5 +1,4 @@
 import ApiError from "../../../errors/ApiError";
-import { IServiceBooking } from "../../service.module/serviceBooking/serviceBooking.interface";
 import { TPaymentGateway } from "./payment.constant";
 import { PaymentGateway } from "./payment.gateway";
 import { StatusCodes } from 'http-status-codes';

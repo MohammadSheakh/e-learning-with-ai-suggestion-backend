@@ -142,6 +142,7 @@ export const calendlyOAuthCallbackHandlerV2 = async (
       { new: true, runValidators: true }
     );
 
+    // TODO : We need to provide proper front end URL .. or we need to make a nice ejs page in backend .. with return to home button
     // 6. redirect to frontend
     res.redirect(
       `${process.env.FRONTEND_URL}/dashboard?calendly=connected&name=${encodeURIComponent(userDetails.name)}`
@@ -196,6 +197,3 @@ export const calendlyWebHookHandler = async (req: Request, res: Response): Promi
      // DO NOT throw - we already sent 200 response
      }
 };
-
-
-

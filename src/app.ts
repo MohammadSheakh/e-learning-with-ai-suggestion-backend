@@ -42,12 +42,16 @@ app.use(
     credentials: true,
   })
 );
-app.post('/api/v1/stripe/webhook', express.raw({ type: 'application/json' }), webhookHandler);
-
-// // Step 2: Handle OAuth callback
 app.get('/api/calendly/callback',
   //  express.raw({ type: 'application/json'  }),
     calendlyOAuthCallbackHandlerV2);
+
+app.get('/api/calendly/:id/dashboard',
+calendlyOAuthCallbackHandlerV2);
+app.post('/api/v1/stripe/webhook', express.raw({ type: 'application/json' }), webhookHandler);
+
+// // Step 2: Handle OAuth callback
+
 
 app.post('/api/webhooks/calendly', express.raw({ type: 'application/json' , limit: '1mb' }), verifyCalendlySignature , calendlyWebHookHandler);
 
