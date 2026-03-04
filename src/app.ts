@@ -19,6 +19,11 @@ import {  calendlyOAuthCallbackHandlerV2, calendlyWebHookHandler }  from './modu
 import { verifyCalendlySignature } from './middlewares/calendly/verifyCalendlySignature';
 // import i18nextFsBackend from 'i18next-fs-backend';
 
+/*-─────────────────────────────────
+|  This payment.bootstrap.ts import is important for payment by stripe
+└──────────────────────────────────*/
+import './modules/payment.module/payment/payment.bootstrap.ts';
+
 const app = express();
 
 //---------------------------------
@@ -51,8 +56,7 @@ app.get('/api/calendly/callback',
 
 app.post('/api/v1/stripe/webhook', express.raw({ type: 'application/json' }), webhookHandler);
 
-// // Step 2: Handle OAuth callback
-
+// Step 2: Handle OAuth callback
 
 app.post('/api/webhooks/calendly', express.raw({ type: 'application/json' , limit: '1mb' }), verifyCalendlySignature , calendlyWebHookHandler);
 

@@ -108,6 +108,7 @@ export class PurchasedAdminCapsuleService extends GenericService<
         [{
           studentId: user?.userId,
           capsuleId : capsuleId,
+          
           paymentMethod : null, // in webhook we will update this
           paymentTransactionId : null,  // in webhook we will update this
           paymentStatus : TPaymentStatus.pending, // may be unpaid hoile valo hobe 

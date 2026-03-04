@@ -6,6 +6,7 @@ import { User } from "../../../user.module/user/user.model";
 import mongoose from 'mongoose';
 import { TCurrency } from "../../../../enums/payment";
 import { config } from "../../../../config";
+import { PaymentGateway } from "../gateways/paymentgateway.abstract";
 
 export abstract class PurchaseStrategy<T>{
 
@@ -37,7 +38,11 @@ export abstract class PurchaseStrategy<T>{
 
 
     // THIS NEVER CHANGES - lives here once, forever
-    async processPayment(entityId: string, loggedInUser: IUser) :Promise<{ url: string }>{
+    async processPayment(
+        entityId: string,
+        loggedInUser: IUser,
+        gateway : PaymentGateway  // 👈 gateway comes in here
+    ) :Promise<{ url: string }>{
         // check already purchased
         const alreadyPurchased = await this.checkAlreadyPurchased(entityId, loggedInUser.userId);
         if(alreadyPurchased){
@@ -51,8 +56,9 @@ export abstract class PurchaseStrategy<T>{
         }
 
         // 3. Stripe customer — SAME FOR ALL
-        const stripeCustomerId = await this.resolveStripeCustomer(user);
-    
+        // const stripeCustomerId = await this.resolveStripeCustomer(user);
+        const customerId = await gateway.resolveCustomer(loggedInUser);
+
         // create pending purchase - SAME FLOW, DIFFEREENT MODEL
         let pendingPurchase;
         const session = await mongoose.startSession();
@@ -61,6 +67,15 @@ export abstract class PurchaseStrategy<T>{
         })
         session.endSession();
 
+        const metadata = this.getMetadata(pendingPurchase, entity, loggedInUser);
+
+        return gateway.createSession({
+            stripeCustomerId: customerId,
+            price: pendingPurchase.price,
+            metadata,
+        });
+
+        /*-----------------------
         // 5. Build stripe session — SAME FOR ALL
         const stripeSession = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -80,6 +95,8 @@ export abstract class PurchaseStrategy<T>{
         });
 
         return { url: stripeSession.url };
+
+        ------------------------*/
     }
 }
 
