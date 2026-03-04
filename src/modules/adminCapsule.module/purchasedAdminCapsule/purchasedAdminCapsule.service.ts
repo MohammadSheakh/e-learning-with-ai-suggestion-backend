@@ -33,17 +33,13 @@ export class PurchasedAdminCapsuleService extends GenericService<
     this.stripe = stripe;
   }
 
+
+  /*-─────────────────────────────────
+  |  We move this purchase logic .. to payment.module folder 
+  └──────────────────────────────────*/
   async createV2(capsuleId:string, user: IUser) : Promise<IPurchasedAdminCapsule | { url: any}> {
 
-    /******
-     * 📝
-     * First We have to check user's subscriptionPlan
-     * 1. if "none".. we dont let him to book appointment
-     * 2. if "freeTrial" .. need to pay // TODO : need to talk with client about this feature
-     * 3. if "standard" or "standardPlus" .. they need to pay to book appointment
-     * 4. if "vise" ... no payment required to book appointment
-     * ******* */
-
+  
     const existingUser:IMainUser = await User.findById(user.userId).select('subscriptionType name');
 
     const checkAlreadyPurchased = await PurchasedAdminCapsule.findOne({

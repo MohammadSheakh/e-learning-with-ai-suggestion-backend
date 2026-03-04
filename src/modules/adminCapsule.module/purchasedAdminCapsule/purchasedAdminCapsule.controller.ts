@@ -30,8 +30,6 @@ export class PurchasedAdminCapsuleController extends GenericController<
 
     create = catchAsync(async (req: Request, res: Response) => {
       
-      // const data:ITrainingProgramPurchase = req.body;
-    
       //const result = await this.purchasedAdminCapsuleService.createV2(req.params.adminCapsuleId, req.user as IUser);
       
       const strategy = 
@@ -41,8 +39,6 @@ export class PurchasedAdminCapsuleController extends GenericController<
           req.params.adminCapsuleId,
           req.user as IUser
         );
-
-      console.log("strategy :: ", strategy);
 
       sendResponse(res, {
         code: StatusCodes.OK,

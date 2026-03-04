@@ -1,6 +1,3 @@
-//01968138704
-//1020
-
 import { PurchasedAdminCapsule } from "../../adminCapsule.module/purchasedAdminCapsule/purchasedAdminCapsule.model";
 import { PurchasedJourney } from "../../journey.module/purchasedJourney/purchasedJourney.model";
 import { StripeGateway } from "./gateways/stripe/stripe.gateway";
@@ -8,6 +5,9 @@ import { PaymentService } from "./payment.service";
 
 /*-─────────────────────────────────
 |  We need to import this module at app.ts
+|
+| // INFO : 
+| When you add new puchasing feature in this system .. you must register that purchase strategy here
 └──────────────────────────────────*/
 
 const paymentService = new PaymentService();

@@ -8,11 +8,12 @@ import { Journey } from "../journey/journey.model";
 import { PurchasedJourney } from "./purchasedJourney.model";
 
 export class JourneyPurchaseStrategy extends PurchaseStrategy<IJourney>{
+    
     async checkAlreadyPurchased(journeyId: string, userId: string) {
-    return !!await PurchasedJourney.findOne({ 
-        journeyId, studentId: userId, 
-        paymentStatus: TPaymentStatus.completed 
-        });
+        return !!await PurchasedJourney.findOne({ 
+            journeyId, studentId: userId, 
+            paymentStatus: TPaymentStatus.completed 
+            });
     }
 
     async findExisting(journeyId: string) {
