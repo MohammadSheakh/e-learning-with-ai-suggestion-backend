@@ -18,5 +18,6 @@ export enum TNotificationType {
     payment = 'payment',
     system = 'system',
     newUser = 'newUser',
-    review = 'review'
+    review = 'review',
+    sessionBooking = 'sessionBooking'
 }

@@ -182,10 +182,14 @@ export const calendlyWebHookHandler = async (req: Request, res: Response): Promi
           // Process event based on type
           switch (event) {
                case 'invitee.created':
+                    console.log("🪝🪝 invitee.created 🪝🪝")
+
                     await handleInviteeCreated(user, payload);
                     break;
                
                case 'invitee.canceled':
+                    console.log("🪝🪝 invitee.canceled 🪝🪝")
+
                     await handleInviteeCanceled(payload);
                     break;
                     

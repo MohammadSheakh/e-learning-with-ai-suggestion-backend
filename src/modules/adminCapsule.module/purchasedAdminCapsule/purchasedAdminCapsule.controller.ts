@@ -14,6 +14,7 @@ export class PurchasedAdminCapsuleController extends GenericController<
   IPurchasedAdminCapsule
 > {
   purchasedAdminCapsuleService = new PurchasedAdminCapsuleService();
+  
 
   constructor() {
     super(new PurchasedAdminCapsuleService(), 'PurchasedAdminCapsule');
@@ -23,7 +24,11 @@ export class PurchasedAdminCapsuleController extends GenericController<
     
     // const data:ITrainingProgramPurchase = req.body;
   
-    const result = await this.purchasedAdminCapsuleService.createV2(req.params.adminCapsuleId, req.user as IUser);
+    //const result = await this.purchasedAdminCapsuleService.createV2(req.params.adminCapsuleId, req.user as IUser);
+
+
+    const strategy = 
+
 
     sendResponse(res, {
       code: StatusCodes.OK,

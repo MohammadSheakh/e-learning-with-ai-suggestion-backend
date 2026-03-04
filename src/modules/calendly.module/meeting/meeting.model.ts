@@ -6,12 +6,16 @@ import mongoose from 'mongoose';
 
 const MeetingSchema = new Schema<IMeeting>(
   {
-    calendlyEventId: { type: String, required: true, unique: true },
+    calendlyEventId: { 
+      type: String, required: true, unique: true },
     calendlyInviteeId: { type: String, required: true },
     
     // Relationships
-    mentorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    studentEmail: { type: String, required: true },
+    mentorId: { 
+      type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    studentEmail: { 
+      type: String, required: true },
+    
     studentName: String,
     
     // Event details

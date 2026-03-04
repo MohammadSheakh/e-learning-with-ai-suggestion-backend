@@ -1,3 +1,7 @@
+import { TRole } from "../../../middlewares/roles";
+import { enqueueWebNotification } from "../../../services/notification.service";
+import { TNotificationType } from "../../notification/notification.constants";
+import { IMeeting } from "../meeting/meeting.interface";
 import { Meeting } from "../meeting/meeting.model";
 
 // Handle new meeting scheduled
@@ -14,7 +18,7 @@ export async function handleInviteeCreated(user, payload) {
   const eventId = scheduled_event.uri.split('/').pop();
   
   // Create meeting record
-  const meeting = await Meeting.findOneAndUpdate(
+  const meeting:IMeeting = await Meeting.findOneAndUpdate(
     { calendlyEventId: eventId },
     {
       calendlyEventId: eventId,
@@ -32,6 +36,7 @@ export async function handleInviteeCreated(user, payload) {
     { upsert: true, new: true }
   );
   
+  /*---------------------------
   // Notify mentor (in-app + email)
   await sendMeetingNotification({
     userId: user._id,
@@ -43,6 +48,19 @@ export async function handleInviteeCreated(user, payload) {
       meetingId: meeting._id
     }
   });
+  ------------------------------*/
+
+  await enqueueWebNotification(
+    `Student ${studentName} book a session at ${meeting.scheduledAt}`,
+    null, // senderId
+    user._id, // receiverId
+    TRole.mentor, // receiverRole
+    TNotificationType.sessionBooking, // type // 🎨 this is for wallet page routing
+    meeting._id, // id of type 
+    null, // linkFor 
+    null, // linkId
+  );
+
   
   console.log(`✅ New meeting created: ${meeting._id} for mentor ${user.email}`);
 }

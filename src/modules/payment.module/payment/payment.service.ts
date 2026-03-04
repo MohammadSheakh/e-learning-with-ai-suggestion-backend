@@ -1,6 +1,6 @@
 import ApiError from "../../../errors/ApiError";
 import { TPaymentGateway } from "./payment.constant";
-import { PaymentGateway } from "./payment.gateway";
+import { PaymentGateway } from "./purchaseStrategy/purchaseStrategy.abstract";
 import { StatusCodes } from 'http-status-codes';
 // https://www.youtube.com/watch?v=vE74gnv4VlY
 export class PaymentService {
