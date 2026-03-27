@@ -12,7 +12,7 @@ const upload = multer({ storage: storage });
 const router = Router();
 
 
-//---------------------------------
+//-----------------------------------
 // (Doctor | Patient) (Registration) | as doctor and patient need to provide their documents while registration
 // TODO : validation add kora lagbe .. 
 //---------------------------------
